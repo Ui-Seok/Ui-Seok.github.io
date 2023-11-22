@@ -1,0 +1,27 @@
+---
+title: "MLOps for MLE - 1"
+subtitle: Docker 환경 설정 및 DB 설정
+author: "Ui Seok"
+date: "2023-11-23"
+categories: [mlops]
+
+page-layout: article
+---
+
+## Summary
+
+1. Docker 설치 및 PostgreSQL DB 서버 생성
+
+2. DB의 role name과 attribute 확인
+
+3. 생성된 DB에 query를 작성하여 테이블 생성
+
+::: {.callout-note}
+실습을 진행했던 코드를 보고싶으시다면 [여기](https://github.com/Ui-Seok/mlops-tutorial)를 눌러주세요
+:::
+
+
+
+## Reference
+
+[ML Engineer를 위한 MLOps tutorial](https://mlops-for-mle.github.io/tutorial/)

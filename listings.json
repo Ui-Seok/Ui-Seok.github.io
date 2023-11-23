@@ -6,12 +6,14 @@
   {
     "listing": "/docs/blog/index.html",
     "items": [
+      "/docs/blog/posts/2023-11-24-MLOps-day2/index.html",
       "/docs/blog/posts/2023-11-23-MLOps-day1/index.html"
     ]
   },
   {
     "listing": "/index.html",
     "items": [
+      "/docs/blog/posts/2023-11-24-MLOps-day2/index.html",
       "/docs/blog/posts/2023-11-23-MLOps-day1/index.html",
       "/posts/test-page/index.html",
       "/posts/post-with-code/index.html",

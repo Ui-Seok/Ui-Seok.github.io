@@ -14,6 +14,48 @@
     "text": "Coursera 강의를 듣고 정리하는 페이지입니다.\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\nNo matching items"
   },
   {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
+    "title": "MLOps for MLE - 2",
+    "section": "",
+    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
+    "title": "MLOps for MLE - 2",
+    "section": "",
+    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
+    "title": "MLOps for MLE - 2",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "posts/test-page/index.html",
+    "href": "posts/test-page/index.html",
+    "title": "Test Page",
+    "section": "",
+    "text": "This is test page."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code."
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
     "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
     "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
     "title": "MLOps for MLE - 1",
@@ -28,6 +70,20 @@
     "text": "Docker 설치 및 PostgreSQL DB 서버 생성\nDB의 role name과 attribute 확인\n생성된 DB에 query를 작성하여 테이블 생성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#스펙-명세서",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#스펙-명세서",
+    "title": "MLOps for MLE - 1",
+    "section": "스펙 명세서",
+    "text": "스펙 명세서\n\nDocker 설치\nPostgreSQL DB 서버를 생성\n\nImage: postgres:14.0\nContainer name: postgres-server\nPOSTGRES_USER: myuser\nPOSTGRES_PASSWORD: mypassword\nPOSTGRES_DB: mydatabase\nPort forwarding: 5432:5432\n\n생성된 DB 서버 확인\n\npsql로 DB에 접근하여 role name과 attributes 확인"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
+    "title": "MLOps for MLE - 1",
+    "section": "실습",
+    "text": "실습\nDocker 설치 후 docker run 명령어를 사용하여 DB 서버 생성하기\n$ docker run -d \\\n  --name postgres-server \\\n  -p 5432:5432 \\\n  -e POSTGRES_USER=myuser \\\n  -e POSTGRES_PASSWORD=mypassword \\\n  -e POSTGRES_DB=mydatabase \\\n  postgres:14.0"
+  },
+  {
     "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
     "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
     "title": "MLOps for MLE - 1",
@@ -35,38 +91,17 @@
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
   {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
-    "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
-  },
-  {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
-    "section": "",
-    "text": "This is a post with executable code."
-  },
-  {
-    "objectID": "posts/test-page/index.html",
-    "href": "posts/test-page/index.html",
-    "title": "Test Page",
-    "section": "",
-    "text": "This is test page."
-  },
-  {
     "objectID": "docs/blog/index.html",
     "href": "docs/blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "공부한 내용을 정리하는 페이지입니다.\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 1\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2023\n\n\nUi Seok\n\n\n\n\n\n\nNo matching items"
+    "text": "공부한 내용을 정리하는 페이지입니다.\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 2\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 24, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 1\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2023\n\n\nUi Seok\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "UiSeok’s blog",
     "section": "",
-    "text": "공부했던 내용들을 정리하는 블로그 입니다.\nWelcome my page!\nThis page made by Quarto\n\n\n\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 1\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nTest Page\n\n\n\n\n\n\n\ncode\n\n\ntest\n\n\n\n\n\n\n\n\n\n\n\nNov 22, 2023\n\n\nMe\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nNov 21, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nNov 18, 2023\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
+    "text": "공부했던 내용들을 정리하는 블로그 입니다.\nWelcome my page!\nThis page made by Quarto\n\n\n\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 2\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 24, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 1\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nTest Page\n\n\n\n\n\n\n\ncode\n\n\ntest\n\n\n\n\n\n\n\n\n\n\n\nNov 22, 2023\n\n\nMe\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nNov 21, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nNov 18, 2023\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
   }
 ]

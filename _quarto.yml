@@ -1,6 +1,9 @@
 project:
   type: website
 
+metadata-files: 
+  - docs/blog/posts/_sidebar.yml
+
 website:
   title: "Home"
   search: True

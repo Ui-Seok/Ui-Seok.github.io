@@ -1,0 +1,25 @@
+---
+title: "MLOps for MLE - 2"
+subtitle: Docker 환경 설정 및 DB 설정
+author: "Ui Seok"
+date: "2023-11-24"
+categories: [mlops]
+
+page-layout: article
+---
+
+## Summary
+
+1. 생성한 테이블에 iris 데이터 삽입
+
+2. 자동으로 삽입해주는 스크립트 작성
+
+::: {.callout-note}
+실습을 진행했던 코드를 보고싶으시다면 [여기](https://github.com/Ui-Seok/mlops-tutorial)를 눌러주세요
+:::
+
+
+
+## Reference
+
+[ML Engineer를 위한 MLOps tutorial](https://mlops-for-mle.github.io/tutorial/)

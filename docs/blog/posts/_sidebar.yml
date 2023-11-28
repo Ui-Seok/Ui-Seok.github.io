@@ -1,7 +1,7 @@
 website:
-  page-navigation: false
+  page-navigation: true
   sidebar:
-    - id: blog
+    - id: Blog
       style: "floating"
       collapse-level: 2
       contents: "docs/blog/posts/*/index.*"

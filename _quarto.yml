@@ -1,8 +1,8 @@
 project:
   type: website
 
-metadata-files: 
-  - docs/blog/posts/_sidebar.yml
+# metadata-files: 
+#   - docs/blog/posts/_sidebar.yml
 
 website:
   title: "Home"
@@ -31,10 +31,9 @@ format:
   html:
     theme: cosmo
     css: styles.css
-
     toc: true
 
     # code-line-numbers: true
 
 execute: 
-  freeze: true
+  freeze: auto

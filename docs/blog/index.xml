@@ -10,7 +10,361 @@
 <atom:link href="https://ui-seok.github.io/docs/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Thu, 23 Nov 2023 15:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 26 Nov 2023 15:00:00 GMT</lastBuildDate>
+<item>
+  <title>MLOps for MLE - 4</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/blog/posts/2023-11-26-MLOps-day4/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li><p>기본적인 모델 학습 및 저장</p></li>
+<li><p>모델 파이프라인 작성</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>mlops</category>
+  <guid>https://ui-seok.github.io/docs/blog/posts/2023-11-26-MLOps-day4/index.html</guid>
+  <pubDate>Sun, 26 Nov 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>MLOps for MLE - 3</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/blog/posts/2023-11-25-MLOps-day3/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li><p>앞의 코드를 Docker에서 활용하기 위해 Dockerfile 작성</p></li>
+<li><p>Docker 컨테이너 간의 네트워크를 연결하여 DB에 데이터 삽입</p></li>
+<li><p>DB 컨테이너와 데이터 생성 컨테이너를 묶는 Docker Compose 파일 작성</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="data-generator-on-docker" class="level3">
+<h3 class="anchored" data-anchor-id="data-generator-on-docker">1. Data Generator on Docker</h3>
+<p><strong>앞에서 만들었던 데이터 생성 코드(<code>data_generator.py</code>로 부를 예정)를 활용</strong></p>
+<ul>
+<li><p>코드 실행 순서</p>
+<ol type="1">
+<li><p>DB에 연결하는 connector 생성</p></li>
+<li><p>연결된 DB에 <code>iris_data</code> 테이블 생성</p></li>
+<li><p>Iris 데이터 불러오기</p></li>
+<li><p>불러온 데이터 중 랜덤으로 row 1개를 DB에 삽입</p></li>
+<li><p>4번을 계속해서 반복</p></li>
+</ol></li>
+</ul>
+<p><strong>Dockerfile 작성</strong></p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode dockerfile code-with-copy"><code class="sourceCode dockerfile"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">FROM</span> amd64/python:3.9-slim</span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">RUN</span> <span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">apt-get</span> update <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&amp;&amp;</span> <span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">apt-get</span> install <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-y</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\ </span></span>
+<span id="cb1-4">    postgresql-client \ </span>
+<span id="cb1-5">    &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
+<span id="cb1-6"></span>
+<span id="cb1-7"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">WORKDIR</span> /usr/app</span>
+<span id="cb1-8"></span>
+<span id="cb1-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">RUN</span> <span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-U</span> pip <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&amp;&amp;</span><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">\ </span></span>
+<span id="cb1-10">    pip install scikit-learn pandas psycopg2-binary</span>
+<span id="cb1-11"></span>
+<span id="cb1-12"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">COPY</span> data_generator.py data_generator.py</span>
+<span id="cb1-13"></span>
+<span id="cb1-14"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">ENTRYPOINT</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"python"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data_generator.py"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"--db-host"</span>]</span>
+<span id="cb1-15"></span>
+<span id="cb1-16"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">CMD</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"localhost"</span>]</span></code></pre></div>
+<ul>
+<li><em>from</em> : 이미지를 만들 때 base가 되는 이미지 지정</li>
+<li><em>RUN</em> : 이미지를 만들 때 실행할 코드를 지정, 첫 번째 <code>RUN</code>에서는 해당 Dockerfile을 이용하여 컨테이너에 접근하여 <code>psql</code>을 사용하기 위해 <code>postgresql-client</code>을 설치</li>
+<li><em>WORKDIR</em> : 작업 directory 지정</li>
+<li><em>RUN</em> : 두 번째 <code>RUN</code>에서는 컨테이너에서 python 스크립트를 실행할 때 필요한 패키지 설치</li>
+<li><em>COPY</em> : <code>WORKDIR</code>로 지정한 directory를 기준으로 파일이나 폴더를 이미지에 복사</li>
+<li><em>ENTRYPOINT</em> : 컨테이너가 실행될 때 시작할 프로세스를 입력</li>
+<li><em>CMD</em> : 컨테이너가 실행될 때 <code>ENTRYPOINT</code>에 전달할 argument를 입력</li>
+</ul>
+<p><strong>Docker build</strong></p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1">$ docker build <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">OPTIONS</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span> PATH | URL | -</span></code></pre></div>
+<p>-&gt; 이 명령어를 통해 dockerfile을 기준으로 이미지를 생성</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1">$ docker run <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">docker image name</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span></code></pre></div>
+<p>-&gt; build한 이미지 실행</p>
+<p>하지만 port 및 TCP/IP 관련 에러가 뜨는데 이는 local과 DB container는 연결되어 있지만 <code>Data Generator</code>과 DB Container가 연결되어 있지 않음</p>
+<p>이를 해결하기 위해 컨테이너 간 통신할 수 있도록 네트워크를 생성해야 함</p>
+</section>
+<section id="네트워크-연결" class="level3">
+<h3 class="anchored" data-anchor-id="네트워크-연결">2. 네트워크 연결</h3>
+<p><strong><code>docker network</code> 사용</strong></p>
+<p>네트워크 정의 및 생성</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1">$ docker network create <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">network-name</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span></code></pre></div>
+<p>실행 중인 DB 컨테이너를 생성된 네트워크에 연결</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1">$ docker network connect <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">network-name</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">] [DB container name]</span></span></code></pre></div>
+<ul>
+<li><p>EX)</p>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1">$ docker network connect my-network postgres-server</span></code></pre></div></li>
+</ul>
+<p><strong>docker 재 실행</strong></p>
+<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1">$ docker run -d \</span>
+<span id="cb7-2">    --name <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">docker image name</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span> \ </span>
+<span id="cb7-3">    --network <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"network-name"</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span> \ </span></code></pre></div>
+<ul>
+<li><p>EX)</p>
+<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1">$ docker run -d \ </span>
+<span id="cb8-2">    --name data-generator \ </span>
+<span id="cb8-3">    --network "my-network" \ </span>
+<span id="cb8-4">    data-generator "postgres-server"</span></code></pre></div></li>
+</ul>
+<p>-&gt; <code>psql</code>을 이용하여 DB에 접속해서 확인해보면 추가되는 것을 확인할 수 있음</p>
+</section>
+<section id="docker-compose" class="level3">
+<h3 class="anchored" data-anchor-id="docker-compose">3. Docker Compose</h3>
+<p><strong>Compose 파일의 아키텍처</strong></p>
+<div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><span class="an" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">version:</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"> "3"</span></span>
+<span id="cb9-2"></span>
+<span id="cb9-3">services:</span>
+<span id="cb9-4">    postgres-server:</span>
+<span id="cb9-5">        ...</span>
+<span id="cb9-6"></span>
+<span id="cb9-7"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    data-generator:</span></span>
+<span id="cb9-8"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        ...</span></span></code></pre></div>
+<ul>
+<li><em>version</em> : Compose 파일의 버전</li>
+<li><em>services</em> : Compose에 묶일 서비스들을 의미</li>
+</ul>
+<p><strong>Postgres server service</strong></p>
+<div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><span class="an" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">version:</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"> "3"</span></span>
+<span id="cb10-2"></span>
+<span id="cb10-3">services:</span>
+<span id="cb10-4">    postgres-server:</span>
+<span id="cb10-5">        image: postgres:14.0</span>
+<span id="cb10-6">        container_name: postgres-server</span>
+<span id="cb10-7">        ports:</span>
+<span id="cb10-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">            - </span>5432:5432</span>
+<span id="cb10-9">        environment:</span>
+<span id="cb10-10">            POSTGRES_USER: myuser</span>
+<span id="cb10-11">            POSTGRES_PASSWORD: mypassword</span>
+<span id="cb10-12">            POSTGRES_DB: mydatabase</span></code></pre></div>
+<ul>
+<li><em>postgres-server</em> : 서비스의 이름, 실행되는 컨테이너 호스트의 이름</li>
+<li><em>ports</em> : 컨테이너에서 외부로 노출할 포트 포워딩을 설정, <code>host:container</code> 형식으로 사용되고 여러 개 지정 가능</li>
+<li><em>environment</em> : 컨테이너를 실행할 때 사용한 <code>-e</code>옵션과 같은 역할</li>
+</ul>
+<p><strong>Data generator service</strong></p>
+<div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><span class="an" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">version:</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"> "3"</span></span>
+<span id="cb11-2"></span>
+<span id="cb11-3">services:</span>
+<span id="cb11-4">    data-generator:</span>
+<span id="cb11-5">        build:</span>
+<span id="cb11-6">            context: .</span>
+<span id="cb11-7">            dockerfile: Dockerfile</span>
+<span id="cb11-8">        container_name: data-generator</span>
+<span id="cb11-9">        depends_on:</span>
+<span id="cb11-10"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">            - </span>postgres_server</span>
+<span id="cb11-11">        command: <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"postgres-server"</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span></code></pre></div>
+<ul>
+<li><em>build</em> :
+<ul>
+<li><em>context</em> : 이미지를 build하기 위해 dockerfile이 있는 절대경로 및 상대경로 설정</li>
+<li><em>dockerfile</em> : <em>context</em> 에서 설정한 경로에 있는 dockerfile의 파일명 입력</li>
+</ul></li>
+<li><em>depends_on</em> : Compose로 띄워지는 서비스 간의 종속성 순서대로 서비스를 시작할 때 사용</li>
+<li><em>command</em> : Dockerfile에 작성되어 있는 <code>CMD</code>를 덮어씀</li>
+</ul>
+<p>위에서 작성한 코드를 하나의 파일로 합쳐 만들고 실행</p>
+<div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1">$ docker compose up -d</span></code></pre></div>
+<ul>
+<li><em>-d</em> : Detached 모드(백그라운드에서 컨테이를 실행 후 유지)로 실행</li>
+</ul>
+<p>하지만 <code>docker ps</code>를 입력해보면 postgres server만 띄워져있음</p>
+<p><code>depends on</code> 으로 서비스 간의 종속성은 정해졌지만, 실제로 postgres-servre가 띄워진 뒤에 곧바로 data-generator가 띄워짐</p>
+<p>postgres-server의 준비가 되지 않은 상태로 data-generator가 DB와 연결을 하려다 보니 Exited 문제가 발생</p>
+<p>-&gt; 이를 해결하기 위해 <code>healthcheck</code>와 <code>condition</code>을 추가</p>
+<p><strong><code>healthcheck</code>와 <code>condition</code>추가하기</strong></p>
+<div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">### postgres-server에 추가</span></span>
+<span id="cb13-2">healthcheck:</span>
+<span id="cb13-3">    test: <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"CMD", "pg_isready", "-q", "-U", "myuser", "-d", "mydatabase"</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span id="cb13-4">    interval: 10s</span>
+<span id="cb13-5">    timeout: 5s</span>
+<span id="cb13-6">    retries: 5</span>
+<span id="cb13-7"></span>
+<span id="cb13-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">### data-generator에 추가</span></span>
+<span id="cb13-9">depends_on: </span>
+<span id="cb13-10">    postgres-server:</span>
+<span id="cb13-11">        condition: service_healthy</span></code></pre></div>
+<ul>
+<li><em>test</em> : 테스트 할 명령어 입력</li>
+<li><em>interval</em> : Healthcheck의 간격 설정</li>
+<li><em>timeout</em> : Healthcheck의 timeout을 설정</li>
+<li><em>retries</em> : Timeout의 횟수 설정</li>
+<li><em>condition</em> : Healthcheck 기능을 사용하기 위해 <em>depends_on</em> 의 parameter로 <code>condition: service_healthy</code>를 넣어줌</li>
+</ul>
+<p>이후 서비스를 다시 실행하면 문제 없이 실행이 가능</p>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>mlops</category>
+  <guid>https://ui-seok.github.io/docs/blog/posts/2023-11-25-MLOps-day3/index.html</guid>
+  <pubDate>Sat, 25 Nov 2023 15:00:00 GMT</pubDate>
+</item>
 <item>
   <title>MLOps for MLE - 2</title>
   <dc:creator>Ui Seok</dc:creator>
@@ -38,6 +392,391 @@ Note
 <p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
 </div>
 </div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="데이터-삽입" class="level3">
+<h3 class="anchored" data-anchor-id="데이터-삽입">1. 데이터 삽입</h3>
+<p><strong><code>scikit-learn</code> 패키지의 <code>load_iris</code>를 삽입하기 위해 앞에서 생성한 테이블의 columns 이름과 일치하도록 수정</strong></p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_iris</span>
+<span id="cb1-3"></span>
+<span id="cb1-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> get_data():</span>
+<span id="cb1-5">    X, y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_iris(return_X_y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, as_frame<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb1-6">    df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.concat([X, y], axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"columns"</span>)</span>
+<span id="cb1-7">    rename_rule <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb1-8">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sepal length (cm)"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sepal_length"</span>,</span>
+<span id="cb1-9">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sepal width (cm)"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sepal_width"</span>,</span>
+<span id="cb1-10">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"petal length (cm)"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"petal_length"</span>,</span>
+<span id="cb1-11">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"petal width (cm)"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"petal_width"</span>,</span>
+<span id="cb1-12">    }</span>
+<span id="cb1-13">    df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.rename(columns<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>rename_rule)</span>
+<span id="cb1-14">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> df</span></code></pre></div>
+<p><strong>Data Insertion Query 작성</strong></p>
+<p>DB에 데이터를 삽입하는 query의 포맷은 다음과 같음</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">INSERT</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">INTO</span> {table_name} (col_1, col_2, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">..</span>.) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">VALUES</span> (val_1, val_2, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">..</span>.)</span></code></pre></div>
+<p>이를 이해하고 query를 작성</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">insert_row_query <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb3-2"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">INSERT INTO iris_data</span></span>
+<span id="cb3-3"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    (timestamp, sepal_length, sepal_width, petal_length, petal_width, target)</span></span>
+<span id="cb3-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    VALUES (</span></span>
+<span id="cb3-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">        NOW(),</span></span>
+<span id="cb3-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">        </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>sepal_length<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb3-7"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">        </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>sepal_width<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb3-8"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">        </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>petal_length<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb3-9"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">        </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>petal_width<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb3-10"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">        </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>target<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb3-11"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    );"""</span></span></code></pre></div>
+<p>이 query를 cursor를 이용하여 DB에 전달하는 코드 작성</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb4-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> psycopg2</span>
+<span id="cb4-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_iris</span>
+<span id="cb4-4"></span>
+<span id="cb4-5"></span>
+<span id="cb4-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> get_data():</span>
+<span id="cb4-7">    X, y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_iris(return_X_y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, as_frame<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb4-8">    df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.concat([X, y], axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"columns"</span>)</span>
+<span id="cb4-9">    rename_rule <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb4-10">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sepal length (cm)"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sepal_length"</span>,</span>
+<span id="cb4-11">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sepal width (cm)"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sepal_width"</span>,</span>
+<span id="cb4-12">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"petal length (cm)"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"petal_length"</span>,</span>
+<span id="cb4-13">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"petal width (cm)"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"petal_width"</span>,</span>
+<span id="cb4-14">    }</span>
+<span id="cb4-15">    df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.rename(columns<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>rename_rule)</span>
+<span id="cb4-16">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> df</span>
+<span id="cb4-17"></span>
+<span id="cb4-18"></span>
+<span id="cb4-19"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> insert_data(db_connect, data):</span>
+<span id="cb4-20">    insert_row_query <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb4-21"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    INSERT INTO iris_data</span></span>
+<span id="cb4-22"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">        (timestamp, sepal_length, sepal_width, petal_length, petal_width, target)</span></span>
+<span id="cb4-23"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">        VALUES (</span></span>
+<span id="cb4-24"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">            NOW(),</span></span>
+<span id="cb4-25"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">            </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>sepal_length<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb4-26"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">            </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>sepal_width<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb4-27"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">            </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>petal_length<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb4-28"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">            </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>petal_width<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb4-29"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">            </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>target<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb4-30"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">        );"""</span></span>
+<span id="cb4-31"></span>
+<span id="cb4-32">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> db_connect.cursor() <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> cur:</span>
+<span id="cb4-33">        cur.execute(insert_row_query)</span>
+<span id="cb4-34">        db_connect.commit()</span>
+<span id="cb4-35"></span>
+<span id="cb4-36"></span>
+<span id="cb4-37"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">__name__</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"__main__"</span>:</span>
+<span id="cb4-38">    db_connect <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> psycopg2.<span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">connect</span>(</span>
+<span id="cb4-39">        user<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"myuser"</span>,</span>
+<span id="cb4-40">        password<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"mypassword"</span>,</span>
+<span id="cb4-41">        host<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"localhost"</span>,</span>
+<span id="cb4-42">        port<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5432</span>,</span>
+<span id="cb4-43">        database<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"mydatabase"</span>,</span>
+<span id="cb4-44">    )</span>
+<span id="cb4-45">    df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> get_data()</span>
+<span id="cb4-46">    insert_data(db_connect, df.sample(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>).squeeze())</span></code></pre></div>
+<p>-&gt; <code>psql</code>로 현재는 iris_data에서 하나의 데이터만 DB에 입력된 상태임을 확인할 수 있음</p>
+</section>
+<section id="loop-추가" class="level3">
+<h3 class="anchored" data-anchor-id="loop-추가">2. Loop 추가</h3>
+<p><code>insert_data</code> 함수를 계속해서 반복하도록 하는 코드 작성</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> time</span>
+<span id="cb5-2"></span>
+<span id="cb5-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> generate_data(db_connect, df):</span>
+<span id="cb5-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">while</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>:</span>
+<span id="cb5-5">        insert_data(db_connect, df.sample(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>).squeeze())</span>
+<span id="cb5-6">        time.sleep(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div>
+<p>-&gt; <code>time</code>패키지의 <code>sleep</code>함수를 이용해서 DB의 부하 줄이기</p>
+</section>
 </section>
 <section id="reference" class="level2">
 <h2 class="anchored" data-anchor-id="reference">Reference</h2>
@@ -80,28 +819,11 @@ Note
 </div>
 </div>
 </section>
-<section id="스펙-명세서" class="level2">
-<h2 class="anchored" data-anchor-id="스펙-명세서">스펙 명세서</h2>
-<ol type="1">
-<li>Docker 설치</li>
-<li>PostgreSQL DB 서버를 생성
-<ul>
-<li>Image: <code>postgres:14.0</code></li>
-<li>Container name: <code>postgres-server</code></li>
-<li>POSTGRES_USER: <code>myuser</code></li>
-<li>POSTGRES_PASSWORD: <code>mypassword</code></li>
-<li>POSTGRES_DB: <code>mydatabase</code></li>
-<li>Port forwarding: <code>5432:5432</code></li>
-</ul></li>
-<li>생성된 DB 서버 확인
-<ul>
-<li><code>psql</code>로 DB에 접근하여 role name과 attributes 확인</li>
-</ul></li>
-</ol>
-</section>
 <section id="실습" class="level2">
 <h2 class="anchored" data-anchor-id="실습">실습</h2>
-<p>Docker 설치 후 <code>docker run</code> 명령어를 사용하여 DB 서버 생성하기</p>
+<section id="db-서버-생성-및-확인" class="level3">
+<h3 class="anchored" data-anchor-id="db-서버-생성-및-확인">1. DB 서버 생성 및 확인</h3>
+<p><strong>Docker 설치 후 <code>docker run</code> 명령어를 사용하여 DB 서버 생성</strong></p>
 <div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1">$ docker run -d \</span>
 <span id="cb1-2">  --name postgres-server \</span>
 <span id="cb1-3">  -p 5432:5432 \</span>
@@ -109,6 +831,131 @@ Note
 <span id="cb1-5">  -e POSTGRES_PASSWORD=mypassword \</span>
 <span id="cb1-6">  -e POSTGRES_DB=mydatabase \</span>
 <span id="cb1-7">  postgres:14.0</span></code></pre></div>
+<ul>
+<li><em>-d</em> : 컨테이너가 detached 모드로 실행</li>
+<li><em>-p</em> : port forwarding 설정</li>
+<li><em>-e</em> : 환경 변수 설정</li>
+</ul>
+<p><strong><code>psql</code>을 통해 PostgreSQL DB 서버 접속</strong></p>
+<p>-&gt; <code>psql</code>은 PostgreSQL DB 서버를 확인할때 사용하는 CLI 툴</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1">$ PGPASSWORD=mypassword psql -h localhost -p {port} -U myuser -d mydatabase</span></code></pre></div>
+<ul>
+<li><em>PGPASSWORD</em> : 접속할 유저의 비밀번호</li>
+<li><em>h</em> : 호스트 지정</li>
+<li><em>U</em> : 접속할 유저 이름 입력</li>
+<li><em>d</em> : DB 이름 입력</li>
+</ul>
+</section>
+<section id="db-table-생성" class="level3">
+<h3 class="anchored" data-anchor-id="db-table-생성">2. DB Table 생성</h3>
+<p><strong><code>psycopg2</code>를 이용하여 DB 접근</strong></p>
+<p>-&gt; <code>connect</code> 함수 사용</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> psycopg2</span>
+<span id="cb3-2"></span>
+<span id="cb3-3">db_connect <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> psycopg2.<span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">connect</span>(</span>
+<span id="cb3-4">    user<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"myuser"</span>,</span>
+<span id="cb3-5">    password<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"mypassword"</span>,</span>
+<span id="cb3-6">    host<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"localhost"</span>,</span>
+<span id="cb3-7">    port<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5432</span>,</span>
+<span id="cb3-8">    database<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"mydatabase"</span>,</span>
+<span id="cb3-9">)</span></code></pre></div>
+<p>-&gt; DB를 생성할 때 입력한 정보 입력</p>
+<p><strong>SQL Table Creation</strong></p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">CREATE</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">TABLE</span> table_name (</span>
+<span id="cb4-2">    column1 datatype,</span>
+<span id="cb4-3">    column2 datatype,</span>
+<span id="cb4-4">    column3 datatype,</span>
+<span id="cb4-5">    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">..</span>.</span>
+<span id="cb4-6">);</span></code></pre></div>
+<p>-&gt; 이 실습에서는 <code>scikit-learn</code>패캐지의 <code>load_iris</code>사용</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">create_table_query <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"""</span></span>
+<span id="cb5-2"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">CREATE TABLE IF NOT EXISTS iris_data (</span></span>
+<span id="cb5-3"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    id SERIAL PRIMARY KEY,</span></span>
+<span id="cb5-4"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    timestamp timestamp,</span></span>
+<span id="cb5-5"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    sepal_length float8,</span></span>
+<span id="cb5-6"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    sepal_width float8,</span></span>
+<span id="cb5-7"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    petal_length float8,</span></span>
+<span id="cb5-8"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    petal_width float8,</span></span>
+<span id="cb5-9"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">    target int</span></span>
+<span id="cb5-10"><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">);"""</span></span></code></pre></div>
+<p><strong>Send Query to DB</strong></p>
+<ol type="1">
+<li><p>Connector에서 cursor를 열고, cursor에 query 전달</p>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">cur <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> db_connect.cursor()</span>
+<span id="cb6-2">cur.execute(create_table_query)</span></code></pre></div></li>
+<li><p>전달된 query를 실행하기 위해 connector에 <code>commit</code></p>
+<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">db_connect.commit()</span></code></pre></div></li>
+<li><p>Cursor의 사용이 끝나면 cursor를 <code>close</code></p>
+<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">cur.close()</span></code></pre></div></li>
+</ol>
+<p>하나의 프로세스로 만들게되면 다음과 같음</p>
+<div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> db_connect.cursor() <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> cur:</span>
+<span id="cb9-2">    cur.execute(create_table_query)</span>
+<span id="cb9-3">    db_connect.commit()</span></code></pre></div>
+<p><strong>테이블 확인</strong></p>
+<p><code>psql</code>을 이용하여 DB에 접속하고 <code>\d</code>를 입력하여 생성된 테이블들의 목록을 확인</p>
+<p><code>select * from iris_data;</code>를 입력하면 <code>iris_data</code> 테이블에 있는 데이터를 확인 할 수 있음</p>
+</section>
 </section>
 <section id="reference" class="level2">
 <h2 class="anchored" data-anchor-id="reference">Reference</h2>

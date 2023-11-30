@@ -2,38 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ui-seok.github.io/about.html</loc>
-    <lastmod>2023-11-23T15:16:43.534Z</lastmod>
+    <lastmod>2023-11-30T13:27:39.195Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/coursera/index.html</loc>
-    <lastmod>2023-11-23T15:16:42.940Z</lastmod>
+    <lastmod>2023-11-30T13:27:38.450Z</lastmod>
   </url>
   <url>
-    <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-24-MLOps-day2/index.html</loc>
-    <lastmod>2023-11-23T15:16:42.400Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ui-seok.github.io/posts/test-page/index.html</loc>
-    <lastmod>2023-11-23T15:16:41.874Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ui-seok.github.io/posts/post-with-code/index.html</loc>
-    <lastmod>2023-11-23T15:16:41.408Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ui-seok.github.io/posts/welcome/index.html</loc>
-    <lastmod>2023-11-23T15:16:41.648Z</lastmod>
+    <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-26-MLOps-day4/index.html</loc>
+    <lastmod>2023-11-30T13:27:37.222Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-23-MLOps-day1/index.html</loc>
-    <lastmod>2023-11-23T15:16:42.158Z</lastmod>
+    <lastmod>2023-11-30T13:27:36.600Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ui-seok.github.io/posts/test-page/index.html</loc>
+    <lastmod>2023-11-30T13:27:35.952Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ui-seok.github.io/posts/post-with-code/index.html</loc>
+    <lastmod>2023-11-30T13:27:35.491Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ui-seok.github.io/posts/welcome/index.html</loc>
+    <lastmod>2023-11-30T13:27:35.728Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-25-MLOps-day3/index.html</loc>
+    <lastmod>2023-11-30T13:27:36.318Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-24-MLOps-day2/index.html</loc>
+    <lastmod>2023-11-30T13:27:36.858Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/index.html</loc>
-    <lastmod>2023-11-23T15:16:42.711Z</lastmod>
+    <lastmod>2023-11-30T13:27:38.108Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/index.html</loc>
-    <lastmod>2023-11-23T15:16:43.329Z</lastmod>
+    <lastmod>2023-11-30T13:27:38.930Z</lastmod>
   </url>
 </urlset>

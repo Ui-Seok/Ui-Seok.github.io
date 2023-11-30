@@ -14,23 +14,58 @@
     "text": "Coursera 강의를 듣고 정리하는 페이지입니다.\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
-    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
-    "title": "MLOps for MLE - 2",
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
+    "title": "MLOps for MLE - 4",
     "section": "",
-    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
-    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
-    "title": "MLOps for MLE - 2",
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
+    "title": "MLOps for MLE - 4",
     "section": "",
-    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
-    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
-    "title": "MLOps for MLE - 2",
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
+    "title": "MLOps for MLE - 4",
+    "section": "실습",
+    "text": "실습"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
+    "title": "MLOps for MLE - 4",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
+    "title": "MLOps for MLE - 1",
+    "section": "",
+    "text": "Docker 설치 및 PostgreSQL DB 서버 생성\nDB의 role name과 attribute 확인\n생성된 DB에 query를 작성하여 테이블 생성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#summary",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#summary",
+    "title": "MLOps for MLE - 1",
+    "section": "",
+    "text": "Docker 설치 및 PostgreSQL DB 서버 생성\nDB의 role name과 attribute 확인\n생성된 DB에 query를 작성하여 테이블 생성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
+    "title": "MLOps for MLE - 1",
+    "section": "실습",
+    "text": "실습\n\n1. DB 서버 생성 및 확인\nDocker 설치 후 docker run 명령어를 사용하여 DB 서버 생성\n$ docker run -d \\\n  --name postgres-server \\\n  -p 5432:5432 \\\n  -e POSTGRES_USER=myuser \\\n  -e POSTGRES_PASSWORD=mypassword \\\n  -e POSTGRES_DB=mydatabase \\\n  postgres:14.0\n\n-d : 컨테이너가 detached 모드로 실행\n-p : port forwarding 설정\n-e : 환경 변수 설정\n\npsql을 통해 PostgreSQL DB 서버 접속\n-&gt; psql은 PostgreSQL DB 서버를 확인할때 사용하는 CLI 툴\n$ PGPASSWORD=mypassword psql -h localhost -p {port} -U myuser -d mydatabase\n\nPGPASSWORD : 접속할 유저의 비밀번호\nh : 호스트 지정\nU : 접속할 유저 이름 입력\nd : DB 이름 입력\n\n\n\n2. DB Table 생성\npsycopg2를 이용하여 DB 접근\n-&gt; connect 함수 사용\nimport psycopg2\n\ndb_connect = psycopg2.connect(\n    user=\"myuser\",\n    password=\"mypassword\",\n    host=\"localhost\",\n    port=5432,\n    database=\"mydatabase\",\n)\n-&gt; DB를 생성할 때 입력한 정보 입력\nSQL Table Creation\nCREATE TABLE table_name (\n    column1 datatype,\n    column2 datatype,\n    column3 datatype,\n    ...\n);\n-&gt; 이 실습에서는 scikit-learn패캐지의 load_iris사용\ncreate_table_query = \"\"\"\nCREATE TABLE IF NOT EXISTS iris_data (\n    id SERIAL PRIMARY KEY,\n    timestamp timestamp,\n    sepal_length float8,\n    sepal_width float8,\n    petal_length float8,\n    petal_width float8,\n    target int\n);\"\"\"\nSend Query to DB\n\nConnector에서 cursor를 열고, cursor에 query 전달\ncur = db_connect.cursor()\ncur.execute(create_table_query)\n전달된 query를 실행하기 위해 connector에 commit\ndb_connect.commit()\nCursor의 사용이 끝나면 cursor를 close\ncur.close()\n\n하나의 프로세스로 만들게되면 다음과 같음\nwith db_connect.cursor() as cur:\n    cur.execute(create_table_query)\n    db_connect.commit()\n테이블 확인\npsql을 이용하여 DB에 접속하고 \\d를 입력하여 생성된 테이블들의 목록을 확인\nselect * from iris_data;를 입력하면 iris_data 테이블에 있는 데이터를 확인 할 수 있음"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
+    "title": "MLOps for MLE - 1",
     "section": "Reference",
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
@@ -56,37 +91,58 @@
     "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   },
   {
-    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
-    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
-    "title": "MLOps for MLE - 1",
+    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html",
+    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html",
+    "title": "MLOps for MLE - 3",
     "section": "",
-    "text": "Docker 설치 및 PostgreSQL DB 서버 생성\nDB의 role name과 attribute 확인\n생성된 DB에 query를 작성하여 테이블 생성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "앞의 코드를 Docker에서 활용하기 위해 Dockerfile 작성\nDocker 컨테이너 간의 네트워크를 연결하여 DB에 데이터 삽입\nDB 컨테이너와 데이터 생성 컨테이너를 묶는 Docker Compose 파일 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#summary",
-    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#summary",
-    "title": "MLOps for MLE - 1",
+    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#summary",
+    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#summary",
+    "title": "MLOps for MLE - 3",
     "section": "",
-    "text": "Docker 설치 및 PostgreSQL DB 서버 생성\nDB의 role name과 attribute 확인\n생성된 DB에 query를 작성하여 테이블 생성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "앞의 코드를 Docker에서 활용하기 위해 Dockerfile 작성\nDocker 컨테이너 간의 네트워크를 연결하여 DB에 데이터 삽입\nDB 컨테이너와 데이터 생성 컨테이너를 묶는 Docker Compose 파일 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#스펙-명세서",
-    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#스펙-명세서",
-    "title": "MLOps for MLE - 1",
-    "section": "스펙 명세서",
-    "text": "스펙 명세서\n\nDocker 설치\nPostgreSQL DB 서버를 생성\n\nImage: postgres:14.0\nContainer name: postgres-server\nPOSTGRES_USER: myuser\nPOSTGRES_PASSWORD: mypassword\nPOSTGRES_DB: mydatabase\nPort forwarding: 5432:5432\n\n생성된 DB 서버 확인\n\npsql로 DB에 접근하여 role name과 attributes 확인"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
-    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
-    "title": "MLOps for MLE - 1",
+    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#실습",
+    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#실습",
+    "title": "MLOps for MLE - 3",
     "section": "실습",
-    "text": "실습\nDocker 설치 후 docker run 명령어를 사용하여 DB 서버 생성하기\n$ docker run -d \\\n  --name postgres-server \\\n  -p 5432:5432 \\\n  -e POSTGRES_USER=myuser \\\n  -e POSTGRES_PASSWORD=mypassword \\\n  -e POSTGRES_DB=mydatabase \\\n  postgres:14.0"
+    "text": "실습\n\n1. Data Generator on Docker\n앞에서 만들었던 데이터 생성 코드(data_generator.py로 부를 예정)를 활용\n\n코드 실행 순서\n\nDB에 연결하는 connector 생성\n연결된 DB에 iris_data 테이블 생성\nIris 데이터 불러오기\n불러온 데이터 중 랜덤으로 row 1개를 DB에 삽입\n4번을 계속해서 반복\n\n\nDockerfile 작성\nFROM amd64/python:3.9-slim\n\nRUN apt-get update && apt-get install -y \\ \n    postgresql-client \\ \n    && rm -rf /var/lib/apt/lists/*\n\nWORKDIR /usr/app\n\nRUN pip install -U pip &&\\ \n    pip install scikit-learn pandas psycopg2-binary\n\nCOPY data_generator.py data_generator.py\n\nENTRYPOINT [\"python\", \"data_generator.py\", \"--db-host\"]\n\nCMD [\"localhost\"]\n\nfrom : 이미지를 만들 때 base가 되는 이미지 지정\nRUN : 이미지를 만들 때 실행할 코드를 지정, 첫 번째 RUN에서는 해당 Dockerfile을 이용하여 컨테이너에 접근하여 psql을 사용하기 위해 postgresql-client을 설치\nWORKDIR : 작업 directory 지정\nRUN : 두 번째 RUN에서는 컨테이너에서 python 스크립트를 실행할 때 필요한 패키지 설치\nCOPY : WORKDIR로 지정한 directory를 기준으로 파일이나 폴더를 이미지에 복사\nENTRYPOINT : 컨테이너가 실행될 때 시작할 프로세스를 입력\nCMD : 컨테이너가 실행될 때 ENTRYPOINT에 전달할 argument를 입력\n\nDocker build\n$ docker build [OPTIONS] PATH | URL | -\n-&gt; 이 명령어를 통해 dockerfile을 기준으로 이미지를 생성\n$ docker run [docker image name]\n-&gt; build한 이미지 실행\n하지만 port 및 TCP/IP 관련 에러가 뜨는데 이는 local과 DB container는 연결되어 있지만 Data Generator과 DB Container가 연결되어 있지 않음\n이를 해결하기 위해 컨테이너 간 통신할 수 있도록 네트워크를 생성해야 함\n\n\n2. 네트워크 연결\ndocker network 사용\n네트워크 정의 및 생성\n$ docker network create [network-name]\n실행 중인 DB 컨테이너를 생성된 네트워크에 연결\n$ docker network connect [network-name] [DB container name]\n\nEX)\n$ docker network connect my-network postgres-server\n\ndocker 재 실행\n$ docker run -d \\\n    --name [docker image name] \\ \n    --network [\"network-name\"] \\ \n\nEX)\n$ docker run -d \\ \n    --name data-generator \\ \n    --network \"my-network\" \\ \n    data-generator \"postgres-server\"\n\n-&gt; psql을 이용하여 DB에 접속해서 확인해보면 추가되는 것을 확인할 수 있음\n\n\n3. Docker Compose\nCompose 파일의 아키텍처\nversion: \"3\"\n\nservices:\n    postgres-server:\n        ...\n\n    data-generator:\n        ...\n\nversion : Compose 파일의 버전\nservices : Compose에 묶일 서비스들을 의미\n\nPostgres server service\nversion: \"3\"\n\nservices:\n    postgres-server:\n        image: postgres:14.0\n        container_name: postgres-server\n        ports:\n            - 5432:5432\n        environment:\n            POSTGRES_USER: myuser\n            POSTGRES_PASSWORD: mypassword\n            POSTGRES_DB: mydatabase\n\npostgres-server : 서비스의 이름, 실행되는 컨테이너 호스트의 이름\nports : 컨테이너에서 외부로 노출할 포트 포워딩을 설정, host:container 형식으로 사용되고 여러 개 지정 가능\nenvironment : 컨테이너를 실행할 때 사용한 -e옵션과 같은 역할\n\nData generator service\nversion: \"3\"\n\nservices:\n    data-generator:\n        build:\n            context: .\n            dockerfile: Dockerfile\n        container_name: data-generator\n        depends_on:\n            - postgres_server\n        command: [\"postgres-server\"]\n\nbuild :\n\ncontext : 이미지를 build하기 위해 dockerfile이 있는 절대경로 및 상대경로 설정\ndockerfile : context 에서 설정한 경로에 있는 dockerfile의 파일명 입력\n\ndepends_on : Compose로 띄워지는 서비스 간의 종속성 순서대로 서비스를 시작할 때 사용\ncommand : Dockerfile에 작성되어 있는 CMD를 덮어씀\n\n위에서 작성한 코드를 하나의 파일로 합쳐 만들고 실행\n$ docker compose up -d\n\n-d : Detached 모드(백그라운드에서 컨테이를 실행 후 유지)로 실행\n\n하지만 docker ps를 입력해보면 postgres server만 띄워져있음\ndepends on 으로 서비스 간의 종속성은 정해졌지만, 실제로 postgres-servre가 띄워진 뒤에 곧바로 data-generator가 띄워짐\npostgres-server의 준비가 되지 않은 상태로 data-generator가 DB와 연결을 하려다 보니 Exited 문제가 발생\n-&gt; 이를 해결하기 위해 healthcheck와 condition을 추가\nhealthcheck와 condition추가하기\n### postgres-server에 추가\nhealthcheck:\n    test: [\"CMD\", \"pg_isready\", \"-q\", \"-U\", \"myuser\", \"-d\", \"mydatabase\"]\n    interval: 10s\n    timeout: 5s\n    retries: 5\n\n### data-generator에 추가\ndepends_on: \n    postgres-server:\n        condition: service_healthy\n\ntest : 테스트 할 명령어 입력\ninterval : Healthcheck의 간격 설정\ntimeout : Healthcheck의 timeout을 설정\nretries : Timeout의 횟수 설정\ncondition : Healthcheck 기능을 사용하기 위해 depends_on 의 parameter로 condition: service_healthy를 넣어줌\n\n이후 서비스를 다시 실행하면 문제 없이 실행이 가능"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
-    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
-    "title": "MLOps for MLE - 1",
+    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#reference",
+    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#reference",
+    "title": "MLOps for MLE - 3",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
+    "title": "MLOps for MLE - 2",
+    "section": "",
+    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
+    "title": "MLOps for MLE - 2",
+    "section": "",
+    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#실습",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#실습",
+    "title": "MLOps for MLE - 2",
+    "section": "실습",
+    "text": "실습\n\n1. 데이터 삽입\nscikit-learn 패키지의 load_iris를 삽입하기 위해 앞에서 생성한 테이블의 columns 이름과 일치하도록 수정\nimport pandas as pd\nfrom sklearn.datasets import load_iris\n\ndef get_data():\n    X, y = load_iris(return_X_y=True, as_frame=True)\n    df = pd.concat([X, y], axis=\"columns\")\n    rename_rule = {\n        \"sepal length (cm)\": \"sepal_length\",\n        \"sepal width (cm)\": \"sepal_width\",\n        \"petal length (cm)\": \"petal_length\",\n        \"petal width (cm)\": \"petal_width\",\n    }\n    df = df.rename(columns=rename_rule)\n    return df\nData Insertion Query 작성\nDB에 데이터를 삽입하는 query의 포맷은 다음과 같음\nINSERT INTO {table_name} (col_1, col_2, ...) VALUES (val_1, val_2, ...)\n이를 이해하고 query를 작성\ninsert_row_query = f\"\"\"\nINSERT INTO iris_data\n    (timestamp, sepal_length, sepal_width, petal_length, petal_width, target)\n    VALUES (\n        NOW(),\n        {data.sepal_length},\n        {data.sepal_width},\n        {data.petal_length},\n        {data.petal_width},\n        {data.target}\n    );\"\"\"\n이 query를 cursor를 이용하여 DB에 전달하는 코드 작성\nimport pandas as pd\nimport psycopg2\nfrom sklearn.datasets import load_iris\n\n\ndef get_data():\n    X, y = load_iris(return_X_y=True, as_frame=True)\n    df = pd.concat([X, y], axis=\"columns\")\n    rename_rule = {\n        \"sepal length (cm)\": \"sepal_length\",\n        \"sepal width (cm)\": \"sepal_width\",\n        \"petal length (cm)\": \"petal_length\",\n        \"petal width (cm)\": \"petal_width\",\n    }\n    df = df.rename(columns=rename_rule)\n    return df\n\n\ndef insert_data(db_connect, data):\n    insert_row_query = f\"\"\"\n    INSERT INTO iris_data\n        (timestamp, sepal_length, sepal_width, petal_length, petal_width, target)\n        VALUES (\n            NOW(),\n            {data.sepal_length},\n            {data.sepal_width},\n            {data.petal_length},\n            {data.petal_width},\n            {data.target}\n        );\"\"\"\n\n    with db_connect.cursor() as cur:\n        cur.execute(insert_row_query)\n        db_connect.commit()\n\n\nif __name__ == \"__main__\":\n    db_connect = psycopg2.connect(\n        user=\"myuser\",\n        password=\"mypassword\",\n        host=\"localhost\",\n        port=5432,\n        database=\"mydatabase\",\n    )\n    df = get_data()\n    insert_data(db_connect, df.sample(1).squeeze())\n-&gt; psql로 현재는 iris_data에서 하나의 데이터만 DB에 입력된 상태임을 확인할 수 있음\n\n\n2. Loop 추가\ninsert_data 함수를 계속해서 반복하도록 하는 코드 작성\nimport time\n\ndef generate_data(db_connect, df):\n    while True:\n        insert_data(db_connect, df.sample(1).squeeze())\n        time.sleep(1)\n-&gt; time패키지의 sleep함수를 이용해서 DB의 부하 줄이기"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
+    "title": "MLOps for MLE - 2",
     "section": "Reference",
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
@@ -95,13 +151,13 @@
     "href": "docs/blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "공부한 내용을 정리하는 페이지입니다.\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 2\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 24, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 1\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2023\n\n\nUi Seok\n\n\n\n\n\n\nNo matching items"
+    "text": "공부한 내용을 정리하는 페이지입니다.\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 4\n\n\n모델 학습 및 파이프라인 작성\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 27, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 3\n\n\nDocker를 활용하여 DB에 데이터 삽입\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 26, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 2\n\n\nDB에 데이터 삽입\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 24, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 1\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2023\n\n\nUi Seok\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "UiSeok’s blog",
     "section": "",
-    "text": "공부했던 내용들을 정리하는 블로그 입니다.\nWelcome my page!\nThis page made by Quarto\n\n\n\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 2\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 24, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 1\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nTest Page\n\n\n\n\n\n\n\ncode\n\n\ntest\n\n\n\n\n\n\n\n\n\n\n\nNov 22, 2023\n\n\nMe\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nNov 21, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nNov 18, 2023\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
+    "text": "공부했던 내용들을 정리하는 블로그 입니다.\nWelcome my page!\nThis page made by Quarto\n\n\n\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 4\n\n\n모델 학습 및 파이프라인 작성\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 27, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 3\n\n\nDocker를 활용하여 DB에 데이터 삽입\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 26, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 2\n\n\nDB에 데이터 삽입\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 24, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nMLOps for MLE - 1\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\n\nmlops\n\n\n\n\n\n\n\n\n\n\n\nNov 23, 2023\n\n\nUi Seok\n\n\n\n\n\n\n  \n\n\n\n\nTest Page\n\n\n\n\n\n\n\ncode\n\n\ntest\n\n\n\n\n\n\n\n\n\n\n\nNov 22, 2023\n\n\nMe\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nNov 21, 2023\n\n\nHarlow Malloc\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nNov 18, 2023\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
   }
 ]

@@ -41,6 +41,262 @@ Note
 </section>
 <section id="실습" class="level2">
 <h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="base-model-코드-작성" class="level3">
+<h3 class="anchored" data-anchor-id="base-model-코드-작성">1. Base Model 코드 작성</h3>
+<p>데이터: <code>Iris</code></p>
+<p>데이터 스케일링: <code>StandardScaler</code></p>
+<p>모델: <code>SVC</code></p>
+<p>정확도 metric: <code>accuracy_score</code></p>
+<p>모델 저장 방법: <code>joblib</code></p>
+<p>전체 코드는 아래와 같음</p>
+<p><strong>Train 코드</strong></p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> joblib</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_iris</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.metrics <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> accuracy_score</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.model_selection <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> train_test_split</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.preprocessing <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> StandardScaler</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.svm <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> SVC</span>
+<span id="cb1-7"></span>
+<span id="cb1-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1. get data</span></span>
+<span id="cb1-9">X, y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_iris(return_X_y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, as_frame<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb1-10">X_train, X_valid, y_train, y_valid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> train_test_split(X, y, train_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.8</span>, random_state<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2022</span>)</span>
+<span id="cb1-11"></span>
+<span id="cb1-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 2. model development and train</span></span>
+<span id="cb1-13">scaler <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> StandardScaler()</span>
+<span id="cb1-14">classifier <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> SVC()</span>
+<span id="cb1-15"></span>
+<span id="cb1-16">scaled_X_train <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scaler.fit_transform(X_train)</span>
+<span id="cb1-17">scaled_X_valid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scaler.transform(X_valid)</span>
+<span id="cb1-18">classifier.fit(scaled_X_train, y_train)</span>
+<span id="cb1-19"></span>
+<span id="cb1-20">train_pred <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> classifier.predict(scaled_X_train)</span>
+<span id="cb1-21">valid_pred <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> classifier.predict(scaled_X_valid)</span>
+<span id="cb1-22"></span>
+<span id="cb1-23">train_acc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> accuracy_score(y_true<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>y_train, y_pred<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>train_pred)</span>
+<span id="cb1-24">valid_acc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> accuracy_score(y_true<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>y_valid, y_pred<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>valid_pred)</span>
+<span id="cb1-25"></span>
+<span id="cb1-26"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Train Accuracy :"</span>, train_acc)</span>
+<span id="cb1-27"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Valid Accuracy :"</span>, valid_acc)</span>
+<span id="cb1-28"></span>
+<span id="cb1-29"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 3. save model</span></span>
+<span id="cb1-30">joblib.dump(scaler, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"scaler.joblib"</span>)</span>
+<span id="cb1-31">joblib.dump(classifier, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"classifier.joblib"</span>)</span></code></pre></div>
+<p><strong>Validate 코드</strong></p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> joblib</span>
+<span id="cb2-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_iris</span>
+<span id="cb2-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.metrics <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> accuracy_score</span>
+<span id="cb2-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.model_selection <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> train_test_split</span>
+<span id="cb2-5"></span>
+<span id="cb2-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1. reproduce data</span></span>
+<span id="cb2-7">X, y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_iris(return_X_y<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, as_frame<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb2-8">X_train, X_valid, y_train, y_valid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> train_test_split(X, y, train_size<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.8</span>, random_state<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2022</span>)</span>
+<span id="cb2-9"></span>
+<span id="cb2-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 2. load model</span></span>
+<span id="cb2-11">scaler_load <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> joblib.load(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"scaler.joblib"</span>)</span>
+<span id="cb2-12">classifier_load <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> joblib.load(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"classifier.joblib"</span>)</span>
+<span id="cb2-13"></span>
+<span id="cb2-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 3. validate</span></span>
+<span id="cb2-15">scaled_X_train <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scaler_load.transform(X_train)</span>
+<span id="cb2-16">scaled_X_valid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scaler_load.transform(X_valid)</span>
+<span id="cb2-17"></span>
+<span id="cb2-18">load_train_pred <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> classifier_load.predict(scaled_X_train)</span>
+<span id="cb2-19">load_valid_pred <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> classifier_load.predict(scaled_X_valid)</span>
+<span id="cb2-20"></span>
+<span id="cb2-21">load_train_acc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> accuracy_score(y_true<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>y_train, y_pred<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>load_train_pred)</span>
+<span id="cb2-22">load_valid_acc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> accuracy_score(y_true<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>y_valid, y_pred<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>load_valid_pred)</span>
+<span id="cb2-23"></span>
+<span id="cb2-24"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Load Model Train Accuracy :"</span>, load_train_acc)</span>
+<span id="cb2-25"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Load Model Valid Accuracy :"</span>, load_valid_acc)</span></code></pre></div>
+<p>-&gt; <code>joblib</code>의 load를 통해 학습한 모델을 불러옴</p>
+</section>
+<section id="model-pipeline-작성" class="level3">
+<h3 class="anchored" data-anchor-id="model-pipeline-작성">2. Model Pipeline 작성</h3>
+<p><strong>위에서 사용했던 모델인 <code>scaler</code>와 <code>SVC</code>를 통합</strong></p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.preprocessing <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> StandardScaler</span>
+<span id="cb3-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.pipeline <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Pipeline</span>
+<span id="cb3-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.svm <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> SVC</span>
+<span id="cb3-4"></span>
+<span id="cb3-5">model_pipeline <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Pipeline([(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"scaler"</span>, StandardScaler()), (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"svc"</span>, SVC())])</span></code></pre></div>
+<p>-&gt; 이 코드를 활용하여 앞의 부분을 대체</p>
+</section>
 </section>
 <section id="reference" class="level2">
 <h2 class="anchored" data-anchor-id="reference">Reference</h2>

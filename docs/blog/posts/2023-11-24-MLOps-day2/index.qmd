@@ -1,6 +1,6 @@
 ---
 title: "MLOps for MLE - 2"
-subtitle: DB에 데이터 삽입
+description: DB에 데이터 삽입
 author: "Ui Seok"
 date: "2023-11-24"
 categories: [mlops]
@@ -23,7 +23,7 @@ page-layout: article
 
 ### 1. 데이터 삽입
 
-__`scikit-learn` 패키지의 `load_iris`를 삽입하기 위해 앞에서 생성한 테이블의 columns 이름과 일치하도록 수정__
+__`scikit-learn` 패키지의 `load_iris` 를 삽입하기 위해 앞에서 생성한 테이블의 columns 이름과 일치하도록 수정__
 
 ``` python
 import pandas as pd
@@ -44,7 +44,7 @@ def get_data():
 
 __Data Insertion Query 작성__
 
-DB에 데이터를 삽입하는 query의 포맷은 다음과 같음
+DB 에 데이터를 삽입하는 query 의 포맷은 다음과 같음
 
 ``` sql
 INSERT INTO {table_name} (col_1, col_2, ...) VALUES (val_1, val_2, ...)
@@ -68,7 +68,7 @@ INSERT INTO iris_data
 
 ```
 
-이 query를 cursor를 이용하여 DB에 전달하는 코드 작성
+이 query 를 cursor 를 이용하여 DB 에 전달하는 코드 작성
 
 ``` python
 import pandas as pd
@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
 ```
 
--> `psql`로 현재는 iris_data에서 하나의 데이터만 DB에 입력된 상태임을 확인할 수 있음
+-> `psql` 로 현재는 iris_data 에서 하나의 데이터만 DB에 입력된 상태임을 확인할 수 있음
 
 
 ### 2. Loop 추가
@@ -137,7 +137,7 @@ def generate_data(db_connect, df):
 
 ```
 
--> `time`패키지의 `sleep`함수를 이용해서 DB의 부하 줄이기
+-> `time` 패키지의 `sleep` 함수를 이용해서 DB의 부하 줄이기
 
 
 ## Reference

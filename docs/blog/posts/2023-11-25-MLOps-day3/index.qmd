@@ -1,6 +1,6 @@
 ---
 title: "MLOps for MLE - 3"
-subtitle: Docker를 활용하여 DB에 데이터 삽입
+description: Docker를 활용하여 DB에 데이터 삽입
 author: "Ui Seok"
 date: "2023-11-26"
 categories: [mlops]
@@ -10,9 +10,9 @@ page-layout: article
 
 ## Summary
 
-1. 앞의 코드를 Docker에서 활용하기 위해 Dockerfile 작성
+1. 앞의 코드를 Docker 에서 활용하기 위해 Dockerfile 작성
 
-2. Docker 컨테이너 간의 네트워크를 연결하여 DB에 데이터 삽입
+2. Docker 컨테이너 간의 네트워크를 연결하여 DB 에 데이터 삽입
 
 3. DB 컨테이너와 데이터 생성 컨테이너를 묶는 Docker Compose 파일 작성
 
@@ -64,13 +64,13 @@ CMD ["localhost"]
 
 ```
 
-- _from_ : 이미지를 만들 때 base가 되는 이미지 지정
-- _RUN_ : 이미지를 만들 때 실행할 코드를 지정, 첫 번째 `RUN`에서는 해당 Dockerfile을 이용하여 컨테이너에 접근하여 `psql`을 사용하기 위해 `postgresql-client`을 설치
+- _from_ : 이미지를 만들 때 base 가 되는 이미지 지정
+- _RUN_ : 이미지를 만들 때 실행할 코드를 지정, 첫 번째 `RUN` 에서는 해당 Dockerfile 을 이용하여 컨테이너에 접근하여 `psql` 을 사용하기 위해 `postgresql-client` 을 설치
 - _WORKDIR_ : 작업 directory 지정
-- _RUN_ : 두 번째 `RUN`에서는 컨테이너에서 python 스크립트를 실행할 때 필요한 패키지 설치
-- _COPY_ : `WORKDIR`로 지정한 directory를 기준으로 파일이나 폴더를 이미지에 복사 
+- _RUN_ : 두 번째 `RUN` 에서는 컨테이너에서 python 스크립트를 실행할 때 필요한 패키지 설치
+- _COPY_ : `WORKDIR` 로 지정한 directory 를 기준으로 파일이나 폴더를 이미지에 복사 
 - _ENTRYPOINT_ : 컨테이너가 실행될 때 시작할 프로세스를 입력
-- _CMD_ : 컨테이너가 실행될 때 `ENTRYPOINT`에 전달할 argument를 입력
+- _CMD_ : 컨테이너가 실행될 때 `ENTRYPOINT` 에 전달할 argument 를 입력
 
 
 __Docker build__
@@ -80,7 +80,7 @@ $ docker build [OPTIONS] PATH | URL | -
 
 ```
 
--> 이 명령어를 통해 dockerfile을 기준으로 이미지를 생성
+-> 이 명령어를 통해 dockerfile 을 기준으로 이미지를 생성
 
 
 ``` markdown
@@ -88,9 +88,9 @@ $ docker run [docker image name]
 
 ```
 
--> build한 이미지 실행
+-> build 한 이미지 실행
 
-하지만 port 및 TCP/IP 관련 에러가 뜨는데 이는 local과 DB container는 연결되어 있지만 `Data Generator`과 DB Container가 연결되어 있지 않음
+하지만 port 및 TCP/IP 관련 에러가 뜨는데 이는 local 과 DB container 는 연결되어 있지만 `Data Generator` 과 DB Container 가 연결되어 있지 않음
 
 이를 해결하기 위해 컨테이너 간 통신할 수 있도록 네트워크를 생성해야 함
 
@@ -139,14 +139,14 @@ $ docker run -d \
 
     ```
 
--> `psql`을 이용하여 DB에 접속해서 확인해보면 추가되는 것을 확인할 수 있음
+-> `psql` 을 이용하여 DB에 접속해서 확인해보면 추가되는 것을 확인할 수 있음
 
 
 ### 3. Docker Compose
 
 __Compose 파일의 아키텍처__
 
-``` markdown
+``` yaml
 version: "3"
 
 services:
@@ -159,12 +159,12 @@ services:
 ```
 
 - _version_ : Compose 파일의 버전
-- _services_ : Compose에 묶일 서비스들을 의미
+- _services_ : Compose 에 묶일 서비스들을 의미
 
 
 __Postgres server service__
 
-``` markdown
+``` yaml
 version: "3"
 
 services:
@@ -182,12 +182,12 @@ services:
 
 - _postgres-server_ : 서비스의 이름, 실행되는 컨테이너 호스트의 이름
 - _ports_ : 컨테이너에서 외부로 노출할 포트 포워딩을 설정, `host:container` 형식으로 사용되고 여러 개 지정 가능
-- _environment_ : 컨테이너를 실행할 때 사용한 `-e`옵션과 같은 역할
+- _environment_ : 컨테이너를 실행할 때 사용한 `-e` 옵션과 같은 역할
 
 
 __Data generator service__
 
-``` markdown
+``` yaml
 version: "3"
 
 services:
@@ -203,10 +203,10 @@ services:
 ```
 
 - _build_ : 
-    - _context_ : 이미지를 build하기 위해 dockerfile이 있는 절대경로 및 상대경로 설정
-    - _dockerfile_ : _context_ 에서 설정한 경로에 있는 dockerfile의 파일명 입력
-- _depends_on_ : Compose로 띄워지는 서비스 간의 종속성 순서대로 서비스를 시작할 때 사용
-- _command_ : Dockerfile에 작성되어 있는 `CMD`를 덮어씀
+    - _context_ : 이미지를 build 하기 위해 dockerfile 이 있는 절대경로 및 상대경로 설정
+    - _dockerfile_ : _context_ 에서 설정한 경로에 있는 dockerfile 의 파일명 입력
+- _depends_on_ : Compose 로 띄워지는 서비스 간의 종속성 순서대로 서비스를 시작할 때 사용
+- _command_ : Dockerfile 에 작성되어 있는 `CMD` 를 덮어씀
 
 
 위에서 작성한 코드를 하나의 파일로 합쳐 만들고 실행
@@ -218,18 +218,18 @@ $ docker compose up -d
 
 - _-d_ : Detached 모드(백그라운드에서 컨테이를 실행 후 유지)로 실행
 
-하지만 `docker ps`를 입력해보면 postgres server만 띄워져있음
+하지만 `docker ps` 를 입력해보면 postgres server 만 띄워져있음
 
-`depends on` 으로 서비스 간의 종속성은 정해졌지만, 실제로 postgres-servre가 띄워진 뒤에 곧바로 data-generator가 띄워짐
+`depends on` 으로 서비스 간의 종속성은 정해졌지만, 실제로 postgres-server 가 띄워진 뒤에 곧바로 data-generator 가 띄워짐
 
-postgres-server의 준비가 되지 않은 상태로 data-generator가 DB와 연결을 하려다 보니 Exited 문제가 발생
+postgres-server 의 준비가 되지 않은 상태로 data-generator 가 DB 와 연결을 하려다 보니 Exited 문제가 발생
 
--> 이를 해결하기 위해 `healthcheck`와 `condition`을 추가
+-> 이를 해결하기 위해 `healthcheck` 와 `condition` 을 추가
 
 
-__`healthcheck`와 `condition`추가하기__
+__`healthcheck` 와 `condition` 추가하기__
 
-``` markdown
+``` yaml
 ### postgres-server에 추가
 healthcheck:
     test: ["CMD", "pg_isready", "-q", "-U", "myuser", "-d", "mydatabase"]
@@ -245,10 +245,10 @@ depends_on:
 ```
 
 - _test_ : 테스트 할 명령어 입력
-- _interval_ : Healthcheck의 간격 설정
-- _timeout_ : Healthcheck의 timeout을 설정
-- _retries_ : Timeout의 횟수 설정
-- _condition_ : Healthcheck 기능을 사용하기 위해 _depends_on_ 의 parameter로 `condition: service_healthy`를 넣어줌
+- _interval_ : Healthcheck 의 간격 설정
+- _timeout_ : Healthcheck 의 timeout 을 설정
+- _retries_ : Timeout 의 횟수 설정
+- _condition_ : Healthcheck 기능을 사용하기 위해 _depends_on_ 의 parameter 로 `condition: service_healthy` 를 넣어줌
 
 이후 서비스를 다시 실행하면 문제 없이 실행이 가능
 

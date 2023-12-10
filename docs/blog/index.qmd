@@ -8,7 +8,7 @@ listing:
     categories: true
     sort-ui: true
     filter-ui: true
-    page-size: 5
+    page-size: 10
     feed: true
 
 search: true

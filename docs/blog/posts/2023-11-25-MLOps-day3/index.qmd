@@ -94,6 +94,8 @@ $ docker run [docker image name]
 
 이를 해결하기 위해 컨테이너 간 통신할 수 있도록 네트워크를 생성해야 함
 
+![에러 발생 예시](fig1.png)
+
 
 ### 2. 네트워크 연결
 
@@ -119,6 +121,14 @@ $ docker network connect [network-name] [DB container name]
     $ docker network connect my-network postgres-server
 
     ```
+
+네트워크 삭제
+
+``` markdown
+$ docker network rm [network-name]
+
+```
+
 
 __docker 재 실행__
 

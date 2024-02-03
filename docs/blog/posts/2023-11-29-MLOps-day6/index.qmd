@@ -1,0 +1,160 @@
+---
+title: "MLOps for MLE - 6"
+description: MLflow 서버 구축 및 모델 저장
+author: "Ui Seok"
+date: "2023-11-29"
+categories: [mlops]
+
+page-layout: article
+---
+
+## Summary
+
+1. Docker Compose 를 이용하여 MLflow 서버를 구축 및 띄움
+
+::: {.callout-note}
+실습을 진행했던 코드를 보고싶으시다면 [여기](https://github.com/Ui-Seok/mlops-tutorial)를 눌러주세요
+:::
+
+
+## 실습
+
+### 1. MLflow Backend Store
+
+__Backend Store__ 란 수치 데이터와 MLflow 서버의 정보들을 체계적으로 관리하기 위한 DB 이다. Backend store 에는 모델의 학습 결과인 accuracy, f1-score, loss, hyperparameter 등의 수치 데이터와 run_id, run_name, experiment_name 등의 MLflow의 meta-data 가 저장된다.
+
+Backend Store 로 사용하기 위해 PostgreSQL DB 를 새롭게 생성
+
+``` yaml
+version: "3"
+
+services:
+  mlflow-backend-store:
+    image: postgres:14.0
+    container_name: mlflow-backend-store
+    environment:
+      POSTGRES_USER: mlflowuser
+      POSTGRES_PASSWORD: mlflowpassword
+      POSTGRES_DB: mlflowdatabase
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-U", "mlflowuser", "-d", "mlflowdatabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+```
+
+
+### 2. MLflow Artifact Store
+
+__Artifact Store__ 란 MLflow 에서 학습된 모델을 저장하는 Model Registry 로써 이용하기 위한 storage server 이다. 이를 이용하면 기본적인 파일 시스템 보다 체계적으로 관리 할 수 있으며 외부에 있는 storage server 도 사용 할 수 있다는 장점이 있다.
+
+Artifact store 로 __MinIO__ 서버를 사용한다.
+
+- MinIO 는 S3 를 대체할 수 있는 오픈 소스 개체 스토리지이다.
+
+- AWS S3 의 API 와도 호환이 가능해서 SDK도 동일하게 사용 가능하다.
+
+- MLflow 에서는 AWS S3 를 모델을 저장하기 위한 스토리지로 사용하도록 권장하고 있다.
+
+- 실습에서 AWS credential 을 통해 MinIO 대신 AWS S3 를 사용해도 같은 결과를 얻을 수 있다.
+
+MinIO 의 스펙을 Compose 파일에 서비스 이름, 유저 이름, 비밀번호를 환경변수로 정의하고 호스트와 연결되는 포트 또한 정의
+
+``` yaml
+version: "3"
+
+services:
+  mlflow-artifact-store:
+    image: minio/minio
+    container_name: mlflow-artifact-store
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: miniostorage
+    command: server /data/minio --console-address :9001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+```
+
+
+### 3. MLflow Server
+
+위에서 만든 Backend Store와 Artifact Store에 접근 가능한 MLflow서버 생성
+
+``` Dockerfile
+FROM amd64/python:3.9-slim
+
+RUN apt-get update && apt-get install -y \
+    git \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install -U pip &&\
+    pip install mlflow psycopg2-binary boto3
+
+RUN cd /tmp && \
+    wget https://dl.min.io/client/mc/release/linux-amd64/mc && \
+    chmod +x mc && \
+    mv mc /usr/bin/mc
+
+```
+
+작성된 Dockerfile 을 build 하도록 Compose 파일의 `service` 탭 밑에 정의
+
+``` yaml
+version: "3"
+
+services:
+  mlflow-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mlflow-server
+    depends_on:
+      mlflow-backend-store:
+        condition: service_healthy
+      mlflow-artifact-store:
+        condition: service_healthy
+    ports:
+      - 5001:5000
+    environment:
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: miniostorage
+      MLFLOW_S3_ENDPOINT_URL: http://mlflow-artifact-store:9000
+    command:
+      - /bin/sh
+      - -c
+      - |
+        mc config host add mlflowminio http://mlflow-artifact-store:9000 minio miniostorage &&
+        mc mb --ignore-existing mlflowminio/mlflow
+        mlflow server \
+        --backend-store-uri postgresql://mlflowuser:mlflowpassword@mlflow-backend-store/mlflowdatabase \
+        --default-artifact-root s3://mlflow/ \
+        --host 0.0.0.0
+
+```
+
+- MinIO 에 접근하기 위한 계정 정보를 환경변수로 설정
+- 모델을 저장할 때 사용할 MinIO 초기 버켓 생성
+- MLflow 서버를 끠우는 명령어 작성
+    - PostgreSQL DB 에 연결하기 위한 keyword argument 추가
+    - MinIO 에 연결하기 위한 keyword argument 추가
+
+-> Compose 를 띄우면 `localhost:5001` 을 통해 MLflow 서버에 접속이 가능하고 `localhost:9001` 을 통해 MinIO 서버에 접속이 가능하다.
+
+![MLflow 접속화면](fig1.png)
+
+![Minio 접속화면](fig2.png)
+
+
+
+## Reference
+
+[ML Engineer를 위한 MLOps tutorial](https://mlops-for-mle.github.io/tutorial/)

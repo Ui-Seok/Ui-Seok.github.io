@@ -55,6 +55,7 @@
   <category>books</category>
   <guid>https://ui-seok.github.io/docs/blog/posts/2023-12-06-book-review-1/index.html</guid>
   <pubDate>Mon, 04 Dec 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/109/200/150" medium="image"/>
 </item>
 <item>
   <title>MLOps for MLE - 8</title>
@@ -387,6 +388,7 @@ font-style: inherit;">"Valid Accuracy :"</span>, valid_acc)</span></code></pre><
   <category>mlops</category>
   <guid>https://ui-seok.github.io/docs/blog/posts/2023-12-02-MLOps-day8/index.html</guid>
   <pubDate>Fri, 01 Dec 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/108/200/150" medium="image"/>
 </item>
 <item>
   <title>MLOps for MLE - 7</title>
@@ -814,6 +816,7 @@ font-style: inherit;">False</span>)</span></code></pre></div>
   <category>mlops</category>
   <guid>https://ui-seok.github.io/docs/blog/posts/2023-12-01-MLOps-day7/index.html</guid>
   <pubDate>Thu, 30 Nov 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/107/200/150" medium="image"/>
 </item>
 <item>
   <title>MLOps for MLE - 6</title>
@@ -1474,6 +1477,7 @@ font-style: inherit;">|</span></span>
   <category>mlops</category>
   <guid>https://ui-seok.github.io/docs/blog/posts/2023-11-29-MLOps-day6/index.html</guid>
   <pubDate>Tue, 28 Nov 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/106/200/150" medium="image"/>
 </item>
 <item>
   <title>MLOps for MLE - 5</title>
@@ -1897,6 +1901,7 @@ font-style: inherit;">"Load Model Valid Accuracy :"</span>, load_valid_acc)</spa
   <category>mlops</category>
   <guid>https://ui-seok.github.io/docs/blog/posts/2023-11-28-MLOps-day5/index.html</guid>
   <pubDate>Mon, 27 Nov 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/104/200/150" medium="image"/>
 </item>
 <item>
   <title>MLOps for MLE - 4</title>
@@ -2196,6 +2201,7 @@ font-style: inherit;">"svc"</span>, SVC())])</span></code></pre></div>
   <category>mlops</category>
   <guid>https://ui-seok.github.io/docs/blog/posts/2023-11-26-MLOps-day4/index.html</guid>
   <pubDate>Sun, 26 Nov 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/103/200/150" medium="image"/>
 </item>
 <item>
   <title>MLOps for MLE - 3</title>
@@ -2767,6 +2773,7 @@ font-style: inherit;"> service_healthy</span></span></code></pre></div>
   <category>mlops</category>
   <guid>https://ui-seok.github.io/docs/blog/posts/2023-11-25-MLOps-day3/index.html</guid>
   <pubDate>Sat, 25 Nov 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/102/200/150" medium="image"/>
 </item>
 <item>
   <title>MLOps for MLE - 2</title>
@@ -3204,6 +3211,7 @@ font-style: inherit;">1</span>)</span></code></pre></div>
   <category>mlops</category>
   <guid>https://ui-seok.github.io/docs/blog/posts/2023-11-24-MLOps-day2/index.html</guid>
   <pubDate>Thu, 23 Nov 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/100/200/150" medium="image"/>
 </item>
 <item>
   <title>MLOps for MLE - 1</title>
@@ -3402,6 +3410,7 @@ font-style: inherit;">as</span> cur:</span>
   <category>mlops</category>
   <guid>https://ui-seok.github.io/docs/blog/posts/2023-11-23-MLOps-day1/index.html</guid>
   <pubDate>Wed, 22 Nov 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/99/200/150" medium="image"/>
 </item>
 </channel>
 </rss>

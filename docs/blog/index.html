@@ -71,9 +71,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -183,7 +183,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
 <div class="listing-actions-group">
    <div class="input-group input-group-sm quarto-listing-sort">
      <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
@@ -209,321 +209,276 @@ ul.task-list li input[type="checkbox"] {
       <input type="text" class="search form-control" placeholder="Filter">
     </div>
 </div>
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="books" data-listing-date-sort="1701702000000" data-listing-file-modified-sort="1702222198566" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
-<div class="thumbnail">
-<p><a href="../../docs/blog/posts/2023-12-06-book-review-1/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
-</div>
-<div class="body">
-<a href="../../docs/blog/posts/2023-12-06-book-review-1/index.html">
-<h3 class="no-anchor listing-title">
+<div class="list grid quarto-listing-cols-3">
+<div class="g-col-1" data-index="0" data-categories="books" data-listing-date-sort="1701702000000" data-listing-file-modified-sort="1706946907458" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<a href="../../docs/blog/posts/2023-12-06-book-review-1/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://picsum.photos/id/109/200/150" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
 머신러닝 시스템 설계 Ch.1
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('books'); return false;">
 books
 </div>
 </div>
-<a href="../../docs/blog/posts/2023-12-06-book-review-1/index.html">
-<div class="listing-description">
-<p>머신러닝 시스템 개요</p>
+<div class="card-text listing-description">
+머신러닝 시스템 개요
 </div>
-</a>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Ui Seok
 </div>
-<div class="metadata">
-<a href="../../docs/blog/posts/2023-12-06-book-review-1/index.html">
 <div class="listing-date">
 Dec 5, 2023
 </div>
-<div class="listing-author">
-Ui Seok
+</div>
+</div>
 </div>
 </a>
 </div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="mlops" data-listing-date-sort="1701442800000" data-listing-file-modified-sort="1706945636666" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
-<div class="thumbnail">
-<p><a href="../../docs/blog/posts/2023-12-02-MLOps-day8/index.html"> <p class="card-img-top"><img src="posts/2023-12-02-MLOps-day8/fig1.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../../docs/blog/posts/2023-12-02-MLOps-day8/index.html">
-<h3 class="no-anchor listing-title">
+<div class="g-col-1" data-index="1" data-categories="mlops" data-listing-date-sort="1701442800000" data-listing-file-modified-sort="1706946893269" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<a href="../../docs/blog/posts/2023-12-02-MLOps-day8/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://picsum.photos/id/108/200/150" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
 MLOps for MLE - 8
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('mlops'); return false;">
 mlops
 </div>
 </div>
-<a href="../../docs/blog/posts/2023-12-02-MLOps-day8/index.html">
-<div class="listing-description">
-<p>MLflow 서버에서 모델 불러오기</p>
+<div class="card-text listing-description">
+MLflow 서버에서 모델 불러오기
 </div>
-</a>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Ui Seok
 </div>
-<div class="metadata">
-<a href="../../docs/blog/posts/2023-12-02-MLOps-day8/index.html">
 <div class="listing-date">
 Dec 2, 2023
 </div>
-<div class="listing-author">
-Ui Seok
+</div>
+</div>
 </div>
 </a>
 </div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="mlops" data-listing-date-sort="1701356400000" data-listing-file-modified-sort="1706943859714" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
-<div class="thumbnail">
-<p><a href="../../docs/blog/posts/2023-12-01-MLOps-day7/index.html"> <p class="card-img-top"><img src="posts/2023-12-01-MLOps-day7/fig1.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../../docs/blog/posts/2023-12-01-MLOps-day7/index.html">
-<h3 class="no-anchor listing-title">
+<div class="g-col-1" data-index="2" data-categories="mlops" data-listing-date-sort="1701356400000" data-listing-file-modified-sort="1706946881278" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<a href="../../docs/blog/posts/2023-12-01-MLOps-day7/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://picsum.photos/id/107/200/150" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
 MLOps for MLE - 7
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('mlops'); return false;">
 mlops
 </div>
 </div>
-<a href="../../docs/blog/posts/2023-12-01-MLOps-day7/index.html">
-<div class="listing-description">
-<p>MLflow 서버에 학습된 모델 저장</p>
+<div class="card-text listing-description">
+MLflow 서버에 학습된 모델 저장
 </div>
-</a>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Ui Seok
 </div>
-<div class="metadata">
-<a href="../../docs/blog/posts/2023-12-01-MLOps-day7/index.html">
 <div class="listing-date">
 Dec 1, 2023
 </div>
-<div class="listing-author">
-Ui Seok
+</div>
+</div>
 </div>
 </a>
 </div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="mlops" data-listing-date-sort="1701183600000" data-listing-file-modified-sort="1706942187251" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
-<div class="thumbnail">
-<p><a href="../../docs/blog/posts/2023-11-29-MLOps-day6/index.html"> <p class="card-img-top"><img src="posts/2023-11-29-MLOps-day6/fig1.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../../docs/blog/posts/2023-11-29-MLOps-day6/index.html">
-<h3 class="no-anchor listing-title">
+<div class="g-col-1" data-index="3" data-categories="mlops" data-listing-date-sort="1701183600000" data-listing-file-modified-sort="1706946869639" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
+<a href="../../docs/blog/posts/2023-11-29-MLOps-day6/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://picsum.photos/id/106/200/150" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
 MLOps for MLE - 6
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('mlops'); return false;">
 mlops
 </div>
 </div>
-<a href="../../docs/blog/posts/2023-11-29-MLOps-day6/index.html">
-<div class="listing-description">
-<p>MLflow 서버 구축 및 모델 저장</p>
+<div class="card-text listing-description">
+MLflow 서버 구축 및 모델 저장
 </div>
-</a>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Ui Seok
 </div>
-<div class="metadata">
-<a href="../../docs/blog/posts/2023-11-29-MLOps-day6/index.html">
 <div class="listing-date">
 Nov 29, 2023
 </div>
-<div class="listing-author">
-Ui Seok
+</div>
+</div>
 </div>
 </a>
 </div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="mlops" data-listing-date-sort="1701097200000" data-listing-file-modified-sort="1706942505753" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
-<div class="thumbnail">
-<p><a href="../../docs/blog/posts/2023-11-28-MLOps-day5/index.html"> <p class="card-img-top"><img src="posts/2023-11-28-MLOps-day5/fig1.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../../docs/blog/posts/2023-11-28-MLOps-day5/index.html">
-<h3 class="no-anchor listing-title">
+<div class="g-col-1" data-index="4" data-categories="mlops" data-listing-date-sort="1701097200000" data-listing-file-modified-sort="1706946853475" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<a href="../../docs/blog/posts/2023-11-28-MLOps-day5/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://picsum.photos/id/104/200/150" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
 MLOps for MLE - 5
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('mlops'); return false;">
 mlops
 </div>
 </div>
-<a href="../../docs/blog/posts/2023-11-28-MLOps-day5/index.html">
-<div class="listing-description">
-<p>DB에서 데이터를 가져오기</p>
+<div class="card-text listing-description">
+DB에서 데이터를 가져오기
 </div>
-</a>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Ui Seok
 </div>
-<div class="metadata">
-<a href="../../docs/blog/posts/2023-11-28-MLOps-day5/index.html">
 <div class="listing-date">
 Nov 28, 2023
 </div>
-<div class="listing-author">
-Ui Seok
+</div>
+</div>
 </div>
 </a>
 </div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="mlops" data-listing-date-sort="1701010800000" data-listing-file-modified-sort="1702222250018" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
-<div class="thumbnail">
-<p><a href="../../docs/blog/posts/2023-11-26-MLOps-day4/index.html"> <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div> </a></p>
-</div>
-<div class="body">
-<a href="../../docs/blog/posts/2023-11-26-MLOps-day4/index.html">
-<h3 class="no-anchor listing-title">
+<div class="g-col-1" data-index="5" data-categories="mlops" data-listing-date-sort="1701010800000" data-listing-file-modified-sort="1706946844145" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<a href="../../docs/blog/posts/2023-11-26-MLOps-day4/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://picsum.photos/id/103/200/150" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
 MLOps for MLE - 4
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('mlops'); return false;">
 mlops
 </div>
 </div>
-<a href="../../docs/blog/posts/2023-11-26-MLOps-day4/index.html">
-<div class="listing-description">
-<p>모델 학습 및 파이프라인 작성</p>
+<div class="card-text listing-description">
+모델 학습 및 파이프라인 작성
 </div>
-</a>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Ui Seok
 </div>
-<div class="metadata">
-<a href="../../docs/blog/posts/2023-11-26-MLOps-day4/index.html">
 <div class="listing-date">
 Nov 27, 2023
 </div>
-<div class="listing-author">
-Ui Seok
+</div>
+</div>
 </div>
 </a>
 </div>
-</div>
-<div class="quarto-post image-right" data-index="6" data-categories="mlops" data-listing-date-sort="1700924400000" data-listing-file-modified-sort="1705312575480" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5">
-<div class="thumbnail">
-<p><a href="../../docs/blog/posts/2023-11-25-MLOps-day3/index.html"> <p class="card-img-top"><img src="posts/2023-11-25-MLOps-day3/fig1.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../../docs/blog/posts/2023-11-25-MLOps-day3/index.html">
-<h3 class="no-anchor listing-title">
+<div class="g-col-1" data-index="6" data-categories="mlops" data-listing-date-sort="1700924400000" data-listing-file-modified-sort="1706946820749" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5">
+<a href="../../docs/blog/posts/2023-11-25-MLOps-day3/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://picsum.photos/id/102/200/150" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
 MLOps for MLE - 3
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('mlops'); return false;">
 mlops
 </div>
 </div>
-<a href="../../docs/blog/posts/2023-11-25-MLOps-day3/index.html">
-<div class="listing-description">
-<p>Docker를 활용하여 DB에 데이터 삽입</p>
+<div class="card-text listing-description">
+Docker를 활용하여 DB에 데이터 삽입
 </div>
-</a>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Ui Seok
 </div>
-<div class="metadata">
-<a href="../../docs/blog/posts/2023-11-25-MLOps-day3/index.html">
 <div class="listing-date">
 Nov 26, 2023
 </div>
-<div class="listing-author">
-Ui Seok
+</div>
+</div>
 </div>
 </a>
 </div>
-</div>
-<div class="quarto-post image-right" data-index="7" data-categories="mlops" data-listing-date-sort="1700751600000" data-listing-file-modified-sort="1705311534493" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
-<div class="thumbnail">
-<p><a href="../../docs/blog/posts/2023-11-24-MLOps-day2/index.html"> <p class="card-img-top"><img src="posts/2023-11-24-MLOps-day2/fig1.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../../docs/blog/posts/2023-11-24-MLOps-day2/index.html">
-<h3 class="no-anchor listing-title">
+<div class="g-col-1" data-index="7" data-categories="mlops" data-listing-date-sort="1700751600000" data-listing-file-modified-sort="1706946785078" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
+<a href="../../docs/blog/posts/2023-11-24-MLOps-day2/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://picsum.photos/id/100/200/150" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
 MLOps for MLE - 2
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('mlops'); return false;">
 mlops
 </div>
 </div>
-<a href="../../docs/blog/posts/2023-11-24-MLOps-day2/index.html">
-<div class="listing-description">
-<p>DB에 데이터 삽입</p>
+<div class="card-text listing-description">
+DB에 데이터 삽입
 </div>
-</a>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Ui Seok
 </div>
-<div class="metadata">
-<a href="../../docs/blog/posts/2023-11-24-MLOps-day2/index.html">
 <div class="listing-date">
 Nov 24, 2023
 </div>
-<div class="listing-author">
-Ui Seok
+</div>
+</div>
 </div>
 </a>
 </div>
-</div>
-<div class="quarto-post image-right" data-index="8" data-categories="mlops" data-listing-date-sort="1700665200000" data-listing-file-modified-sort="1705311300476" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
-<div class="thumbnail">
-<p><a href="../../docs/blog/posts/2023-11-23-MLOps-day1/index.html"> <p class="card-img-top"><img src="posts/2023-11-23-MLOps-day1/fig1.png"  class="thumbnail-image card-img"/></p> </a></p>
-</div>
-<div class="body">
-<a href="../../docs/blog/posts/2023-11-23-MLOps-day1/index.html">
-<h3 class="no-anchor listing-title">
+<div class="g-col-1" data-index="8" data-categories="mlops" data-listing-date-sort="1700665200000" data-listing-file-modified-sort="1706946802447" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<a href="../../docs/blog/posts/2023-11-23-MLOps-day1/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img src="https://picsum.photos/id/99/200/150" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
 MLOps for MLE - 1
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
+</h5>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('mlops'); return false;">
 mlops
 </div>
 </div>
-<a href="../../docs/blog/posts/2023-11-23-MLOps-day1/index.html">
-<div class="listing-description">
-<p>Docker 환경 설정 및 DB 설정</p>
+<div class="card-text listing-description">
+Docker 환경 설정 및 DB 설정
 </div>
-</a>
-</div>
-<div class="metadata">
-<a href="../../docs/blog/posts/2023-11-23-MLOps-day1/index.html">
-<div class="listing-date">
-Nov 23, 2023
-</div>
+<div class="card-attribution card-text-small justify">
 <div class="listing-author">
 Ui Seok
 </div>
-</a>
+<div class="listing-date">
+Nov 23, 2023
 </div>
+</div>
+</div>
+</div>
+</a>
 </div>
 </div>
 <div class="listing-no-matching d-none">

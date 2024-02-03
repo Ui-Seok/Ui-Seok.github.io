@@ -8,6 +8,7 @@
 
 <meta name="author" content="Ui Seok">
 <meta name="dcterms.date" content="2023-11-26">
+<meta name="description" content="Docker를 활용하여 DB에 데이터 삽입">
 
 <title>Home - MLOps for MLE - 3</title>
 <style>
@@ -179,12 +180,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">MLOps for MLE - 3</h1>
-<p class="subtitle lead">Docker를 활용하여 DB에 데이터 삽입</p>
   <div class="quarto-categories">
     <div class="quarto-category">mlops</div>
   </div>
   </div>
 
+<div>
+  <div class="description">
+    Docker를 활용하여 DB에 데이터 삽입
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -212,8 +217,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="summary" class="level2">
 <h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <ol type="1">
-<li><p>앞의 코드를 Docker에서 활용하기 위해 Dockerfile 작성</p></li>
-<li><p>Docker 컨테이너 간의 네트워크를 연결하여 DB에 데이터 삽입</p></li>
+<li><p>앞의 코드를 Docker 에서 활용하기 위해 Dockerfile 작성</p></li>
+<li><p>Docker 컨테이너 간의 네트워크를 연결하여 DB 에 데이터 삽입</p></li>
 <li><p>DB 컨테이너와 데이터 생성 컨테이너를 묶는 Docker Compose 파일 작성</p></li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -263,21 +268,27 @@ Note
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">CMD</span> [<span class="st">"localhost"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li><em>from</em> : 이미지를 만들 때 base가 되는 이미지 지정</li>
-<li><em>RUN</em> : 이미지를 만들 때 실행할 코드를 지정, 첫 번째 <code>RUN</code>에서는 해당 Dockerfile을 이용하여 컨테이너에 접근하여 <code>psql</code>을 사용하기 위해 <code>postgresql-client</code>을 설치</li>
+<li><em>from</em> : 이미지를 만들 때 base 가 되는 이미지 지정</li>
+<li><em>RUN</em> : 이미지를 만들 때 실행할 코드를 지정, 첫 번째 <code>RUN</code> 에서는 해당 Dockerfile 을 이용하여 컨테이너에 접근하여 <code>psql</code> 을 사용하기 위해 <code>postgresql-client</code> 을 설치</li>
 <li><em>WORKDIR</em> : 작업 directory 지정</li>
-<li><em>RUN</em> : 두 번째 <code>RUN</code>에서는 컨테이너에서 python 스크립트를 실행할 때 필요한 패키지 설치</li>
-<li><em>COPY</em> : <code>WORKDIR</code>로 지정한 directory를 기준으로 파일이나 폴더를 이미지에 복사</li>
+<li><em>RUN</em> : 두 번째 <code>RUN</code> 에서는 컨테이너에서 python 스크립트를 실행할 때 필요한 패키지 설치</li>
+<li><em>COPY</em> : <code>WORKDIR</code> 로 지정한 directory 를 기준으로 파일이나 폴더를 이미지에 복사</li>
 <li><em>ENTRYPOINT</em> : 컨테이너가 실행될 때 시작할 프로세스를 입력</li>
-<li><em>CMD</em> : 컨테이너가 실행될 때 <code>ENTRYPOINT</code>에 전달할 argument를 입력</li>
+<li><em>CMD</em> : 컨테이너가 실행될 때 <code>ENTRYPOINT</code> 에 전달할 argument 를 입력</li>
 </ul>
 <p><strong>Docker build</strong></p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>$ docker build <span class="co">[</span><span class="ot">OPTIONS</span><span class="co">]</span> PATH | URL | -</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>-&gt; 이 명령어를 통해 dockerfile을 기준으로 이미지를 생성</p>
+<p>-&gt; 이 명령어를 통해 dockerfile 을 기준으로 이미지를 생성</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>$ docker run <span class="co">[</span><span class="ot">docker image name</span><span class="co">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>-&gt; build한 이미지 실행</p>
-<p>하지만 port 및 TCP/IP 관련 에러가 뜨는데 이는 local과 DB container는 연결되어 있지만 <code>Data Generator</code>과 DB Container가 연결되어 있지 않음</p>
+<p>-&gt; build 한 이미지 실행</p>
+<p>하지만 port 및 TCP/IP 관련 에러가 뜨는데 이는 local 과 DB container 는 연결되어 있지만 <code>Data Generator</code> 과 DB Container 가 연결되어 있지 않음</p>
 <p>이를 해결하기 위해 컨테이너 간 통신할 수 있도록 네트워크를 생성해야 함</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">에러 발생 예시</figcaption>
+</figure>
+</div>
 </section>
 <section id="네트워크-연결" class="level3">
 <h3 class="anchored" data-anchor-id="네트워크-연결">2. 네트워크 연결</h3>
@@ -290,100 +301,102 @@ Note
 <li><p>EX)</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>$ docker network connect my-network postgres-server</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
+<p>네트워크 삭제</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>$ docker network rm <span class="co">[</span><span class="ot">network-name</span><span class="co">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>docker 재 실행</strong></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>$ docker run -d \</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    --name <span class="co">[</span><span class="ot">docker image name</span><span class="co">]</span> \ </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    --network <span class="co">[</span><span class="ot">"network-name"</span><span class="co">]</span> \ </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>$ docker run -d \</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    --name <span class="co">[</span><span class="ot">docker image name</span><span class="co">]</span> \ </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    --network <span class="co">[</span><span class="ot">"network-name"</span><span class="co">]</span> \ </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><p>EX)</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>$ docker run -d \ </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    --name data-generator \ </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    --network "my-network" \ </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    data-generator "postgres-server"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>$ docker run -d \ </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    --name data-generator \ </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    --network "my-network" \ </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    data-generator "postgres-server"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
-<p>-&gt; <code>psql</code>을 이용하여 DB에 접속해서 확인해보면 추가되는 것을 확인할 수 있음</p>
+<p>-&gt; <code>psql</code> 을 이용하여 DB에 접속해서 확인해보면 추가되는 것을 확인할 수 있음</p>
 </section>
 <section id="docker-compose" class="level3">
 <h3 class="anchored" data-anchor-id="docker-compose">3. Docker Compose</h3>
 <p><strong>Compose 파일의 아키텍처</strong></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="an">version:</span><span class="co"> "3"</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>services:</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    postgres-server:</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        ...</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="in">    data-generator:</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="in">        ...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">"3"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">postgres-server</span><span class="kw">:</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="at">        ...</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">data-generator</span><span class="kw">:</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="at">        ...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><em>version</em> : Compose 파일의 버전</li>
-<li><em>services</em> : Compose에 묶일 서비스들을 의미</li>
+<li><em>services</em> : Compose 에 묶일 서비스들을 의미</li>
 </ul>
 <p><strong>Postgres server service</strong></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="an">version:</span><span class="co"> "3"</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>services:</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    postgres-server:</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        image: postgres:14.0</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        container_name: postgres-server</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        ports:</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="ss">            - </span>5432:5432</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        environment:</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>            POSTGRES_USER: myuser</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>            POSTGRES_PASSWORD: mypassword</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>            POSTGRES_DB: mydatabase</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">"3"</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">postgres-server</span><span class="kw">:</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">image</span><span class="kw">:</span><span class="at"> postgres:14.0</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> postgres-server</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="kw">-</span><span class="at"> 5432:5432</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">POSTGRES_USER</span><span class="kw">:</span><span class="at"> myuser</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">POSTGRES_PASSWORD</span><span class="kw">:</span><span class="at"> mypassword</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">POSTGRES_DB</span><span class="kw">:</span><span class="at"> mydatabase</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><em>postgres-server</em> : 서비스의 이름, 실행되는 컨테이너 호스트의 이름</li>
 <li><em>ports</em> : 컨테이너에서 외부로 노출할 포트 포워딩을 설정, <code>host:container</code> 형식으로 사용되고 여러 개 지정 가능</li>
-<li><em>environment</em> : 컨테이너를 실행할 때 사용한 <code>-e</code>옵션과 같은 역할</li>
+<li><em>environment</em> : 컨테이너를 실행할 때 사용한 <code>-e</code> 옵션과 같은 역할</li>
 </ul>
 <p><strong>Data generator service</strong></p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="an">version:</span><span class="co"> "3"</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>services:</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    data-generator:</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        build:</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>            context: .</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>            dockerfile: Dockerfile</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        container_name: data-generator</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        depends_on:</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="ss">            - </span>postgres_server</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        command: <span class="co">[</span><span class="ot">"postgres-server"</span><span class="co">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">"3"</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">data-generator</span><span class="kw">:</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">build</span><span class="kw">:</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">context</span><span class="kw">:</span><span class="at"> .</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">dockerfile</span><span class="kw">:</span><span class="at"> Dockerfile</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> data-generator</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="kw">-</span><span class="at"> postgres_server</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">command</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"postgres-server"</span><span class="kw">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><em>build</em> :
 <ul>
-<li><em>context</em> : 이미지를 build하기 위해 dockerfile이 있는 절대경로 및 상대경로 설정</li>
-<li><em>dockerfile</em> : <em>context</em> 에서 설정한 경로에 있는 dockerfile의 파일명 입력</li>
+<li><em>context</em> : 이미지를 build 하기 위해 dockerfile 이 있는 절대경로 및 상대경로 설정</li>
+<li><em>dockerfile</em> : <em>context</em> 에서 설정한 경로에 있는 dockerfile 의 파일명 입력</li>
 </ul></li>
-<li><em>depends_on</em> : Compose로 띄워지는 서비스 간의 종속성 순서대로 서비스를 시작할 때 사용</li>
-<li><em>command</em> : Dockerfile에 작성되어 있는 <code>CMD</code>를 덮어씀</li>
+<li><em>depends_on</em> : Compose 로 띄워지는 서비스 간의 종속성 순서대로 서비스를 시작할 때 사용</li>
+<li><em>command</em> : Dockerfile 에 작성되어 있는 <code>CMD</code> 를 덮어씀</li>
 </ul>
 <p>위에서 작성한 코드를 하나의 파일로 합쳐 만들고 실행</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>$ docker compose up -d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>$ docker compose up -d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><em>-d</em> : Detached 모드(백그라운드에서 컨테이를 실행 후 유지)로 실행</li>
 </ul>
-<p>하지만 <code>docker ps</code>를 입력해보면 postgres server만 띄워져있음</p>
-<p><code>depends on</code> 으로 서비스 간의 종속성은 정해졌지만, 실제로 postgres-servre가 띄워진 뒤에 곧바로 data-generator가 띄워짐</p>
-<p>postgres-server의 준비가 되지 않은 상태로 data-generator가 DB와 연결을 하려다 보니 Exited 문제가 발생</p>
-<p>-&gt; 이를 해결하기 위해 <code>healthcheck</code>와 <code>condition</code>을 추가</p>
-<p><strong><code>healthcheck</code>와 <code>condition</code>추가하기</strong></p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">### postgres-server에 추가</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>healthcheck:</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    test: <span class="co">[</span><span class="ot">"CMD", "pg_isready", "-q", "-U", "myuser", "-d", "mydatabase"</span><span class="co">]</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    interval: 10s</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    timeout: 5s</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    retries: 5</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">### data-generator에 추가</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>depends_on: </span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    postgres-server:</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        condition: service_healthy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>하지만 <code>docker ps</code> 를 입력해보면 postgres server 만 띄워져있음</p>
+<p><code>depends on</code> 으로 서비스 간의 종속성은 정해졌지만, 실제로 postgres-server 가 띄워진 뒤에 곧바로 data-generator 가 띄워짐</p>
+<p>postgres-server 의 준비가 되지 않은 상태로 data-generator 가 DB 와 연결을 하려다 보니 Exited 문제가 발생</p>
+<p>-&gt; 이를 해결하기 위해 <code>healthcheck</code> 와 <code>condition</code> 을 추가</p>
+<p><strong><code>healthcheck</code> 와 <code>condition</code> 추가하기</strong></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">### postgres-server에 추가</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">healthcheck</span><span class="kw">:</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">test</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">"CMD"</span><span class="kw">,</span><span class="at"> </span><span class="st">"pg_isready"</span><span class="kw">,</span><span class="at"> </span><span class="st">"-q"</span><span class="kw">,</span><span class="at"> </span><span class="st">"-U"</span><span class="kw">,</span><span class="at"> </span><span class="st">"myuser"</span><span class="kw">,</span><span class="at"> </span><span class="st">"-d"</span><span class="kw">,</span><span class="at"> </span><span class="st">"mydatabase"</span><span class="kw">]</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">interval</span><span class="kw">:</span><span class="at"> 10s</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">timeout</span><span class="kw">:</span><span class="at"> 5s</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">retries</span><span class="kw">:</span><span class="at"> </span><span class="dv">5</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">### data-generator에 추가</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">depends_on</span><span class="kw">:</span><span class="at"> </span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">postgres-server</span><span class="kw">:</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">condition</span><span class="kw">:</span><span class="at"> service_healthy</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><em>test</em> : 테스트 할 명령어 입력</li>
-<li><em>interval</em> : Healthcheck의 간격 설정</li>
-<li><em>timeout</em> : Healthcheck의 timeout을 설정</li>
-<li><em>retries</em> : Timeout의 횟수 설정</li>
-<li><em>condition</em> : Healthcheck 기능을 사용하기 위해 <em>depends_on</em> 의 parameter로 <code>condition: service_healthy</code>를 넣어줌</li>
+<li><em>interval</em> : Healthcheck 의 간격 설정</li>
+<li><em>timeout</em> : Healthcheck 의 timeout 을 설정</li>
+<li><em>retries</em> : Timeout 의 횟수 설정</li>
+<li><em>condition</em> : Healthcheck 기능을 사용하기 위해 <em>depends_on</em> 의 parameter 로 <code>condition: service_healthy</code> 를 넣어줌</li>
 </ul>
 <p>이후 서비스를 다시 실행하면 문제 없이 실행이 가능</p>
 </section>

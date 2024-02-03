@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ui Seok">
-<meta name="dcterms.date" content="2023-11-23">
-<meta name="description" content="Docker 환경 설정 및 DB 설정">
+<meta name="dcterms.date" content="2023-12-01">
+<meta name="description" content="MLflow 서버에 학습된 모델 저장">
 
-<title>Home - MLOps for MLE - 1</title>
+<title>Home - MLOps for MLE - 7</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -166,19 +166,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">Summary</a></li>
   <li><a href="#실습" id="toc-실습" class="nav-link" data-scroll-target="#실습">실습</a>
   <ul class="collapse">
-  <li><a href="#db-서버-생성-및-확인" id="toc-db-서버-생성-및-확인" class="nav-link" data-scroll-target="#db-서버-생성-및-확인">1. DB 서버 생성 및 확인</a></li>
-  <li><a href="#db-table-생성" id="toc-db-table-생성" class="nav-link" data-scroll-target="#db-table-생성">2. DB Table 생성</a></li>
+  <li><a href="#save-model-to-registry" id="toc-save-model-to-registry" class="nav-link" data-scroll-target="#save-model-to-registry">1. Save Model to Registry</a></li>
+  <li><a href="#전체-코드" id="toc-전체-코드" class="nav-link" data-scroll-target="#전체-코드">2. 전체 코드</a></li>
   </ul></li>
   <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/blog/posts/2023-11-23-MLOps-day1/index.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/blog/posts/2023-12-01-MLOps-day7/index.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">MLOps for MLE - 1</h1>
+<h1 class="title">MLOps for MLE - 7</h1>
   <div class="quarto-categories">
     <div class="quarto-category">mlops</div>
   </div>
@@ -186,7 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    Docker 환경 설정 및 DB 설정
+    MLflow 서버에 학습된 모델 저장
   </div>
 </div>
 
@@ -203,7 +203,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 23, 2023</p>
+      <p class="date">December 1, 2023</p>
     </div>
   </div>
   
@@ -216,9 +216,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="summary" class="level2">
 <h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <ol type="1">
-<li><p>Docker 설치 및 PostgreSQL DB 서버 생성</p></li>
-<li><p>DB 의 role name 과 attribute 확인</p></li>
-<li><p>생성된 DB 에 query 를 작성하여 테이블 생성</p></li>
+<li>모델을 학습하고 MLflow 서버에 저장</li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -236,97 +234,138 @@ Note
 </section>
 <section id="실습" class="level2">
 <h2 class="anchored" data-anchor-id="실습">실습</h2>
-<section id="db-서버-생성-및-확인" class="level3">
-<h3 class="anchored" data-anchor-id="db-서버-생성-및-확인">1. DB 서버 생성 및 확인</h3>
-<p><strong>Docker 설치 후 <code>docker run</code> 명령어를 사용하여 DB 서버 생성</strong></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>$ docker run -d \</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  --name postgres-server \</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  -p 5432:5432 \</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  -e POSTGRES_USER=myuser \</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  -e POSTGRES_PASSWORD=mypassword \</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  -e POSTGRES_DB=mydatabase \</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  postgres:14.0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="save-model-to-registry" class="level3">
+<h3 class="anchored" data-anchor-id="save-model-to-registry">1. Save Model to Registry</h3>
+<p><code>day 5</code> 에서 작성한 <code>db_train.py</code> 코드의 <code>#3. save_model</code> 부분을 변경하여 모델을 업로드하는 코드 작성</p>
+<section id="환경-변수-추가" class="level4">
+<h4 class="anchored" data-anchor-id="환경-변수-추가">1.1 환경 변수 추가</h4>
+<p>MLflow 와 통신하기 위해서는 몇 가지 환경 변수가 설정되어야 함</p>
+<p>유저가 학습한 모델을 MLflow 서버를 통해 Arifact Store 인 MinIO 에 저장함</p>
+<p>이 과정에서 MinIO 의 접근 권한이 필요함</p>
+<p>이 접근 권한 정보는 <code>day 6</code> 에서 Docker Compose 파일의 <code>mlflow-server</code> 와 <code>mlflow-artifact-store</code> 의 정보임</p>
+<p>따라서 아이디와 비밀번호를 사전에 정의된 시스템 환경 변수에 설정해야 MinIO 에 접근할 수 있음</p>
+<p>추가로 MLflow 서버와 S3(MinIO) 의 URI 도 함께 설정해야함</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"MLFLOW_S3_ENDPOINT_URL"</span>] <span class="op">=</span> <span class="st">"http://localhost:9000"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"MLFLOW_TRACKING_URI"</span>] <span class="op">=</span> <span class="st">"http://localhost:5001"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"AWS_ACCESS_KEY_ID"</span>] <span class="op">=</span> <span class="st">"minio"</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"AWS_SECRET_ACCESS_KEY"</span>] <span class="op">=</span> <span class="st">"miniostorage"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li><em>-d</em> : 컨테이너가 detached 모드로 실행</li>
-<li><em>-p</em> : port forwarding 설정</li>
-<li><em>-e</em> : 환경 변수 설정</li>
+<li><em>MLFLOW_S3_ENDPOINT_URL</em> : 모델을 저장할 스토리지 주소</li>
+<li><em>MLFLOW_TRACKING_URI</em> : 정보를 저장하기 위해 연결할 MLflow 서버의 수조</li>
+<li><em>AWS_ACCESS_KEY_ID</em> : MinIO 에 접근하기 위한 아이디</li>
+<li><em>AWS_SECRET_ACCESS_KEY</em> : MinIO 에 접근하기 위한 비밀번호</li>
 </ul>
+</section>
+<section id="모델-저장하기" class="level4">
+<h4 class="anchored" data-anchor-id="모델-저장하기">1.2 모델 저장하기</h4>
+<p>MLflow 의 정보를 저장하기 위해 <code>experiment</code> 와 <code>run</code> 을 사용함</p>
+<ul>
+<li><code>experiment</code> : MLflow 에서 정보를 관리하기 위해 나누는 일종의 directory, 생성하지 않는 경우 <code>Default</code>로 저장됨</li>
+<li><code>run</code> : <code>experiment</code> 에 저장되는 모델 실험 결과, 해당 <code>run</code> 에 실제 정보들이 저장되며 <code>experiment/run</code> 의 구조로 저장됨</li>
+</ul>
+<p><code>mlflow</code> 클래스를 이용하여 다음과 같이 코드를 작성함</p>
+<p><code>parser</code> 를 활용하여 <code>model_name</code> 인자를 받아주고 <code>experiment</code> 는 <code>mlflow.set_experiment("new-exp")</code> 를 이용하여 이름을 정해줌</p>
+<p><code>run</code> 을 담당하는 코드는 다음과 같음</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mlflow.start_run():</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    mlflow.log_metrics({<span class="st">"train_acc"</span>: train_acc, <span class="st">"valid_acc"</span>: valid_acc})</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    mlflow.sklearn.log_model(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        sk_model<span class="op">=</span>model_pipeline,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        artifact_path<span class="op">=</span>args.model_name,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        signature<span class="op">=</span>signature,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        input_example<span class="op">=</span>input_sample,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><em>mlflow.log_metrics</em> : 모델의 결과 metrics 를 Python 의 dictionary 형태로 입력해 생성된 <code>run</code> 을 저장</li>
+<li><em>mlflow.sklearn.log_model</em> : <code>sklearn</code> 모델은 <code>mlflow.sklearn</code> 를 사용해 간편하게 업로드가 가능함</li>
+</ul>
+<p>모델은 다음과 같은 구조로 저장됨</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Directory written by mlflow.sklearn.save_model(model, "sk_model")</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sk_model<span class="op">/</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>├── MLmodel</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>├── model.pkl</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>├── conda.yaml</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>├── python_env.yaml</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>└── requirements.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="전체-코드" class="level3">
+<h3 class="anchored" data-anchor-id="전체-코드">2. 전체 코드</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save_model_to_registry.py</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> argparse <span class="im">import</span> ArgumentParser</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mlflow</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg2</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 0. set mlflow environments</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"MLFLOW_S3_ENDPOINT_URL"</span>] <span class="op">=</span> <span class="st">"http://localhost:9000"</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"MLFLOW_TRACKING_URI"</span>] <span class="op">=</span> <span class="st">"http://localhost:5001"</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"AWS_ACCESS_KEY_ID"</span>] <span class="op">=</span> <span class="st">"minio"</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"AWS_SECRET_ACCESS_KEY"</span>] <span class="op">=</span> <span class="st">"miniostorage"</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. get data</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>db_connect <span class="op">=</span> psycopg2.<span class="ex">connect</span>(</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    user<span class="op">=</span><span class="st">"myuser"</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    password<span class="op">=</span><span class="st">"mypassword"</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">"localhost"</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">5432</span>,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span><span class="st">"mydatabase"</span>,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_sql(<span class="st">"SELECT * FROM iris_data ORDER BY id DESC LIMIT 100"</span>, db_connect)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.drop([<span class="st">"id"</span>, <span class="st">"timestamp"</span>, <span class="st">"target"</span>], axis<span class="op">=</span><span class="st">"columns"</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">"target"</span>]</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>X_train, X_valid, y_train, y_valid <span class="op">=</span> train_test_split(X, y, train_size<span class="op">=</span><span class="fl">0.8</span>, random_state<span class="op">=</span><span class="dv">2022</span>)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. model development and train</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>model_pipeline <span class="op">=</span> Pipeline([(<span class="st">"scaler"</span>, StandardScaler()), (<span class="st">"svc"</span>, SVC())])</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>model_pipeline.fit(X_train, y_train)</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>train_pred <span class="op">=</span> model_pipeline.predict(X_train)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>valid_pred <span class="op">=</span> model_pipeline.predict(X_valid)</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>train_acc <span class="op">=</span> accuracy_score(y_true<span class="op">=</span>y_train, y_pred<span class="op">=</span>train_pred)</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>valid_acc <span class="op">=</span> accuracy_score(y_true<span class="op">=</span>y_valid, y_pred<span class="op">=</span>valid_pred)</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Train Accuracy :"</span>, train_acc)</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Valid Accuracy :"</span>, valid_acc)</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. save model</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>parser <span class="op">=</span> ArgumentParser()</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">"--model-name"</span>, dest<span class="op">=</span><span class="st">"model_name"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">str</span>, default<span class="op">=</span><span class="st">"sk_model"</span>)</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> parser.parse_args()</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>mlflow.set_experiment(<span class="st">"new-exp"</span>)</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>signature <span class="op">=</span> mlflow.models.signature.infer_signature(model_input<span class="op">=</span>X_train, model_output<span class="op">=</span>train_pred)</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>input_sample <span class="op">=</span> X_train.iloc[:<span class="dv">10</span>]</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mlflow.start_run():</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    mlflow.log_metrics({<span class="st">"train_acc"</span>: train_acc, <span class="st">"valid_acc"</span>: valid_acc})</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>    mlflow.sklearn.log_model(</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>        sk_model<span class="op">=</span>model_pipeline,</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>        artifact_path<span class="op">=</span>args.model_name,</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>        signature<span class="op">=</span>signature,</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>        input_example<span class="op">=</span>input_sample,</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. save data</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>df.to_csv(<span class="st">"data.csv"</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>실행코드 : <code>python save_model_to_registry.py --model-name "sk_model"</code></p>
+<p>실행 결과는 다음과 같음</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="fig1.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">docker ps 로 현재 컨테이너 동작 확인</figcaption>
-</figure>
-</div>
-<p><strong><code>psql</code> 을 통해 PostgreSQL DB 서버 접속</strong></p>
-<p>-&gt; <code>psql</code>은 PostgreSQL DB 서버를 확인할때 사용하는 CLI 툴</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>$ PGPASSWORD=mypassword psql -h localhost -p {port} -U myuser -d mydatabase</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li><em>PGPASSWORD</em> : 접속할 유저의 비밀번호</li>
-<li><em>h</em> : 호스트 지정</li>
-<li><em>U</em> : 접속할 유저 이름 입력</li>
-<li><em>d</em> : DB 이름 입력</li>
-</ul>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="fig2.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">SQL 서버에 접속 한 모습과 <code>\du</code> 를 입력해 DB 의 role name 과 arrtributes 를 확인</figcaption>
-</figure>
-</div>
-</section>
-<section id="db-table-생성" class="level3">
-<h3 class="anchored" data-anchor-id="db-table-생성">2. DB Table 생성</h3>
-<p><strong><code>psycopg2</code> 를 이용하여 DB 접근</strong></p>
-<p>-&gt; <code>connect</code> 함수 사용</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg2</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>db_connect <span class="op">=</span> psycopg2.<span class="ex">connect</span>(</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    user<span class="op">=</span><span class="st">"myuser"</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    password<span class="op">=</span><span class="st">"mypassword"</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    host<span class="op">=</span><span class="st">"localhost"</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    port<span class="op">=</span><span class="dv">5432</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span><span class="st">"mydatabase"</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>-&gt; DB 를 생성할 때 입력한 정보 입력</p>
-<p><strong>SQL Table Creation</strong></p>
-<p>아래와 같은 형식으로 작성</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> table_name (</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    column1 datatype,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    column2 datatype,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    column3 datatype,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">..</span>.</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>-&gt; 이 실습에서는 <code>scikit-learn</code> 패캐지의 <code>load_iris</code> 사용</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>create_table_query <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="st">CREATE TABLE IF NOT EXISTS iris_data (</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">    id SERIAL PRIMARY KEY,</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="st">    timestamp timestamp,</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">    sepal_length float8,</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">    sepal_width float8,</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">    petal_length float8,</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">    petal_width float8,</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">    target int</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">);"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Send Query to DB</strong></p>
-<ol type="1">
-<li><p>Connector 에서 cursor 를 열고, cursor 에 query 전달</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cur <span class="op">=</span> db_connect.cursor()</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cur.execute(create_table_query)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>전달된 query 를 실행하기 위해 connector에 <code>commit</code></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>db_connect.commit()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>Cursor 의 사용이 끝나면 cursor를 <code>close</code></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cur.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ol>
-<p>하나의 프로세스로 만들게되면 다음과 같음</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> db_connect.cursor() <span class="im">as</span> cur:</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    cur.execute(create_table_query)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    db_connect.commit()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>테이블 확인</strong></p>
-<p><code>psql</code> 을 이용하여 DB에 접속하고 <code>\d</code> 를 입력하여 생성된 테이블들의 목록을 확인</p>
-<p><code>select * from iris_data;</code> 를 입력하면 <code>iris_data</code> 테이블에 있는 데이터를 확인 할 수 있음</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="fig3.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">테이블 확인</figcaption>
+<figcaption class="figure-caption">모델 저장 결과 상세</figcaption>
 </figure>
 </div>
 </section>

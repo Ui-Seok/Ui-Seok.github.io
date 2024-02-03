@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ui Seok">
-<meta name="dcterms.date" content="2023-11-27">
-<meta name="description" content="모델 학습 및 파이프라인 작성">
+<meta name="dcterms.date" content="2023-12-05">
+<meta name="description" content="머신러닝 시스템 개요">
 
-<title>Home - MLOps for MLE - 4</title>
+<title>Home - 머신러닝 시스템 설계 Ch.1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,40 +22,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -163,30 +129,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">Summary</a></li>
-  <li><a href="#실습" id="toc-실습" class="nav-link" data-scroll-target="#실습">실습</a>
-  <ul class="collapse">
-  <li><a href="#base-model-코드-작성" id="toc-base-model-코드-작성" class="nav-link" data-scroll-target="#base-model-코드-작성">1. Base Model 코드 작성</a></li>
-  <li><a href="#model-pipeline-작성" id="toc-model-pipeline-작성" class="nav-link" data-scroll-target="#model-pipeline-작성">2. Model Pipeline 작성</a></li>
-  </ul></li>
-  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
+  <li><a href="#머신러닝-시스템이란" id="toc-머신러닝-시스템이란" class="nav-link active" data-scroll-target="#머신러닝-시스템이란">1. 머신러닝 시스템이란</a></li>
+  <li><a href="#머신러닝을-사용해야-하는-경우" id="toc-머신러닝을-사용해야-하는-경우" class="nav-link" data-scroll-target="#머신러닝을-사용해야-하는-경우">2. 머신러닝을 사용해야 하는 경우</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/blog/posts/2023-11-26-MLOps-day4/index.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/blog/posts/2023-12-06-book-review-1/index.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">MLOps for MLE - 4</h1>
+<h1 class="title">머신러닝 시스템 설계 Ch.1</h1>
   <div class="quarto-categories">
-    <div class="quarto-category">mlops</div>
+    <div class="quarto-category">books</div>
   </div>
   </div>
 
 <div>
   <div class="description">
-    모델 학습 및 파이프라인 작성
+    머신러닝 시스템 개요
   </div>
 </div>
 
@@ -203,7 +164,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 27, 2023</p>
+      <p class="date">December 5, 2023</p>
     </div>
   </div>
   
@@ -213,112 +174,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="summary" class="level2">
-<h2 class="anchored" data-anchor-id="summary">Summary</h2>
-<ol type="1">
-<li><p>기본적인 모델 학습 및 저장</p></li>
-<li><p>모델 파이프라인 작성</p></li>
-</ol>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
-</div>
-</div>
+<section id="머신러닝-시스템이란" class="level2">
+<h2 class="anchored" data-anchor-id="머신러닝-시스템이란">1. 머신러닝 시스템이란</h2>
+<p>프로덕션 환경에서 알고리즘은 ML 시스템의 일부이다. 시스템은 ML 프로젝트의 출발점이 된 비즈니스 요구 사항, 사용자와 개발자가 시스템과 상호 작용하는 인터페이스, 데이터 스택, 모델을 개발 및 모니터링하고 업데이트하기 위한 로직은 물론 해당 로직을 전달할 수 있는 인프라를 포함한다.</p>
+<ul>
+<li><p>ML 시스템</p>
+<ul>
+<li><p>배포, 모니터링, 로직 업데이트</p></li>
+<li><p>피처 엔지니어링, ML 알고리즘, Evaluation</p></li>
+<li><p>데이터</p></li>
+<li><p>인프라</p></li>
+</ul></li>
+</ul>
+<p>이러한 ML 시스템과 ML 시스템 사용자, 비즈니스 요구 사항, ML 시스템 개발자 모두가 구성 요소이다.</p>
 </section>
-<section id="실습" class="level2">
-<h2 class="anchored" data-anchor-id="실습">실습</h2>
-<section id="base-model-코드-작성" class="level3">
-<h3 class="anchored" data-anchor-id="base-model-코드-작성">1. Base Model 코드 작성</h3>
-<p>데이터: <code>Iris</code></p>
-<p>데이터 스케일링: <code>StandardScaler</code></p>
-<p>모델: <code>SVC</code></p>
-<p>정확도 metric: <code>accuracy_score</code></p>
-<p>모델 저장 방법: <code>joblib</code></p>
-<p>전체 코드는 아래와 같음</p>
-<p><strong>Train 코드</strong></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. get data</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>, as_frame<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>X_train, X_valid, y_train, y_valid <span class="op">=</span> train_test_split(X, y, train_size<span class="op">=</span><span class="fl">0.8</span>, random_state<span class="op">=</span><span class="dv">2022</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. model development and train</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>classifier <span class="op">=</span> SVC()</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>scaled_X_train <span class="op">=</span> scaler.fit_transform(X_train)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>scaled_X_valid <span class="op">=</span> scaler.transform(X_valid)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>classifier.fit(scaled_X_train, y_train)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>train_pred <span class="op">=</span> classifier.predict(scaled_X_train)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>valid_pred <span class="op">=</span> classifier.predict(scaled_X_valid)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>train_acc <span class="op">=</span> accuracy_score(y_true<span class="op">=</span>y_train, y_pred<span class="op">=</span>train_pred)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>valid_acc <span class="op">=</span> accuracy_score(y_true<span class="op">=</span>y_valid, y_pred<span class="op">=</span>valid_pred)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Train Accuracy :"</span>, train_acc)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Valid Accuracy :"</span>, valid_acc)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. save model</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>joblib.dump(scaler, <span class="st">"scaler.joblib"</span>)</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>joblib.dump(classifier, <span class="st">"classifier.joblib"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Validate 코드</strong></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. reproduce data</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> load_iris(return_X_y<span class="op">=</span><span class="va">True</span>, as_frame<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>X_train, X_valid, y_train, y_valid <span class="op">=</span> train_test_split(X, y, train_size<span class="op">=</span><span class="fl">0.8</span>, random_state<span class="op">=</span><span class="dv">2022</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. load model</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>scaler_load <span class="op">=</span> joblib.load(<span class="st">"scaler.joblib"</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>classifier_load <span class="op">=</span> joblib.load(<span class="st">"classifier.joblib"</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. validate</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>scaled_X_train <span class="op">=</span> scaler_load.transform(X_train)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>scaled_X_valid <span class="op">=</span> scaler_load.transform(X_valid)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>load_train_pred <span class="op">=</span> classifier_load.predict(scaled_X_train)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>load_valid_pred <span class="op">=</span> classifier_load.predict(scaled_X_valid)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>load_train_acc <span class="op">=</span> accuracy_score(y_true<span class="op">=</span>y_train, y_pred<span class="op">=</span>load_train_pred)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>load_valid_acc <span class="op">=</span> accuracy_score(y_true<span class="op">=</span>y_valid, y_pred<span class="op">=</span>load_valid_pred)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Load Model Train Accuracy :"</span>, load_train_acc)</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Load Model Valid Accuracy :"</span>, load_valid_acc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>-&gt; <code>joblib</code>의 load를 통해 학습한 모델을 불러옴</p>
+<section id="머신러닝을-사용해야-하는-경우" class="level2">
+<h2 class="anchored" data-anchor-id="머신러닝을-사용해야-하는-경우">2. 머신러닝을 사용해야 하는 경우</h2>
+<p>먼저 프로젝트를 시작하기 전에 ML이 과연 필요한지 생각해야 한다.</p>
+<p>ML은 기존 데이터로 부터 복잡한 패턴을 학습하고 이러한 패턴을 사용해 본 적 없는 데이터에 대해 예측을 수행하는 접근법이다.</p>
+<p>여기서 봐야하는 관점은 학습 가능한 점, 복잡한 패턴, 데이터(사용 가능한 데이터, 본 적 없는 데이터), 예측, 반복적, 비용, 대규모 이다.</p>
+<section id="학습-시스템에-학습-능력이-있음" class="level4">
+<h4 class="anchored" data-anchor-id="학습-시스템에-학습-능력이-있음">1. 학습: 시스템에 학습 능력이 있음</h4>
+<p>흔히 알려진 관계형 데이터베이스는 학습 능력이 없기 때문에 ML 시스템이 아니다. ML 시스템이 학습을 하려면 학습할 대상이 있어야 한다. 대부분의 경우에는 데이터로 학습한다.</p>
+<p>Ex) 지도 학습의 경우, ML 시스템은 한 쌍으로 이뤄진 입력과 출력 데이터를 이용해 입력 데이터에서 출력 데이터를 생성하는 관계를 학습한다.</p>
 </section>
-<section id="model-pipeline-작성" class="level3">
-<h3 class="anchored" data-anchor-id="model-pipeline-작성">2. Model Pipeline 작성</h3>
-<p><strong>위에서 사용했던 모델인 <code>scaler</code>와 <code>SVC</code>를 통합</strong></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model_pipeline <span class="op">=</span> Pipeline([(<span class="st">"scaler"</span>, StandardScaler()), (<span class="st">"svc"</span>, SVC())])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>-&gt; 이 코드를 활용하여 앞의 부분을 대체</p>
-</section>
-</section>
-<section id="reference" class="level2">
-<h2 class="anchored" data-anchor-id="reference">Reference</h2>
-<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+<section id="복잡한-패턴-학습할-패턴이-존재하며-복잡함" class="level4">
+<h4 class="anchored" data-anchor-id="복잡한-패턴-학습할-패턴이-존재하며-복잡함">2. 복잡한 패턴: 학습할 패턴이 존재하며 복잡함</h4>
+<p>ML 시스템은 학습할 패턴이 있는 경우에만 유용하다.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

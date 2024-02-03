@@ -8,6 +8,7 @@
 
 <meta name="author" content="Ui Seok">
 <meta name="dcterms.date" content="2023-11-24">
+<meta name="description" content="DB에 데이터 삽입">
 
 <title>Home - MLOps for MLE - 2</title>
 <style>
@@ -178,12 +179,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">MLOps for MLE - 2</h1>
-<p class="subtitle lead">DB에 데이터 삽입</p>
   <div class="quarto-categories">
     <div class="quarto-category">mlops</div>
   </div>
   </div>
 
+<div>
+  <div class="description">
+    DB에 데이터 삽입
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -232,7 +237,7 @@ Note
 <h2 class="anchored" data-anchor-id="실습">실습</h2>
 <section id="데이터-삽입" class="level3">
 <h3 class="anchored" data-anchor-id="데이터-삽입">1. 데이터 삽입</h3>
-<p><strong><code>scikit-learn</code> 패키지의 <code>load_iris</code>를 삽입하기 위해 앞에서 생성한 테이블의 columns 이름과 일치하도록 수정</strong></p>
+<p><strong><code>scikit-learn</code> 패키지의 <code>load_iris</code> 를 삽입하기 위해 앞에서 생성한 테이블의 columns 이름과 일치하도록 수정</strong></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -248,7 +253,7 @@ Note
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.rename(columns<span class="op">=</span>rename_rule)</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>Data Insertion Query 작성</strong></p>
-<p>DB에 데이터를 삽입하는 query의 포맷은 다음과 같음</p>
+<p>DB 에 데이터를 삽입하는 query 의 포맷은 다음과 같음</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> {table_name} (col_1, col_2, <span class="op">..</span>.) <span class="kw">VALUES</span> (val_1, val_2, <span class="op">..</span>.)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>이를 이해하고 query를 작성</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>insert_row_query <span class="op">=</span> <span class="ss">f"""</span></span>
@@ -262,7 +267,7 @@ Note
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ss">        </span><span class="sc">{</span>data<span class="sc">.</span>petal_width<span class="sc">}</span><span class="ss">,</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="ss">        </span><span class="sc">{</span>data<span class="sc">.</span>target<span class="sc">}</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ss">    );"""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>이 query를 cursor를 이용하여 DB에 전달하는 코드 작성</p>
+<p>이 query 를 cursor 를 이용하여 DB 에 전달하는 코드 작성</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psycopg2</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
@@ -309,7 +314,19 @@ Note
 <span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> get_data()</span>
 <span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    insert_data(db_connect, df.sample(<span class="dv">1</span>).squeeze())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>-&gt; <code>psql</code>로 현재는 iris_data에서 하나의 데이터만 DB에 입력된 상태임을 확인할 수 있음</p>
+<p>-&gt; <code>psql</code> 로 현재는 iris_data 에서 하나의 데이터만 DB에 입력된 상태임을 확인할 수 있음</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">데이터 삽입</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">데이터 확인</figcaption>
+</figure>
+</div>
 </section>
 <section id="loop-추가" class="level3">
 <h3 class="anchored" data-anchor-id="loop-추가">2. Loop 추가</h3>
@@ -320,7 +337,7 @@ Note
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="va">True</span>:</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        insert_data(db_connect, df.sample(<span class="dv">1</span>).squeeze())</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        time.sleep(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>-&gt; <code>time</code>패키지의 <code>sleep</code>함수를 이용해서 DB의 부하 줄이기</p>
+<p>-&gt; <code>time</code> 패키지의 <code>sleep</code> 함수를 이용해서 DB의 부하 줄이기</p>
 </section>
 </section>
 <section id="reference" class="level2">

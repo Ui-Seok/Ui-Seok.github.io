@@ -30,6 +30,8 @@ SELECT * FROM iris_data ORDER BY id DESC LIMIT 100;
 
 ```
 
+![실행결과](fig1.png)
+
 -> `id` column 을 기준으로 최신 데이터 100개를 추출하는 쿼리
 
 __Pandas를 이용한 데이터 받아오기__

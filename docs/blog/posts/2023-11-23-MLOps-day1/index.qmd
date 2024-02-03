@@ -4,6 +4,7 @@ description: Docker 환경 설정 및 DB 설정
 author: "Ui Seok"
 date: "2023-11-23"
 categories: [mlops]
+image: "https://picsum.photos/id/99/200/150"
 
 page-layout: article
 ---

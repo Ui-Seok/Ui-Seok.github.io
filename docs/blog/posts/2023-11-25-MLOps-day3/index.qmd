@@ -4,6 +4,7 @@ description: Docker를 활용하여 DB에 데이터 삽입
 author: "Ui Seok"
 date: "2023-11-26"
 categories: [mlops]
+image: "https://picsum.photos/id/102/200/150"
 
 page-layout: article
 ---

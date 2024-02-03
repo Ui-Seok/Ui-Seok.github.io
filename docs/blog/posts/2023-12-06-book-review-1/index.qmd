@@ -4,6 +4,7 @@ description: 머신러닝 시스템 개요
 author: "Ui Seok"
 date: "2023-12-05"
 categories: [books]
+image: "https://picsum.photos/id/109/200/150"
 
 page-layout: article
 ---

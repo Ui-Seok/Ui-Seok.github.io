@@ -4,6 +4,7 @@ description: DB에서 데이터를 가져오기
 author: "Ui Seok"
 date: "2023-11-28"
 categories: [mlops]
+image: "https://picsum.photos/id/104/200/150"
 
 page-layout: article
 ---

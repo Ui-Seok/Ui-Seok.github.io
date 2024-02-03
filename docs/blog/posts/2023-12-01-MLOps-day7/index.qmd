@@ -4,6 +4,7 @@ description: MLflow 서버에 학습된 모델 저장
 author: "Ui Seok"
 date: "2023-12-01"
 categories: [mlops]
+image: "https://picsum.photos/id/107/200/150"
 
 page-layout: article
 ---

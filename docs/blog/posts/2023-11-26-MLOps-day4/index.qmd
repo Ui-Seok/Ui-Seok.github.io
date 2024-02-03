@@ -4,6 +4,7 @@ description: 모델 학습 및 파이프라인 작성
 author: "Ui Seok"
 date: "2023-11-27"
 categories: [mlops]
+image: "https://picsum.photos/id/103/200/150"
 
 page-layout: article
 ---

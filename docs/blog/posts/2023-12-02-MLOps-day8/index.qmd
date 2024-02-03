@@ -4,6 +4,7 @@ description: MLflow 서버에서 모델 불러오기
 author: "Ui Seok"
 date: "2023-12-02"
 categories: [mlops]
+image: "https://picsum.photos/id/108/200/150"
 
 page-layout: article
 ---

@@ -4,6 +4,7 @@ description: MLflow 서버 구축 및 모델 저장
 author: "Ui Seok"
 date: "2023-11-29"
 categories: [mlops]
+image: "https://picsum.photos/id/106/200/150"
 
 page-layout: article
 ---

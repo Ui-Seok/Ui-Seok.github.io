@@ -1,0 +1,82 @@
+---
+title: "MLOps for MLE - 12"
+description: Docker 를 활용하여 API 실행
+author: "Ui Seok"
+date: "2023-12-12"
+categories: [mlops]
+image: "https://picsum.photos/id/114/200/150"
+
+page-layout: article
+---
+
+## Summary
+
+1. 앞에서 작성한 API 를 Docker 를 이용하여 실행
+
+::: {.callout-note}
+실습을 진행했던 코드를 보고싶으시다면 [여기](https://github.com/Ui-Seok/mlops-tutorial)를 눌러주세요
+:::
+
+
+## 실습
+
+### 1. Dockerfile 작성
+
+``` Dockerfile
+FROM amd64/python:3.9-slim
+
+WORKDIR /usr/app
+
+RUN pip install -U pip \
+    && pip install "fastapi[all]"
+
+COPY crud_pydantic.py crud_pydantic.py
+
+CMD ["uvicorn", "crud_pydantic:app", "--host", "0.0.0.0", "--reload"]
+
+```
+
+#### 1.1 Build
+
+이미지 이름을 지정하고 build
+
+`$ docker build -t {image-name} .`
+
+이미지가 잘 생성되었는지 확인
+
+`$ docker image ls`
+
+![정상적으로 생성 된 모습](fig1.png)
+
+#### 1.2 Run
+
+``` python
+$ docker run -d \
+  --name {container-name} \
+  -p 8000:8000 \
+  {image-name}
+
+```
+
+`docker ps` 로 컨테이너 실행여부 확인
+
+![정상적으로 생성 된 모습](fig2.png)
+
+
+### 2. API 서버에 접속하여 작동 확인
+
+`http://localhost:8000/docs` 에 접속하여 정상적으로 동작하는지 확인
+
+![Swagger UI 화면이 정상적으로 뜸](fig3.png)
+
+#### 2.1 컨테이너 종료
+
+`docker rm --force {container-name}`
+
+
+
+## Reference
+
+[ML Engineer를 위한 MLOps tutorial](https://mlops-for-mle.github.io/tutorial/)
+
+[FastAPI 튜토리얼](https://fastapi.tiangolo.com/tutorial/)

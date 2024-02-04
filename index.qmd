@@ -3,7 +3,7 @@ title: "UiSeok's blog"
 listing:
   contents: posts
   sort: "date desc"
-  type: default
+  type: grid  #default
   categories: true
   sort-ui: false
   filter-ui: true
@@ -14,11 +14,13 @@ title-block-banner: true
 ::: {.get-started}
 ::: {.content-block}
 
-공부했던 내용들을 정리하는 블로그 입니다.
-
 Welcome my page!
 
-This page made by Quarto
+공부했던 내용들을 정리하는 블로그 입니다.
+
+상단의 Menu bar 를 참고해주세요.
+
+_This page made by Quarto_
 
 ---
 

@@ -58,7 +58,7 @@ $ PGPASSWORD=mypassword psql -h localhost -p {port} -U myuser -d mydatabase
 - _U_ : 접속할 유저 이름 입력
 - _d_ : DB 이름 입력
 
-![SQL 서버에 접속 한 모습과 `\du` 를 입력해 DB 의 role name 과 arrtributes 를 확인](fig2.png)
+![SQL 서버에 접속 한 모습과 `\du` 를 입력해 DB 의 role name 과 arrtributes 를 확인](fig2.png){fig-align="left"}
 
 
 ### 2. DB Table 생성
@@ -149,7 +149,7 @@ __테이블 확인__
 
 `select * from iris_data;` 를 입력하면 `iris_data` 테이블에 있는 데이터를 확인 할 수 있음
 
-![테이블 확인](fig3.png)
+![테이블 확인](fig3.png){fig-align="left"}
 
 
 ## Reference

@@ -4,7 +4,7 @@ title: "Coursera Lecture"
 listing:
     contents: posts
     sort: "date desc"
-    type: default
+    type: grid  # default
     categories: true
     sort-ui: true
     filter-ui: true
@@ -16,3 +16,4 @@ search: true
 
 
 Coursera 강의를 듣고 정리하는 페이지입니다.
+---

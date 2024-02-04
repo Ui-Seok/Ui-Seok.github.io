@@ -6,6 +6,11 @@
   {
     "listing": "/docs/blog/index.html",
     "items": [
+      "/docs/blog/posts/2023-12-15-MLOps-day13/index.html",
+      "/docs/blog/posts/2023-12-12-MLOps-day12/index.html",
+      "/docs/blog/posts/2023-12-11-MLOps-day11/index.html",
+      "/docs/blog/posts/2023-12-09-MLOps-day10/index.html",
+      "/docs/blog/posts/2023-12-07-MLOps-day9/index.html",
       "/docs/blog/posts/2023-12-06-book-review-1/index.html",
       "/docs/blog/posts/2023-12-02-MLOps-day8/index.html",
       "/docs/blog/posts/2023-12-01-MLOps-day7/index.html",
@@ -15,6 +20,28 @@
       "/docs/blog/posts/2023-11-25-MLOps-day3/index.html",
       "/docs/blog/posts/2023-11-24-MLOps-day2/index.html",
       "/docs/blog/posts/2023-11-23-MLOps-day1/index.html"
+    ]
+  },
+  {
+    "listing": "/index.html",
+    "items": [
+      "/docs/blog/posts/2023-12-15-MLOps-day13/index.html",
+      "/docs/blog/posts/2023-12-12-MLOps-day12/index.html",
+      "/docs/blog/posts/2023-12-11-MLOps-day11/index.html",
+      "/docs/blog/posts/2023-12-09-MLOps-day10/index.html",
+      "/docs/blog/posts/2023-12-07-MLOps-day9/index.html",
+      "/docs/blog/posts/2023-12-06-book-review-1/index.html",
+      "/docs/blog/posts/2023-12-02-MLOps-day8/index.html",
+      "/docs/blog/posts/2023-12-01-MLOps-day7/index.html",
+      "/docs/blog/posts/2023-11-29-MLOps-day6/index.html",
+      "/docs/blog/posts/2023-11-28-MLOps-day5/index.html",
+      "/docs/blog/posts/2023-11-26-MLOps-day4/index.html",
+      "/docs/blog/posts/2023-11-25-MLOps-day3/index.html",
+      "/docs/blog/posts/2023-11-24-MLOps-day2/index.html",
+      "/docs/blog/posts/2023-11-23-MLOps-day1/index.html",
+      "/posts/test-page/index.html",
+      "/posts/post-with-code/index.html",
+      "/posts/welcome/index.html"
     ]
   }
 ]

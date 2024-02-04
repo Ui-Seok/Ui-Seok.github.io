@@ -10,7 +10,1925 @@
 <atom:link href="https://ui-seok.github.io/docs/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Mon, 04 Dec 2023 15:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 11 Dec 2023 15:00:00 GMT</lastBuildDate>
+<item>
+  <title>MLOps for MLE - 13</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/blog/posts/2023-12-15-MLOps-day13/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li><p>Iris 데이터를 입력받아 예측값을 반환하는 API 작성</p></li>
+<li><p>제대로 동작하는지 확인</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="모델-다운로드" class="level3">
+<h3 class="anchored" data-anchor-id="모델-다운로드">1. 모델 다운로드</h3>
+<section id="environment-variables" class="level4">
+<h4 class="anchored" data-anchor-id="environment-variables">1.1 Environment Variables</h4>
+<p>Model Registry 에 저장되어 있는 모델을 다운로드하기 위해 MLflow 서버와 MinIO 서버에 접속하기 위한 정보를 환경 변수로 설정</p>
+<p>-&gt; <code>day 7</code> 에서 작성한 코드와 같음</p>
+</section>
+<section id="모델-다운로드-함수-작성" class="level4">
+<h4 class="anchored" data-anchor-id="모델-다운로드-함수-작성">1.2 모델 다운로드 함수 작성</h4>
+<p><code>mlflow</code> 패키지를 이용하여 model artifact 다운로드</p>
+<p>-&gt; model artifact 란 MLflow 에 모델이 저장될 때 함께 저장된 메타데이터와 모델 자체의 binary 파일을 의미</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> download_model(args):</span>
+<span id="cb1-2">    mlflow.artifacts.download_artifacts(artifact_uri<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"runs:/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>args<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>run_id<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>args<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>model_name<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>, dst_path<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"."</span>)</span></code></pre></div>
+</section>
+<section id="모델-다운로드-1" class="level4">
+<h4 class="anchored" data-anchor-id="모델-다운로드-1">1.3 모델 다운로드</h4>
+<p><code>argparse</code> 를 이용하여 파라미터를 입력받을 수 있도록 하고 <code>download_model()</code> 함수를 호출함</p>
+</section>
+<section id="전체-코드" class="level4">
+<h4 class="anchored" data-anchor-id="전체-코드">1.4 전체 코드</h4>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> os</span>
+<span id="cb2-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> argparse <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> ArgumentParser</span>
+<span id="cb2-3"></span>
+<span id="cb2-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> mlflow</span>
+<span id="cb2-5"></span>
+<span id="cb2-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set environments</span></span>
+<span id="cb2-7">os.environ[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"MLFLOW_S3_ENDPOINT_URL"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"http://localhost:9000"</span></span>
+<span id="cb2-8">os.environ[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"MLFLOW_TRACKING_URI"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"http://localhost:5001"</span></span>
+<span id="cb2-9">os.environ[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"AWS_ACCESS_KEY_ID"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"minio"</span></span>
+<span id="cb2-10">os.environ[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"AWS_SECRET_ACCESS_KEY"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"miniostorage"</span></span>
+<span id="cb2-11"></span>
+<span id="cb2-12"></span>
+<span id="cb2-13"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> download_model(args):</span>
+<span id="cb2-14">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Download model artifacts</span></span>
+<span id="cb2-15">    mlflow.artifacts.download_artifacts(artifact_uri<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"runs:/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>args<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>run_id<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>args<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>model_name<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>, dst_path<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"."</span>)</span>
+<span id="cb2-16"></span>
+<span id="cb2-17"></span>
+<span id="cb2-18"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">__name__</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"__main__"</span>:</span>
+<span id="cb2-19">    parser <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ArgumentParser()</span>
+<span id="cb2-20">    parser.add_argument(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"--model-name"</span>, dest<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"model_name"</span>, <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, default<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sk_model"</span>)</span>
+<span id="cb2-21">    parser.add_argument(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"--run-id"</span>, dest<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"run_id"</span>, <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>)</span>
+<span id="cb2-22">    args <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> parser.parse_args()</span>
+<span id="cb2-23"></span>
+<span id="cb2-24">    download_model(args)</span></code></pre></div>
+</section>
+<section id="스크립트-실행" class="level4">
+<h4 class="anchored" data-anchor-id="스크립트-실행">1.5 스크립트 실행</h4>
+<p><code>http://localhost:5001</code> 에 접속하여 해당 모델이 저장된 <code>experiment</code> 에 들어가 <code>run_id</code> 와 <code>model_name</code> 을 확인</p>
+<p><code>$ python download_model.py --model-name {model-name} --run-id {run-id}</code></p>
+<p>이 스크립트를 실행하고 나면 <code>model-name</code> 의 폴더가 생성되는 것을 확인할 수 있음</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-15-MLOps-day13/fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">script 실행 모습</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-15-MLOps-day13/fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><code>sk_model</code> 모델의 폴더 이름이 생겨남</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="model-api-명세서-작성" class="level3">
+<h3 class="anchored" data-anchor-id="model-api-명세서-작성">2. Model API 명세서 작성</h3>
+<p><code>POST /predict</code> 를 수행했을 때 학습한 모델의 inference 결과를 반환해주는 API 명세서를 작성</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-15-MLOps-day13/fig3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="pydantic-model-로-스키마의-클래스-작성" class="level3">
+<h3 class="anchored" data-anchor-id="pydantic-model-로-스키마의-클래스-작성">3. Pydantic Model 로 스키마의 클래스 작성</h3>
+<p>명세서에 맞게 <code>Class PredictIn(BaseModel)</code> 와 <code>Class PredictOut(BaseModel)</code> 을 작성</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> pydantic <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> BaseModel</span>
+<span id="cb3-2"></span>
+<span id="cb3-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> PredictIn(BaseModel):</span>
+<span id="cb3-4">    sepal_length: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span></span>
+<span id="cb3-5">    sepal_width: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span></span>
+<span id="cb3-6">    petal_length: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span></span>
+<span id="cb3-7">    petal_width: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span></span>
+<span id="cb3-8"></span>
+<span id="cb3-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> PredictOut(BaseModel):</span>
+<span id="cb3-10">    iris_class: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span></span></code></pre></div>
+</section>
+<section id="predict-api-구현" class="level3">
+<h3 class="anchored" data-anchor-id="predict-api-구현">4. Predict API 구현</h3>
+<section id="load-model" class="level4">
+<h4 class="anchored" data-anchor-id="load-model">4.1 Load Model</h4>
+<p><code>mlflow</code> 패키지를 활용하여 모델을 불러옴</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> get_model():</span>
+<span id="cb4-2">    model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> mlflow.sklearn.load_model(model_uri <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"./{model-name}"</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># sk_model</span></span>
+<span id="cb4-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> model</span>
+<span id="cb4-4"></span>
+<span id="cb4-5">MODEL <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> get_model()</span></code></pre></div>
+</section>
+<section id="create-a-fastapi-instance" class="level4">
+<h4 class="anchored" data-anchor-id="create-a-fastapi-instance">4.2 Create a FastAPI Instance</h4>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span></code></pre></div>
+</section>
+<section id="write-predict-function" class="level4">
+<h4 class="anchored" data-anchor-id="write-predict-function">4.3 Write <code>predict</code> function</h4>
+<p>API 에 <code>POST /predict</code> 를 수행했을 때 학습한 모델의 inference 결과를 반환할 수 있도록 <code>predict</code> 함수 작성</p>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.post</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/predict"</span>, response_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> PredictOut)</span>
+<span id="cb6-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> predict(data: PredictIn) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> PredictOut:</span>
+<span id="cb6-3">    df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame([data.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>()])</span>
+<span id="cb6-4">    pred <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> MODEL.predict(df).item()</span>
+<span id="cb6-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> PredictOut(iris_class <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pred)</span></code></pre></div>
+<ol type="1">
+<li><code>predict</code> 함수는 <code>PredictIn</code> 클래스의 데이터를 입력으로 받고 <code>PredictOut</code> 클래스를 반환</li>
+<li>입력받은 데이터를 데이터프레임 형태로 변환한 후, 위에서 불러온 모델을 이용하여 inference 결과를 저장</li>
+<li>마지막으로 저장된 결과를 <code>PredictOut</code> 클래스에 넣어 반환</li>
+</ol>
+<p>POST method 를 이용하여 예측할 수 있도록 <code>@app.post</code> 를 이용한 데코레이터로 함수를 감싸주고, <code>response_model</code> 은 <code>PredictOut</code> 클래스로 지정</p>
+</section>
+<section id="전체-코드-1" class="level4">
+<h4 class="anchored" data-anchor-id="전체-코드-1">4.4 전체 코드</h4>
+<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># app.py</span></span>
+<span id="cb7-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> mlflow</span>
+<span id="cb7-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb7-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastapi <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> FastAPI</span>
+<span id="cb7-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> schemas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> PredictIn, PredictOut</span>
+<span id="cb7-6"></span>
+<span id="cb7-7"></span>
+<span id="cb7-8"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> get_model():</span>
+<span id="cb7-9">    model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> mlflow.sklearn.load_model(model_uri<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"./sk_model"</span>)</span>
+<span id="cb7-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> model</span>
+<span id="cb7-11"></span>
+<span id="cb7-12"></span>
+<span id="cb7-13">MODEL <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> get_model()</span>
+<span id="cb7-14"></span>
+<span id="cb7-15"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a FastAPI instance</span></span>
+<span id="cb7-16">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span>
+<span id="cb7-17"></span>
+<span id="cb7-18"></span>
+<span id="cb7-19"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.post</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/predict"</span>, response_model<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>PredictOut)</span>
+<span id="cb7-20"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> predict(data: PredictIn) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> PredictOut:</span>
+<span id="cb7-21">    df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame([data.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>()])</span>
+<span id="cb7-22">    pred <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> MODEL.predict(df).item()</span>
+<span id="cb7-23">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> PredictOut(iris_class<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>pred)</span></code></pre></div>
+</section>
+</section>
+<section id="api-작동-확인" class="level3">
+<h3 class="anchored" data-anchor-id="api-작동-확인">5. API 작동 확인</h3>
+<p><code>$ uvicorn app:app --reload</code> 를 입력하고 <code>http://localhost:8000/docs</code> 로 이동하여 동작을 확인</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-15-MLOps-day13/fig4.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Model API Server 동작</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-15-MLOps-day13/fig5.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Request Body 의 형태에 맞게 데이터 입력 화면, Response Body 에 추론 결과를 볼 수 있음</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>mlops</category>
+  <guid>https://ui-seok.github.io/docs/blog/posts/2023-12-15-MLOps-day13/index.html</guid>
+  <pubDate>Mon, 11 Dec 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/114/200/150" medium="image"/>
+</item>
+<item>
+  <title>MLOps for MLE - 12</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/blog/posts/2023-12-12-MLOps-day12/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li>앞에서 작성한 API 를 Docker 를 이용하여 실행</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="dockerfile-작성" class="level3">
+<h3 class="anchored" data-anchor-id="dockerfile-작성">1. Dockerfile 작성</h3>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode dockerfile code-with-copy"><code class="sourceCode dockerfile"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">FROM</span> amd64/python:3.9-slim</span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">WORKDIR</span> /usr/app</span>
+<span id="cb1-4"></span>
+<span id="cb1-5"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">RUN</span> <span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-U</span> pip <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb1-6">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&amp;&amp;</span> <span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">pip</span> install <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"fastapi[all]"</span></span>
+<span id="cb1-7"></span>
+<span id="cb1-8"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">COPY</span> crud_pydantic.py crud_pydantic.py</span>
+<span id="cb1-9"></span>
+<span id="cb1-10"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">CMD</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"uvicorn"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"crud_pydantic:app"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"--host"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"0.0.0.0"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"--reload"</span>]</span></code></pre></div>
+<section id="build" class="level4">
+<h4 class="anchored" data-anchor-id="build">1.1 Build</h4>
+<p>이미지 이름을 지정하고 build</p>
+<p><code>$ docker build -t {image-name} .</code></p>
+<p>이미지가 잘 생성되었는지 확인</p>
+<p><code>$ docker image ls</code></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-12-MLOps-day12/fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">정상적으로 생성 된 모습</figcaption>
+</figure>
+</div>
+</section>
+<section id="run" class="level4">
+<h4 class="anchored" data-anchor-id="run">1.2 Run</h4>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">$ docker run <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb2-2">  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>name {container<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>name} <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb2-3">  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>p <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8000</span>:<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8000</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb2-4">  {image<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>name}</span></code></pre></div>
+<p><code>docker ps</code> 로 컨테이너 실행여부 확인</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-12-MLOps-day12/fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">정상적으로 생성 된 모습</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="api-서버에-접속하여-작동-확인" class="level3">
+<h3 class="anchored" data-anchor-id="api-서버에-접속하여-작동-확인">2. API 서버에 접속하여 작동 확인</h3>
+<p><code>http://localhost:8000/docs</code> 에 접속하여 정상적으로 동작하는지 확인</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-12-MLOps-day12/fig3.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Swagger UI 화면이 정상적으로 뜸</figcaption>
+</figure>
+</div>
+<section id="컨테이너-종료" class="level4">
+<h4 class="anchored" data-anchor-id="컨테이너-종료">2.1 컨테이너 종료</h4>
+<p><code>docker rm --force {container-name}</code></p>
+</section>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+<p><a href="https://fastapi.tiangolo.com/tutorial/">FastAPI 튜토리얼</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>mlops</category>
+  <guid>https://ui-seok.github.io/docs/blog/posts/2023-12-12-MLOps-day12/index.html</guid>
+  <pubDate>Mon, 11 Dec 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/114/200/150" medium="image"/>
+</item>
+<item>
+  <title>MLOps for MLE - 11</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/blog/posts/2023-12-11-MLOps-day11/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li>Create 부분을 Pydantic 을 이용하여 수정</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="pydantic-model" class="level3">
+<h3 class="anchored" data-anchor-id="pydantic-model">1. Pydantic Model</h3>
+<p>Request Body 는 client 에서 API 로 전송하는 데이터를 의미</p>
+<p>Response Body 는 API 가 client 로 전송하는 데이터를 의미</p>
+<section id="base-setting" class="level4">
+<h4 class="anchored" data-anchor-id="base-setting">1.1 Base Setting</h4>
+<p><code>pydantic</code> 으로부터 <code>BaseModel</code> 을 import 하고 <code>day 10</code> 에서 작성한 API 와 마찬가지로 <code>HTTPException</code> 을 이용하여 에러를 발생할 수 있도록 함</p>
+</section>
+<section id="define-input-schema" class="level4">
+<h4 class="anchored" data-anchor-id="define-input-schema">1.2 Define Input Schema</h4>
+<p>입력받아야 하는 데이터의 형태를 지정해주는 <code>CreateIn</code> 클래스 작성</p>
+<p><code>pydantic</code> 의 <code>BaseModel</code> 을 상속받은 <code>CreateIn</code> 클래스에 Request Body 의 구성 요소가 될 변수들을 attribute 로 지정</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> CreateIn(BaseModel):</span>
+<span id="cb1-2">    name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span></span>
+<span id="cb1-3">    nickname: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span></span></code></pre></div>
+</section>
+<section id="define-output-schema" class="level4">
+<h4 class="anchored" data-anchor-id="define-output-schema">1.3 Define Output Schema</h4>
+<p>반환하고자 하는 데이터의 형태를 지정해주는 <code>CreateOut</code> 클래스 작성</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> CreateOut(BaseModel):</span>
+<span id="cb2-2">    status: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span></span>
+<span id="cb2-3">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">id</span>: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span></span></code></pre></div>
+</section>
+</section>
+<section id="response-model" class="level3">
+<h3 class="anchored" data-anchor-id="response-model">2. Response Model</h3>
+<section id="response-model-1" class="level4">
+<h4 class="anchored" data-anchor-id="response-model-1">2.1 Response Model</h4>
+<p><code>@app.get()</code>, <code>@app.post()</code> 등 다양한 Path Operation 에 <code>response_model</code> 을 이용하여 Response Body 에 사용될 데이터 모델을 지정해줄 수 있음</p>
+<p>output data 의 type 을 체크하여 자동으로 변환시키고, type 이 유효한지 확인해주고, response 를 위해 자동으로 JSON Schema 를 추가해주는 등의 역할을 할 수 있음</p>
+</section>
+<section id="api-code" class="level4">
+<h4 class="anchored" data-anchor-id="api-code">2.2 API Code</h4>
+<p>다음과 같이 Response Model 을 활용하여 Create API 를 수정할 수 있음</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.post</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users"</span>, response_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> CreateOut)</span>
+<span id="cb3-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> create_user(user: CreateIn) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> CreateOut:</span>
+<span id="cb3-3">    USER_DB[user.name] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> user.nickname</span>
+<span id="cb3-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> CreateOut(status <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>, <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">id</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(USER_DB))</span></code></pre></div>
+<p>Path Operation Function 을 보면 parameter 로 <code>user</code> 를 입력 받고, type 은 <code>CreateIn</code> 인 것을 알 수 있음</p>
+</section>
+<section id="crud_pydantic.py" class="level4">
+<h4 class="anchored" data-anchor-id="crud_pydantic.py">2.3 <code>crud_pydantic.py</code></h4>
+<p>전체 코드는 다음과 같음</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># crud_pydantic.py</span></span>
+<span id="cb4-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastapi <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> FastAPI, HTTPException</span>
+<span id="cb4-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> pydantic <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> BaseModel</span>
+<span id="cb4-4"></span>
+<span id="cb4-5"></span>
+<span id="cb4-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> CreateIn(BaseModel):</span>
+<span id="cb4-7">    name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span></span>
+<span id="cb4-8">    nickname: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span></span>
+<span id="cb4-9"></span>
+<span id="cb4-10"></span>
+<span id="cb4-11"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">class</span> CreateOut(BaseModel):</span>
+<span id="cb4-12">    status: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span></span>
+<span id="cb4-13">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">id</span>: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span></span>
+<span id="cb4-14"></span>
+<span id="cb4-15"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a FastAPI instance</span></span>
+<span id="cb4-16">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span>
+<span id="cb4-17"></span>
+<span id="cb4-18"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># User database</span></span>
+<span id="cb4-19">USER_DB <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {}</span>
+<span id="cb4-20"></span>
+<span id="cb4-21"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Fail response</span></span>
+<span id="cb4-22">NAME_NOT_FOUND <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> HTTPException(status_code<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">400</span>, detail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Name not found."</span>)</span>
+<span id="cb4-23"></span>
+<span id="cb4-24"></span>
+<span id="cb4-25"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.post</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users"</span>, response_model<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>CreateOut)</span>
+<span id="cb4-26"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> create_user(user: CreateIn):</span>
+<span id="cb4-27">    USER_DB[user.name] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> user.nickname</span>
+<span id="cb4-28">    user_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> user.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>()</span>
+<span id="cb4-29">    user_dict[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span></span>
+<span id="cb4-30">    user_dict[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"id"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(USER_DB)</span>
+<span id="cb4-31">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> user_dict</span>
+<span id="cb4-32"></span>
+<span id="cb4-33"></span>
+<span id="cb4-34"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users"</span>)</span>
+<span id="cb4-35"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb4-36">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb4-37">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb4-38">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"nickname"</span>: USER_DB[name]}</span>
+<span id="cb4-39"></span>
+<span id="cb4-40"></span>
+<span id="cb4-41"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.put</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users"</span>)</span>
+<span id="cb4-42"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> update_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, nickname: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb4-43">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb4-44">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb4-45">    USER_DB[name] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nickname</span>
+<span id="cb4-46">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span>
+<span id="cb4-47"></span>
+<span id="cb4-48"></span>
+<span id="cb4-49"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.delete</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users"</span>)</span>
+<span id="cb4-50"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> delete_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb4-51">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb4-52">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb4-53">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">del</span> USER_DB[name]</span>
+<span id="cb4-54">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span></code></pre></div>
+<p>실행하면 다음과 같은 모습을 보임</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-11-MLOps-day11/fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><code>crud_pydantic.py</code> 실행 회면</figcaption>
+</figure>
+</div>
+</section>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+<p><a href="https://fastapi.tiangolo.com/tutorial/">FastAPI 튜토리얼</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>mlops</category>
+  <guid>https://ui-seok.github.io/docs/blog/posts/2023-12-11-MLOps-day11/index.html</guid>
+  <pubDate>Sun, 10 Dec 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/113/200/150" medium="image"/>
+</item>
+<item>
+  <title>MLOps for MLE - 10</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/blog/posts/2023-12-09-MLOps-day10/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li>FastAPI 을 이용하여 CRUD 를 수행하는 API 작성</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="api-명세서-작성" class="level3">
+<h3 class="anchored" data-anchor-id="api-명세서-작성">1. API 명세서 작성</h3>
+<p>CRUD : Create, Read, Updater, Delete 의 합친 단어</p>
+<section id="path-parameter-아용" class="level4">
+<h4 class="anchored" data-anchor-id="path-parameter-아용">1.1 Path Parameter 아용</h4>
+<p>Path Parameter 의 경우 각 API 에서 사용되는 파라미터를 Path에 포함시켜 전달함</p>
+<p>이를 고려하여 명세서를 작성하면 다음과 같음</p>
+<ol type="1">
+<li><p>Create</p>
+<p>이름과 별명을 입력하여 사용자를 생성함</p>
+<p><code>POST /users/name/{name}/nickname/{nickname}</code></p></li>
+<li><p>Read</p>
+<p>이름을 입력하여 해당 이름을 가진 사용자의 별명을 반환</p>
+<p><code>GET /users/name/{name}</code></p></li>
+<li><p>Update</p>
+<p>이름과 새로운 별명을 입력하여 해당 이름을 가진 사용자의 별명을 업데이트</p>
+<p><code>PUT /users/name/{name}/nickname/{nickname}</code></p></li>
+<li><p>Delete</p>
+<p>이름을 입력하여 해당 이름을 가진 사용자의 정보를 삭제</p>
+<p><code>DELETE /users/name/{name}</code></p></li>
+</ol>
+</section>
+<section id="query-parameter-이용" class="level4">
+<h4 class="anchored" data-anchor-id="query-parameter-이용">1.2 Query Parameter 이용</h4>
+<p>Query Parameter 의 경우 각 API 에서 사용되는 파라미터를 Query 형태로 전달함</p>
+<p>이를 고려하여 명세서를 작성하면 다음과 같음</p>
+<ol type="1">
+<li><p>Create</p>
+<p><code>POST /users?name=hello?nickname=world</code></p></li>
+<li><p>Read</p>
+<p><code>GET /users?name=hello</code></p></li>
+<li><p>Update</p>
+<p><code>PUT /users?name=hello&amp;nickname=world2</code></p></li>
+<li><p>Delete</p>
+<p><code>DELETE /users?name=hello</code></p></li>
+</ol>
+</section>
+</section>
+<section id="api-구현" class="level3">
+<h3 class="anchored" data-anchor-id="api-구현">2. API 구현</h3>
+<p>작성한 명세서를 FastAPI 를 이용해 구현</p>
+<p>FastAPI 클래스의 인스턴스를 생성한 후 입력받은 데이터를 저장할 수 있도록 <code>USER_DB</code> 를 생성</p>
+<p>또한 메모리에 존재하지 않는 이름에 대한 요청이 들어온 경우 에러를 발생할 수 있도록 <code>HTTPException</code> 을 이용하여 <code>NAME_NOT_FOUND</code> 를 선언</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastapi <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> FastAPI, HTTPException</span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a FastAPI instance</span></span>
+<span id="cb1-4">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span>
+<span id="cb1-5"></span>
+<span id="cb1-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># User database</span></span>
+<span id="cb1-7">USER_DB <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {}</span>
+<span id="cb1-8"></span>
+<span id="cb1-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Fail response</span></span>
+<span id="cb1-10">NAME_NOT_FOUND <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> HTTPException(status_code<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">400</span>, detail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Name not found."</span>)</span></code></pre></div>
+<section id="path-parameter-이용" class="level4">
+<h4 class="anchored" data-anchor-id="path-parameter-이용">2.1 Path Parameter 이용</h4>
+<ol type="1">
+<li><p>Create</p>
+<p>이름과 별명을 입력 받아 <code>USER_DB</code> 에 정보를 저장하고 상태 정보를 return</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.post</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users/name/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/nickname/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{nickname}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb2-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> create_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, nickname: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb2-3">    USER_DB[name] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nickname</span>
+<span id="cb2-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span></code></pre></div></li>
+<li><p>Read</p>
+<p>이름을 입력 받아 <code>USER_DB</code> 에서 별명을 찾아 return</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users/name/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb3-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb3-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb3-4">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb3-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"nickname"</span>: USER_DB[name]}</span></code></pre></div></li>
+<li><p>Update</p>
+<p>이름과 새로운 별명을 입력 받아 <code>USER_DB</code> 의 정보를 업데이트하고 상태 정보를 return</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.put</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users/name/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/nickname/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{nickname}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb4-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> update_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, nickname: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb4-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb4-4">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb4-5">    USER_DB[name] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nickname</span>
+<span id="cb4-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span></code></pre></div></li>
+<li><p>Delete</p>
+<p>이름을 입력 받아 <code>USER_DB</code> 에서 정보를 삭제하고 상태 정보를 return</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.delete</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users/name/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb5-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> delete_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb5-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb5-4">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb5-5">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">del</span> USER_DB[name]</span>
+<span id="cb5-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span></code></pre></div></li>
+</ol>
+<p>이를 합치면 코드는 다음과 같음</p>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># crud_path.py</span></span>
+<span id="cb6-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastapi <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> FastAPI, HTTPException</span>
+<span id="cb6-3"></span>
+<span id="cb6-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a FastAPI instance</span></span>
+<span id="cb6-5">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span>
+<span id="cb6-6"></span>
+<span id="cb6-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># User database</span></span>
+<span id="cb6-8">USER_DB <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {}</span>
+<span id="cb6-9"></span>
+<span id="cb6-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Fail response</span></span>
+<span id="cb6-11">NAME_NOT_FOUND <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> HTTPException(status_code<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">400</span>, detail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Name not found."</span>)</span>
+<span id="cb6-12"></span>
+<span id="cb6-13"></span>
+<span id="cb6-14"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.post</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users/name/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/nickname/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{nickname}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb6-15"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> create_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, nickname: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb6-16">    USER_DB[name] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nickname</span>
+<span id="cb6-17">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span>
+<span id="cb6-18"></span>
+<span id="cb6-19"></span>
+<span id="cb6-20"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users/name/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb6-21"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb6-22">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb6-23">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb6-24">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"nickname"</span>: USER_DB[name]}</span>
+<span id="cb6-25"></span>
+<span id="cb6-26"></span>
+<span id="cb6-27"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.put</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users/name/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/nickname/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{nickname}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb6-28"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> update_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, nickname: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb6-29">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb6-30">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb6-31">    USER_DB[name] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nickname</span>
+<span id="cb6-32">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span>
+<span id="cb6-33"></span>
+<span id="cb6-34"></span>
+<span id="cb6-35"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.delete</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users/name/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb6-36"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> delete_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb6-37">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb6-38">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb6-39">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">del</span> USER_DB[name]</span>
+<span id="cb6-40">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span></code></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-09-MLOps-day10/fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><code>https://localhost:8000/docs</code> 에 접속</figcaption>
+</figure>
+</div>
+</section>
+<section id="query-parameter-이용-1" class="level4">
+<h4 class="anchored" data-anchor-id="query-parameter-이용-1">2.2 Query Parameter 이용</h4>
+<p>Path Parameter 와 같이 명세서에 따라 작성하고 코드를 하나로 합치면 다음과 같음</p>
+<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># crud_query.py</span></span>
+<span id="cb7-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastapi <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> FastAPI, HTTPException</span>
+<span id="cb7-3"></span>
+<span id="cb7-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a FastAPI instance</span></span>
+<span id="cb7-5">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span>
+<span id="cb7-6"></span>
+<span id="cb7-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># User database</span></span>
+<span id="cb7-8">USER_DB <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {}</span>
+<span id="cb7-9"></span>
+<span id="cb7-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Fail response</span></span>
+<span id="cb7-11">NAME_NOT_FOUND <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> HTTPException(status_code<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">400</span>, detail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Name not found."</span>)</span>
+<span id="cb7-12"></span>
+<span id="cb7-13"></span>
+<span id="cb7-14"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.post</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users"</span>)</span>
+<span id="cb7-15"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> create_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, nickname: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb7-16">    USER_DB[name] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nickname</span>
+<span id="cb7-17">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span>
+<span id="cb7-18"></span>
+<span id="cb7-19"></span>
+<span id="cb7-20"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users"</span>)</span>
+<span id="cb7-21"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb7-22">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb7-23">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb7-24">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"nickname"</span>: USER_DB[name]}</span>
+<span id="cb7-25"></span>
+<span id="cb7-26"></span>
+<span id="cb7-27"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.put</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users"</span>)</span>
+<span id="cb7-28"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> update_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, nickname: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb7-29">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb7-30">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb7-31">    USER_DB[name] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nickname</span>
+<span id="cb7-32">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span>
+<span id="cb7-33"></span>
+<span id="cb7-34"></span>
+<span id="cb7-35"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.delete</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users"</span>)</span>
+<span id="cb7-36"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> delete_user(name: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb7-37">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> name <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> USER_DB:</span>
+<span id="cb7-38">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> NAME_NOT_FOUND</span>
+<span id="cb7-39">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">del</span> USER_DB[name]</span>
+<span id="cb7-40">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"status"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"success"</span>}</span></code></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-09-MLOps-day10/fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><code>https://localhost:8000/docs</code> 에 접속</figcaption>
+</figure>
+</div>
+</section>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+<p><a href="https://fastapi.tiangolo.com/tutorial/">FastAPI 튜토리얼</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>mlops</category>
+  <guid>https://ui-seok.github.io/docs/blog/posts/2023-12-09-MLOps-day10/index.html</guid>
+  <pubDate>Fri, 08 Dec 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/112/200/150" medium="image"/>
+</item>
+<item>
+  <title>MLOps for MLE - 9</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/blog/posts/2023-12-07-MLOps-day9/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li>FastAPI 의 공식 문서를 참고하여 간단한 API 제작</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="fastapi-를-이용해-간단한-api-만들어보기" class="level3">
+<h3 class="anchored" data-anchor-id="fastapi-를-이용해-간단한-api-만들어보기">1. FastAPI 를 이용해 간단한 API 만들어보기</h3>
+<section id="main.py" class="level4">
+<h4 class="anchored" data-anchor-id="main.py">1.1 <code>main.py</code></h4>
+<p>다음과 같이 <code>main.py</code> 를 작성</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># main.py</span></span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastapi <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> FastAPI</span>
+<span id="cb1-3"></span>
+<span id="cb1-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a FastAPI instance</span></span>
+<span id="cb1-5">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span>
+<span id="cb1-6"></span>
+<span id="cb1-7"></span>
+<span id="cb1-8"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/"</span>)</span>
+<span id="cb1-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_root():</span>
+<span id="cb1-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Hello"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"World"</span>}</span></code></pre></div>
+</section>
+<section id="실행" class="level4">
+<h4 class="anchored" data-anchor-id="실행">1.2 실행</h4>
+<p><code>$ uvicorn main:app --relaod</code> - <em>uvicorn</em> : FastAPI 를 실행하는 웹 서버 실행 Command Line Too - <em>main</em> : 위에서 작성한 Python 모듈 <code>main.py</code> 를 의미 - <em>app</em> : <code>main.py</code> 에서 <code>app = FastAPI()</code> 를 통해 생성된 객체를 의미 - <em>–reload</em> : 코드가 바뀌었을 때 서버가 재시작할 수 있도록 하는 옵션</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-07-MLOps-day9/fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><code>main.py</code> 실행 화면</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-07-MLOps-day9/fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">docs 에 진입한 화면</figcaption>
+</figure>
+</div>
+<p>이는 Swagger UI 에 의해 제공되는 interactive API documentation 임</p>
+</section>
+</section>
+<section id="step-by-step-으로-이해하기" class="level3">
+<h3 class="anchored" data-anchor-id="step-by-step-으로-이해하기">2. Step by Step 으로 이해하기</h3>
+<section id="step-1-import-fastapi" class="level4">
+<h4 class="anchored" data-anchor-id="step-1-import-fastapi">2.1 Step 1: Import FastAPI</h4>
+<p><code>from fastapi import FastAPI</code></p>
+<p>API 를 만들 수 있도록 도와주는 Python 클래스</p>
+</section>
+<section id="step-2-create-a-fastapi-instance" class="level4">
+<h4 class="anchored" data-anchor-id="step-2-create-a-fastapi-instance">2.2 Step 2: Create a FastAPI instance</h4>
+<p><code>FastAPI</code> 클래스의 인스턴스를 생성된</p>
+<p>여기서 생성하는 인스턴스의 이름에 따라 <code>uvicorn main:app --reload</code> 과 같은 형태로 실행 명령어가 달라짐</p>
+<p><code>app = FastAPI()</code></p>
+</section>
+<section id="step-3-create-a-path-operation" class="level4">
+<h4 class="anchored" data-anchor-id="step-3-create-a-path-operation">2.3 Step 3: Create a Path Operation</h4>
+<p>여기서 말하는 path 는 URL 에서 첫 번째 <code>/</code> 부터 시작되는 마지막 부분을 의미함</p>
+<p>Ex) <code>https://example.com/items/foo</code> 에서 <code>/items/foo</code> 에 해당함</p>
+<p>Operation 은 POST, GET, PUT, DELETE 등과 같은 HTTP Method 를 의미함</p>
+<p>이러한 Operation 을 수행하기 위해 <code>@app.get("/")</code> 와 같은 Path Operation Decorator 를 사용</p>
+<p><code>@app.get("/")</code> 은 FastAPI 로 하여금 path <code>/</code> 로 가서 <code>GET</code> operation 을 수행하라는 의미로 사용할 수 있음</p>
+</section>
+<section id="step-4-define-the-path-operation-function" class="level4">
+<h4 class="anchored" data-anchor-id="step-4-define-the-path-operation-function">2.4 Step 4: Define the Path Operation Function</h4>
+<p>Path Operation Function 은 Path Operation 이 수행되었을 때 호출될 Python 함수를 말함</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/"</span>)</span>
+<span id="cb2-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_root():</span>
+<span id="cb2-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Hello"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"World"</span>}</span></code></pre></div>
+</section>
+<section id="step-5-return-the-content" class="level4">
+<h4 class="anchored" data-anchor-id="step-5-return-the-content">2.5 Step 5: Return the content</h4>
+<p>Path Operation Function 을 통해 return 하는 값으로는 <code>dict</code>, <code>list</code>, <code>str</code>, <code>int</code> 등이 가능</p>
+<p>또한, 뒤에서 나올 Pydantic Model 의 형태로도 return 할 수 있음</p>
+</section>
+</section>
+<section id="path-parameter-이해하기" class="level3">
+<h3 class="anchored" data-anchor-id="path-parameter-이해하기">3. Path Parameter 이해하기</h3>
+<p>Path parameter 는 Path Operation 에 포함된 변수로 사용자에게 입력받아 function 의 argument 로 사용되는 parameter 를 의미함</p>
+<p><a href="https://fastapi.tiangolo.com/tutorial/path-params/">Path parameter 참고</a></p>
+<p>다음과 같이 코드를 작성하고 <code>uvicorn path_param:app --reload</code> 를 입력하여 실행함</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># path_param.py</span></span>
+<span id="cb3-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastapi <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> FastAPI</span>
+<span id="cb3-3"></span>
+<span id="cb3-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a FastAPI instance</span></span>
+<span id="cb3-5">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span>
+<span id="cb3-6"></span>
+<span id="cb3-7"></span>
+<span id="cb3-8"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/items/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{item_id}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb3-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_item(item_id: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>):</span>
+<span id="cb3-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"item_id"</span>: item_id}</span></code></pre></div>
+<p><code>item_id</code> 와 같은 parameter 를 Path parameter 라고 함, 여기서 입력된 Path Parameter 의 값은 function 에 argument 로 전달되어 함수가 호출됨</p>
+<p><code>def read_item(item_id: int)</code> 와 같이 type 을 제공할 수 있음</p>
+<p>만약 다른 type 의 데이터가 입력되면 HTTP Error 를 return 하게 됨</p>
+</section>
+<section id="query-parameter-이해하기" class="level3">
+<h3 class="anchored" data-anchor-id="query-parameter-이해하기">4. Query Parameter 이해하기</h3>
+<p>Query Parameter 는 function parameter 로는 사용되지만 Path Operation 에 포함되지 않아 Path Parameter 라고 할 수 없는 parameter 를 의미함</p>
+<p><a href="https://fastapi.tiangolo.com/tutorial/query-params/">Query parameter 참고</a></p>
+<p>다음과 같이 코드를 작성하고 <code>uvicorn query_param:app --reload</code> 를 입력하여 실행함</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># query_param.py</span></span>
+<span id="cb4-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastapi <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> FastAPI</span>
+<span id="cb4-3"></span>
+<span id="cb4-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a FastAPI instance</span></span>
+<span id="cb4-5">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span>
+<span id="cb4-6"></span>
+<span id="cb4-7">fake_items_db <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"item_name"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Foo"</span>}, {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"item_name"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Bar"</span>}, {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"item_name"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Baz"</span>}]</span>
+<span id="cb4-8"></span>
+<span id="cb4-9"></span>
+<span id="cb4-10"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/items/"</span>)</span>
+<span id="cb4-11"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_item(skip: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, limit: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>):</span>
+<span id="cb4-12">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> fake_items_db[skip : skip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> limit]</span></code></pre></div>
+<p>function 에 parameter 로 들어있는 <code>skip</code> 과 <code>limit</code> 이 Path Operation 인 <code>@app.get("/items")</code> 에 들어있지 않음</p>
+<p>Query 는 URL 에서 <code>?</code> 뒤에 key-value 쌍의 형태로 나타나고, <code>&amp;</code> 로 구분되어 사용됨</p>
+<p>Ex) <code>http://localhost:8000/items/?skip=0&amp;limit=10</code> 과 같은 형태로 사용</p>
+<p>Query Parameter 는 path 의 고정된 부분이 아니기 때문에 optional 로 사용될 수 있고 기본값을 가질 수 있음</p>
+<p>위의 예시에서는 <code>skip=0</code> 과 <code>limit=10</code> 의 기본값을 가지고 있음</p>
+<p>하지만 값을 입력받아야만 하는 Query Parameter 도 존재함</p>
+<p>이를 Required Query Parameter 라고 하고 다음과 같은 형태로 사용됨</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/items/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{item_id}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb5-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_user_item(item_id: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, needy: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>):</span>
+<span id="cb5-3">    item <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"item_id"</span>: item_id, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"needy"</span>: needy}</span>
+<span id="cb5-4">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> item</span></code></pre></div>
+<p>위의 예시에서 <code>needy</code> 는 Path Operation <code>@app.get("/items/{item_id}")</code> 에 포함되어 있지 않으므로 Query Parameter 이고, function <code>read_user_item()</code> 에서 기본값이 존재하지 않기 때문에 Required Query Parameter 임을 알 수 있음</p>
+<p>이러한 경우 <code>http://localhost:8000/items/foo-item?needy=someneedy</code> 와 같은 형태로 <code>?</code> 뒤에 입력을 해주어야 에러가 발생하지 않고 함수가 제대로 동작함</p>
+</section>
+<section id="multiple-path-and-query-parameters-사용해보기" class="level3">
+<h3 class="anchored" data-anchor-id="multiple-path-and-query-parameters-사용해보기">5. Multiple Path and Query Parameters 사용해보기</h3>
+<p><a href="https://fastapi.tiangolo.com/tutorial/query-params/#multiple-path-and-query-parameters">Multiple Path and Query Parameter 참고</a></p>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># multi_param.py</span></span>
+<span id="cb6-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> typing <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Union</span>
+<span id="cb6-3"></span>
+<span id="cb6-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> fastapi <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> FastAPI</span>
+<span id="cb6-5"></span>
+<span id="cb6-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a FastAPI instance</span></span>
+<span id="cb6-7">app <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FastAPI()</span>
+<span id="cb6-8"></span>
+<span id="cb6-9"></span>
+<span id="cb6-10"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">@app.get</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/users/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{user_id}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/items/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{item_id}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb6-11"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> read_user_item(user_id: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>, item_id: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, q: Union[<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>, short: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">bool</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>):</span>
+<span id="cb6-12">    item <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"item_id"</span>: item_id, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"owner_id"</span>: user_id}</span>
+<span id="cb6-13">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> q:</span>
+<span id="cb6-14">        item.update({<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"q"</span>: q})</span>
+<span id="cb6-15">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> short:</span>
+<span id="cb6-16">        item.update(</span>
+<span id="cb6-17">            {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"description"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"This is an amazing item that has a long description"</span>},</span>
+<span id="cb6-18">        )</span>
+<span id="cb6-19">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> item</span></code></pre></div>
+<p>먼저 Path Operation 을 보면 <code>@app.get("/users/{user_id}/items/{item_id}")</code> 로 되어 있음</p>
+<p>이를 통해 <code>user_id</code> 와 <code>item_id</code> 라는 Path Parameter 가 있음을 알 수 있음</p>
+<p>Path Operation Function 의 parameter 를 보면, <code>user_id</code>, <code>item_id</code>, <code>q</code>, <code>short</code> 가 있음을 알 수 있음</p>
+<p>Path Parameter 가 아닌 <code>q</code> 와 <code>short</code> 는 Query Parameter 임을 알 수 있고 각각 기본값이 <code>None</code>, <code>False</code> 임을 알 수 있음</p>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+<p><a href="https://fastapi.tiangolo.com/tutorial/">FastAPI 튜토리얼</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>mlops</category>
+  <guid>https://ui-seok.github.io/docs/blog/posts/2023-12-07-MLOps-day9/index.html</guid>
+  <pubDate>Wed, 06 Dec 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/110/200/150" medium="image"/>
+</item>
 <item>
   <title>머신러닝 시스템 설계 Ch.1</title>
   <dc:creator>Ui Seok</dc:creator>
@@ -379,7 +2297,8 @@ font-style: inherit;">"Valid Accuracy :"</span>, valid_acc)</span></code></pre><
 </section>
 <section id="reference" class="level2">
 <h2 class="anchored" data-anchor-id="reference">Reference</h2>
-<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a> <a href="https://www.mlflow.org/docs/latest/models.html#storage-format">MLflow Storage Format</a></p>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+<p><a href="https://www.mlflow.org/docs/latest/models.html#storage-format">MLflow Storage Format</a></p>
 
 
 </section>
@@ -3163,7 +5082,7 @@ font-style: inherit;">=</span> get_data()</span>
 background-color: null;
 font-style: inherit;">1</span>).squeeze())</span></code></pre></div>
 <p>-&gt; <code>psql</code> 로 현재는 iris_data 에서 하나의 데이터만 DB에 입력된 상태임을 확인할 수 있음</p>
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-left">
 <figure class="figure">
 <p><img src="https://ui-seok.github.io/docs/blog/posts/2023-11-24-MLOps-day2/fig1.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">데이터 삽입</figcaption>
@@ -3274,7 +5193,7 @@ Note
 <li><em>U</em> : 접속할 유저 이름 입력</li>
 <li><em>d</em> : DB 이름 입력</li>
 </ul>
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-left">
 <figure class="figure">
 <p><img src="https://ui-seok.github.io/docs/blog/posts/2023-11-23-MLOps-day1/fig2.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">SQL 서버에 접속 한 모습과 <code>\du</code> 를 입력해 DB 의 role name 과 arrtributes 를 확인</figcaption>
@@ -3391,7 +5310,7 @@ font-style: inherit;">as</span> cur:</span>
 <p><strong>테이블 확인</strong></p>
 <p><code>psql</code> 을 이용하여 DB에 접속하고 <code>\d</code> 를 입력하여 생성된 테이블들의 목록을 확인</p>
 <p><code>select * from iris_data;</code> 를 입력하면 <code>iris_data</code> 테이블에 있는 데이터를 확인 할 수 있음</p>
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-left">
 <figure class="figure">
 <p><img src="https://ui-seok.github.io/docs/blog/posts/2023-11-23-MLOps-day1/fig3.png" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">테이블 확인</figcaption>

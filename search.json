@@ -4,7 +4,7 @@
     "href": "about.html",
     "title": "Contact Me",
     "section": "",
-    "text": "Qaurto로 공부 내용을 정리하며 기록하는 블로그 입니다."
+    "text": "Qaurto로 공부 내용을 정리하며 기록하는 블로그 입니다.\n현재 저는 Computer Vision 과 MLOps 를 공부하고 있는 학생입니다.\n블로그 내용 중 틀린 내용 혹은 궁금한 점이 있다면 하단의 Gmail 을 통해 연락주시면 감사하겠습니다!"
   },
   {
     "objectID": "docs/coursera/index.html",
@@ -14,30 +14,58 @@
     "text": "Coursera 강의를 듣고 정리하는 페이지입니다.\n\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
-    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
-    "title": "MLOps for MLE - 4",
+    "objectID": "docs/blog/posts/2023-12-12-MLOps-day12/index.html",
+    "href": "docs/blog/posts/2023-12-12-MLOps-day12/index.html",
+    "title": "MLOps for MLE - 12",
     "section": "",
-    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "앞에서 작성한 API 를 Docker 를 이용하여 실행\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
-    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
-    "title": "MLOps for MLE - 4",
+    "objectID": "docs/blog/posts/2023-12-12-MLOps-day12/index.html#summary",
+    "href": "docs/blog/posts/2023-12-12-MLOps-day12/index.html#summary",
+    "title": "MLOps for MLE - 12",
     "section": "",
-    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "앞에서 작성한 API 를 Docker 를 이용하여 실행\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
-    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
-    "title": "MLOps for MLE - 4",
+    "objectID": "docs/blog/posts/2023-12-12-MLOps-day12/index.html#실습",
+    "href": "docs/blog/posts/2023-12-12-MLOps-day12/index.html#실습",
+    "title": "MLOps for MLE - 12",
     "section": "실습",
-    "text": "실습\n\n1. Base Model 코드 작성\n데이터: Iris\n데이터 스케일링: StandardScaler\n모델: SVC\n정확도 metric: accuracy_score\n모델 저장 방법: joblib\n전체 코드는 아래와 같음\nTrain 코드\nimport joblib\nfrom sklearn.datasets import load_iris\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\n# 1. get data\nX, y = load_iris(return_X_y=True, as_frame=True)\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nscaler = StandardScaler()\nclassifier = SVC()\n\nscaled_X_train = scaler.fit_transform(X_train)\nscaled_X_valid = scaler.transform(X_valid)\nclassifier.fit(scaled_X_train, y_train)\n\ntrain_pred = classifier.predict(scaled_X_train)\nvalid_pred = classifier.predict(scaled_X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\njoblib.dump(scaler, \"scaler.joblib\")\njoblib.dump(classifier, \"classifier.joblib\")\nValidate 코드\nimport joblib\nfrom sklearn.datasets import load_iris\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\n\n# 1. reproduce data\nX, y = load_iris(return_X_y=True, as_frame=True)\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. load model\nscaler_load = joblib.load(\"scaler.joblib\")\nclassifier_load = joblib.load(\"classifier.joblib\")\n\n# 3. validate\nscaled_X_train = scaler_load.transform(X_train)\nscaled_X_valid = scaler_load.transform(X_valid)\n\nload_train_pred = classifier_load.predict(scaled_X_train)\nload_valid_pred = classifier_load.predict(scaled_X_valid)\n\nload_train_acc = accuracy_score(y_true=y_train, y_pred=load_train_pred)\nload_valid_acc = accuracy_score(y_true=y_valid, y_pred=load_valid_pred)\n\nprint(\"Load Model Train Accuracy :\", load_train_acc)\nprint(\"Load Model Valid Accuracy :\", load_valid_acc)\n-&gt; joblib의 load를 통해 학습한 모델을 불러옴\n\n\n2. Model Pipeline 작성\n위에서 사용했던 모델인 scaler와 SVC를 통합\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\n\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\n-&gt; 이 코드를 활용하여 앞의 부분을 대체"
+    "text": "실습\n\n1. Dockerfile 작성\nFROM amd64/python:3.9-slim\n\nWORKDIR /usr/app\n\nRUN pip install -U pip \\\n    && pip install \"fastapi[all]\"\n\nCOPY crud_pydantic.py crud_pydantic.py\n\nCMD [\"uvicorn\", \"crud_pydantic:app\", \"--host\", \"0.0.0.0\", \"--reload\"]\n\n1.1 Build\n이미지 이름을 지정하고 build\n$ docker build -t {image-name} .\n이미지가 잘 생성되었는지 확인\n$ docker image ls\n\n\n\n정상적으로 생성 된 모습\n\n\n\n\n1.2 Run\n$ docker run -d \\\n  --name {container-name} \\\n  -p 8000:8000 \\\n  {image-name}\ndocker ps 로 컨테이너 실행여부 확인\n\n\n\n정상적으로 생성 된 모습\n\n\n\n\n\n2. API 서버에 접속하여 작동 확인\nhttp://localhost:8000/docs 에 접속하여 정상적으로 동작하는지 확인\n\n\n\nSwagger UI 화면이 정상적으로 뜸\n\n\n\n2.1 컨테이너 종료\ndocker rm --force {container-name}"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
-    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
-    "title": "MLOps for MLE - 4",
+    "objectID": "docs/blog/posts/2023-12-12-MLOps-day12/index.html#reference",
+    "href": "docs/blog/posts/2023-12-12-MLOps-day12/index.html#reference",
+    "title": "MLOps for MLE - 12",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html",
+    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html",
+    "title": "MLOps for MLE - 7",
+    "section": "",
+    "text": "모델을 학습하고 MLflow 서버에 저장\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#summary",
+    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#summary",
+    "title": "MLOps for MLE - 7",
+    "section": "",
+    "text": "모델을 학습하고 MLflow 서버에 저장\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#실습",
+    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#실습",
+    "title": "MLOps for MLE - 7",
+    "section": "실습",
+    "text": "실습\n\n1. Save Model to Registry\nday 5 에서 작성한 db_train.py 코드의 #3. save_model 부분을 변경하여 모델을 업로드하는 코드 작성\n\n1.1 환경 변수 추가\nMLflow 와 통신하기 위해서는 몇 가지 환경 변수가 설정되어야 함\n유저가 학습한 모델을 MLflow 서버를 통해 Arifact Store 인 MinIO 에 저장함\n이 과정에서 MinIO 의 접근 권한이 필요함\n이 접근 권한 정보는 day 6 에서 Docker Compose 파일의 mlflow-server 와 mlflow-artifact-store 의 정보임\n따라서 아이디와 비밀번호를 사전에 정의된 시스템 환경 변수에 설정해야 MinIO 에 접근할 수 있음\n추가로 MLflow 서버와 S3(MinIO) 의 URI 도 함께 설정해야함\nimport os\n\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\nMLFLOW_S3_ENDPOINT_URL : 모델을 저장할 스토리지 주소\nMLFLOW_TRACKING_URI : 정보를 저장하기 위해 연결할 MLflow 서버의 수조\nAWS_ACCESS_KEY_ID : MinIO 에 접근하기 위한 아이디\nAWS_SECRET_ACCESS_KEY : MinIO 에 접근하기 위한 비밀번호\n\n\n\n1.2 모델 저장하기\nMLflow 의 정보를 저장하기 위해 experiment 와 run 을 사용함\n\nexperiment : MLflow 에서 정보를 관리하기 위해 나누는 일종의 directory, 생성하지 않는 경우 Default로 저장됨\nrun : experiment 에 저장되는 모델 실험 결과, 해당 run 에 실제 정보들이 저장되며 experiment/run 의 구조로 저장됨\n\nmlflow 클래스를 이용하여 다음과 같이 코드를 작성함\nparser 를 활용하여 model_name 인자를 받아주고 experiment 는 mlflow.set_experiment(\"new-exp\") 를 이용하여 이름을 정해줌\nrun 을 담당하는 코드는 다음과 같음\nwith mlflow.start_run():\n    mlflow.log_metrics({\"train_acc\": train_acc, \"valid_acc\": valid_acc})\n    mlflow.sklearn.log_model(\n        sk_model=model_pipeline,\n        artifact_path=args.model_name,\n        signature=signature,\n        input_example=input_sample,\n    )\n\nmlflow.log_metrics : 모델의 결과 metrics 를 Python 의 dictionary 형태로 입력해 생성된 run 을 저장\nmlflow.sklearn.log_model : sklearn 모델은 mlflow.sklearn 를 사용해 간편하게 업로드가 가능함\n\n모델은 다음과 같은 구조로 저장됨\n# Directory written by mlflow.sklearn.save_model(model, \"sk_model\")\n\nsk_model/\n├── MLmodel\n├── model.pkl\n├── conda.yaml\n├── python_env.yaml\n└── requirements.txt\n\n\n\n2. 전체 코드\n# save_model_to_registry.py\nimport os\nfrom argparse import ArgumentParser\n\nimport mlflow\nimport pandas as pd\nimport psycopg2\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\n# 0. set mlflow environments\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\n# 1. get data\ndb_connect = psycopg2.connect(\n    user=\"myuser\",\n    password=\"mypassword\",\n    host=\"localhost\",\n    port=5432,\n    database=\"mydatabase\",\n)\ndf = pd.read_sql(\"SELECT * FROM iris_data ORDER BY id DESC LIMIT 100\", db_connect)\n\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\nmodel_pipeline.fit(X_train, y_train)\n\ntrain_pred = model_pipeline.predict(X_train)\nvalid_pred = model_pipeline.predict(X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\nparser = ArgumentParser()\nparser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\nargs = parser.parse_args()\n\nmlflow.set_experiment(\"new-exp\")\n\nsignature = mlflow.models.signature.infer_signature(model_input=X_train, model_output=train_pred)\ninput_sample = X_train.iloc[:10]\n\nwith mlflow.start_run():\n    mlflow.log_metrics({\"train_acc\": train_acc, \"valid_acc\": valid_acc})\n    mlflow.sklearn.log_model(\n        sk_model=model_pipeline,\n        artifact_path=args.model_name,\n        signature=signature,\n        input_example=input_sample,\n    )\n\n# 4. save data\ndf.to_csv(\"data.csv\", index=False)\n실행코드 : python save_model_to_registry.py --model-name \"sk_model\"\n실행 결과는 다음과 같음\n\n\n\n모델 저장 결과 상세"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#reference",
+    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#reference",
+    "title": "MLOps for MLE - 7",
     "section": "Reference",
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
@@ -119,6 +147,83 @@
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
   {
+    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html",
+    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html",
+    "title": "MLOps for MLE - 13",
+    "section": "",
+    "text": "Iris 데이터를 입력받아 예측값을 반환하는 API 작성\n제대로 동작하는지 확인\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#summary",
+    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#summary",
+    "title": "MLOps for MLE - 13",
+    "section": "",
+    "text": "Iris 데이터를 입력받아 예측값을 반환하는 API 작성\n제대로 동작하는지 확인\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#실습",
+    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#실습",
+    "title": "MLOps for MLE - 13",
+    "section": "실습",
+    "text": "실습\n\n1. 모델 다운로드\n\n1.1 Environment Variables\nModel Registry 에 저장되어 있는 모델을 다운로드하기 위해 MLflow 서버와 MinIO 서버에 접속하기 위한 정보를 환경 변수로 설정\n-&gt; day 7 에서 작성한 코드와 같음\n\n\n1.2 모델 다운로드 함수 작성\nmlflow 패키지를 이용하여 model artifact 다운로드\n-&gt; model artifact 란 MLflow 에 모델이 저장될 때 함께 저장된 메타데이터와 모델 자체의 binary 파일을 의미\ndef download_model(args):\n    mlflow.artifacts.download_artifacts(artifact_uri=f\"runs:/{args.run_id}/{args.model_name}\", dst_path=\".\")\n\n\n1.3 모델 다운로드\nargparse 를 이용하여 파라미터를 입력받을 수 있도록 하고 download_model() 함수를 호출함\n\n\n1.4 전체 코드\nimport os\nfrom argparse import ArgumentParser\n\nimport mlflow\n\n# Set environments\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\n\ndef download_model(args):\n    # Download model artifacts\n    mlflow.artifacts.download_artifacts(artifact_uri=f\"runs:/{args.run_id}/{args.model_name}\", dst_path=\".\")\n\n\nif __name__ == \"__main__\":\n    parser = ArgumentParser()\n    parser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\n    parser.add_argument(\"--run-id\", dest=\"run_id\", type=str)\n    args = parser.parse_args()\n\n    download_model(args)\n\n\n1.5 스크립트 실행\nhttp://localhost:5001 에 접속하여 해당 모델이 저장된 experiment 에 들어가 run_id 와 model_name 을 확인\n$ python download_model.py --model-name {model-name} --run-id {run-id}\n이 스크립트를 실행하고 나면 model-name 의 폴더가 생성되는 것을 확인할 수 있음\n\n\n\nscript 실행 모습\n\n\n\n\n\nsk_model 모델의 폴더 이름이 생겨남\n\n\n\n\n\n2. Model API 명세서 작성\nPOST /predict 를 수행했을 때 학습한 모델의 inference 결과를 반환해주는 API 명세서를 작성\n\n\n\n\n\n\n\n3. Pydantic Model 로 스키마의 클래스 작성\n명세서에 맞게 Class PredictIn(BaseModel) 와 Class PredictOut(BaseModel) 을 작성\nfrom pydantic import BaseModel\n\nclass PredictIn(BaseModel):\n    sepal_length: float\n    sepal_width: float\n    petal_length: float\n    petal_width: float\n\nclass PredictOut(BaseModel):\n    iris_class: int\n\n\n4. Predict API 구현\n\n4.1 Load Model\nmlflow 패키지를 활용하여 모델을 불러옴\ndef get_model():\n    model = mlflow.sklearn.load_model(model_uri = \"./{model-name}\") # sk_model\n    return model\n\nMODEL = get_model()\n\n\n4.2 Create a FastAPI Instance\napp = FastAPI()\n\n\n4.3 Write predict function\nAPI 에 POST /predict 를 수행했을 때 학습한 모델의 inference 결과를 반환할 수 있도록 predict 함수 작성\n@app.post(\"/predict\", response_model = PredictOut)\ndef predict(data: PredictIn) -&gt; PredictOut:\n    df = pd.DataFrame([data.dict()])\n    pred = MODEL.predict(df).item()\n    return PredictOut(iris_class = pred)\n\npredict 함수는 PredictIn 클래스의 데이터를 입력으로 받고 PredictOut 클래스를 반환\n입력받은 데이터를 데이터프레임 형태로 변환한 후, 위에서 불러온 모델을 이용하여 inference 결과를 저장\n마지막으로 저장된 결과를 PredictOut 클래스에 넣어 반환\n\nPOST method 를 이용하여 예측할 수 있도록 @app.post 를 이용한 데코레이터로 함수를 감싸주고, response_model 은 PredictOut 클래스로 지정\n\n\n4.4 전체 코드\n# app.py\nimport mlflow\nimport pandas as pd\nfrom fastapi import FastAPI\nfrom schemas import PredictIn, PredictOut\n\n\ndef get_model():\n    model = mlflow.sklearn.load_model(model_uri=\"./sk_model\")\n    return model\n\n\nMODEL = get_model()\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.post(\"/predict\", response_model=PredictOut)\ndef predict(data: PredictIn) -&gt; PredictOut:\n    df = pd.DataFrame([data.dict()])\n    pred = MODEL.predict(df).item()\n    return PredictOut(iris_class=pred)\n\n\n\n5. API 작동 확인\n$ uvicorn app:app --reload 를 입력하고 http://localhost:8000/docs 로 이동하여 동작을 확인\n\n\n\nModel API Server 동작\n\n\n\n\n\nRequest Body 의 형태에 맞게 데이터 입력 화면, Response Body 에 추론 결과를 볼 수 있음"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#reference",
+    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#reference",
+    "title": "MLOps for MLE - 13",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html",
+    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html",
+    "title": "MLOps for MLE - 11",
+    "section": "",
+    "text": "Create 부분을 Pydantic 을 이용하여 수정\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#summary",
+    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#summary",
+    "title": "MLOps for MLE - 11",
+    "section": "",
+    "text": "Create 부분을 Pydantic 을 이용하여 수정\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#실습",
+    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#실습",
+    "title": "MLOps for MLE - 11",
+    "section": "실습",
+    "text": "실습\n\n1. Pydantic Model\nRequest Body 는 client 에서 API 로 전송하는 데이터를 의미\nResponse Body 는 API 가 client 로 전송하는 데이터를 의미\n\n1.1 Base Setting\npydantic 으로부터 BaseModel 을 import 하고 day 10 에서 작성한 API 와 마찬가지로 HTTPException 을 이용하여 에러를 발생할 수 있도록 함\n\n\n1.2 Define Input Schema\n입력받아야 하는 데이터의 형태를 지정해주는 CreateIn 클래스 작성\npydantic 의 BaseModel 을 상속받은 CreateIn 클래스에 Request Body 의 구성 요소가 될 변수들을 attribute 로 지정\nclass CreateIn(BaseModel):\n    name: str\n    nickname: str\n\n\n1.3 Define Output Schema\n반환하고자 하는 데이터의 형태를 지정해주는 CreateOut 클래스 작성\nclass CreateOut(BaseModel):\n    status: str\n    id: int\n\n\n\n2. Response Model\n\n2.1 Response Model\n@app.get(), @app.post() 등 다양한 Path Operation 에 response_model 을 이용하여 Response Body 에 사용될 데이터 모델을 지정해줄 수 있음\noutput data 의 type 을 체크하여 자동으로 변환시키고, type 이 유효한지 확인해주고, response 를 위해 자동으로 JSON Schema 를 추가해주는 등의 역할을 할 수 있음\n\n\n2.2 API Code\n다음과 같이 Response Model 을 활용하여 Create API 를 수정할 수 있음\n@app.post(\"/users\", response_model = CreateOut)\ndef create_user(user: CreateIn) -&gt; CreateOut:\n    USER_DB[user.name] = user.nickname\n    return CreateOut(status = \"success\", id = len(USER_DB))\nPath Operation Function 을 보면 parameter 로 user 를 입력 받고, type 은 CreateIn 인 것을 알 수 있음\n\n\n2.3 crud_pydantic.py\n전체 코드는 다음과 같음\n# crud_pydantic.py\nfrom fastapi import FastAPI, HTTPException\nfrom pydantic import BaseModel\n\n\nclass CreateIn(BaseModel):\n    name: str\n    nickname: str\n\n\nclass CreateOut(BaseModel):\n    status: str\n    id: int\n\n# Create a FastAPI instance\napp = FastAPI()\n\n# User database\nUSER_DB = {}\n\n# Fail response\nNAME_NOT_FOUND = HTTPException(status_code=400, detail=\"Name not found.\")\n\n\n@app.post(\"/users\", response_model=CreateOut)\ndef create_user(user: CreateIn):\n    USER_DB[user.name] = user.nickname\n    user_dict = user.dict()\n    user_dict[\"status\"] = \"success\"\n    user_dict[\"id\"] = len(USER_DB)\n    return user_dict\n\n\n@app.get(\"/users\")\ndef read_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    return {\"nickname\": USER_DB[name]}\n\n\n@app.put(\"/users\")\ndef update_user(name: str, nickname: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    USER_DB[name] = nickname\n    return {\"status\": \"success\"}\n\n\n@app.delete(\"/users\")\ndef delete_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    del USER_DB[name]\n    return {\"status\": \"success\"}\n실행하면 다음과 같은 모습을 보임\n\n\n\ncrud_pydantic.py 실행 회면"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#reference",
+    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#reference",
+    "title": "MLOps for MLE - 11",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
+  },
+  {
+    "objectID": "posts/test-page/index.html",
+    "href": "posts/test-page/index.html",
+    "title": "Test Page",
+    "section": "",
+    "text": "This is test page."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code."
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
     "objectID": "docs/blog/posts/2023-11-29-MLOps-day6/index.html",
     "href": "docs/blog/posts/2023-11-29-MLOps-day6/index.html",
     "title": "MLOps for MLE - 6",
@@ -147,25 +252,32 @@
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
   {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
+    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html",
+    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html",
+    "title": "MLOps for MLE - 9",
     "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+    "text": "FastAPI 의 공식 문서를 참고하여 간단한 API 제작\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
+    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#summary",
+    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#summary",
+    "title": "MLOps for MLE - 9",
     "section": "",
-    "text": "This is a post with executable code."
+    "text": "FastAPI 의 공식 문서를 참고하여 간단한 API 제작\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "posts/test-page/index.html",
-    "href": "posts/test-page/index.html",
-    "title": "Test Page",
-    "section": "",
-    "text": "This is test page."
+    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#실습",
+    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#실습",
+    "title": "MLOps for MLE - 9",
+    "section": "실습",
+    "text": "실습\n\n1. FastAPI 를 이용해 간단한 API 만들어보기\n\n1.1 main.py\n다음과 같이 main.py 를 작성\n# main.py\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.get(\"/\")\ndef read_root():\n    return {\"Hello\": \"World\"}\n\n\n1.2 실행\n$ uvicorn main:app --relaod - uvicorn : FastAPI 를 실행하는 웹 서버 실행 Command Line Too - main : 위에서 작성한 Python 모듈 main.py 를 의미 - app : main.py 에서 app = FastAPI() 를 통해 생성된 객체를 의미 - –reload : 코드가 바뀌었을 때 서버가 재시작할 수 있도록 하는 옵션\n\n\n\nmain.py 실행 화면\n\n\n\n\n\ndocs 에 진입한 화면\n\n\n이는 Swagger UI 에 의해 제공되는 interactive API documentation 임\n\n\n\n2. Step by Step 으로 이해하기\n\n2.1 Step 1: Import FastAPI\nfrom fastapi import FastAPI\nAPI 를 만들 수 있도록 도와주는 Python 클래스\n\n\n2.2 Step 2: Create a FastAPI instance\nFastAPI 클래스의 인스턴스를 생성된\n여기서 생성하는 인스턴스의 이름에 따라 uvicorn main:app --reload 과 같은 형태로 실행 명령어가 달라짐\napp = FastAPI()\n\n\n2.3 Step 3: Create a Path Operation\n여기서 말하는 path 는 URL 에서 첫 번째 / 부터 시작되는 마지막 부분을 의미함\nEx) https://example.com/items/foo 에서 /items/foo 에 해당함\nOperation 은 POST, GET, PUT, DELETE 등과 같은 HTTP Method 를 의미함\n이러한 Operation 을 수행하기 위해 @app.get(\"/\") 와 같은 Path Operation Decorator 를 사용\n@app.get(\"/\") 은 FastAPI 로 하여금 path / 로 가서 GET operation 을 수행하라는 의미로 사용할 수 있음\n\n\n2.4 Step 4: Define the Path Operation Function\nPath Operation Function 은 Path Operation 이 수행되었을 때 호출될 Python 함수를 말함\n@app.get(\"/\")\ndef read_root():\n    return {\"Hello\": \"World\"}\n\n\n2.5 Step 5: Return the content\nPath Operation Function 을 통해 return 하는 값으로는 dict, list, str, int 등이 가능\n또한, 뒤에서 나올 Pydantic Model 의 형태로도 return 할 수 있음\n\n\n\n3. Path Parameter 이해하기\nPath parameter 는 Path Operation 에 포함된 변수로 사용자에게 입력받아 function 의 argument 로 사용되는 parameter 를 의미함\nPath parameter 참고\n다음과 같이 코드를 작성하고 uvicorn path_param:app --reload 를 입력하여 실행함\n# path_param.py\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.get(\"/items/{item_id}\")\ndef read_item(item_id: int):\n    return {\"item_id\": item_id}\nitem_id 와 같은 parameter 를 Path parameter 라고 함, 여기서 입력된 Path Parameter 의 값은 function 에 argument 로 전달되어 함수가 호출됨\ndef read_item(item_id: int) 와 같이 type 을 제공할 수 있음\n만약 다른 type 의 데이터가 입력되면 HTTP Error 를 return 하게 됨\n\n\n4. Query Parameter 이해하기\nQuery Parameter 는 function parameter 로는 사용되지만 Path Operation 에 포함되지 않아 Path Parameter 라고 할 수 없는 parameter 를 의미함\nQuery parameter 참고\n다음과 같이 코드를 작성하고 uvicorn query_param:app --reload 를 입력하여 실행함\n# query_param.py\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\nfake_items_db = [{\"item_name\": \"Foo\"}, {\"item_name\": \"Bar\"}, {\"item_name\": \"Baz\"}]\n\n\n@app.get(\"/items/\")\ndef read_item(skip: int = 0, limit: int = 10):\n    return fake_items_db[skip : skip + limit]\nfunction 에 parameter 로 들어있는 skip 과 limit 이 Path Operation 인 @app.get(\"/items\") 에 들어있지 않음\nQuery 는 URL 에서 ? 뒤에 key-value 쌍의 형태로 나타나고, & 로 구분되어 사용됨\nEx) http://localhost:8000/items/?skip=0&limit=10 과 같은 형태로 사용\nQuery Parameter 는 path 의 고정된 부분이 아니기 때문에 optional 로 사용될 수 있고 기본값을 가질 수 있음\n위의 예시에서는 skip=0 과 limit=10 의 기본값을 가지고 있음\n하지만 값을 입력받아야만 하는 Query Parameter 도 존재함\n이를 Required Query Parameter 라고 하고 다음과 같은 형태로 사용됨\n@app.get(\"/items/{item_id}\")\ndef read_user_item(item_id: str, needy: str):\n    item = {\"item_id\": item_id, \"needy\": needy}\n    return item\n위의 예시에서 needy 는 Path Operation @app.get(\"/items/{item_id}\") 에 포함되어 있지 않으므로 Query Parameter 이고, function read_user_item() 에서 기본값이 존재하지 않기 때문에 Required Query Parameter 임을 알 수 있음\n이러한 경우 http://localhost:8000/items/foo-item?needy=someneedy 와 같은 형태로 ? 뒤에 입력을 해주어야 에러가 발생하지 않고 함수가 제대로 동작함\n\n\n5. Multiple Path and Query Parameters 사용해보기\nMultiple Path and Query Parameter 참고\n# multi_param.py\nfrom typing import Union\n\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.get(\"/users/{user_id}/items/{item_id}\")\ndef read_user_item(user_id: int, item_id: str, q: Union[str, None] = None, short: bool = False):\n    item = {\"item_id\": item_id, \"owner_id\": user_id}\n    if q:\n        item.update({\"q\": q})\n    if not short:\n        item.update(\n            {\"description\": \"This is an amazing item that has a long description\"},\n        )\n    return item\n먼저 Path Operation 을 보면 @app.get(\"/users/{user_id}/items/{item_id}\") 로 되어 있음\n이를 통해 user_id 와 item_id 라는 Path Parameter 가 있음을 알 수 있음\nPath Operation Function 의 parameter 를 보면, user_id, item_id, q, short 가 있음을 알 수 있음\nPath Parameter 가 아닌 q 와 short 는 Query Parameter 임을 알 수 있고 각각 기본값이 None, False 임을 알 수 있음"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#reference",
+    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#reference",
+    "title": "MLOps for MLE - 9",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
   },
   {
     "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html",
@@ -221,7 +333,7 @@
     "href": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#reference",
     "title": "MLOps for MLE - 8",
     "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial MLflow Storage Format"
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nMLflow Storage Format"
   },
   {
     "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
@@ -252,30 +364,58 @@
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
   {
-    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html",
-    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html",
-    "title": "MLOps for MLE - 7",
+    "objectID": "docs/blog/posts/2023-12-09-MLOps-day10/index.html",
+    "href": "docs/blog/posts/2023-12-09-MLOps-day10/index.html",
+    "title": "MLOps for MLE - 10",
     "section": "",
-    "text": "모델을 학습하고 MLflow 서버에 저장\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "FastAPI 을 이용하여 CRUD 를 수행하는 API 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#summary",
-    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#summary",
-    "title": "MLOps for MLE - 7",
+    "objectID": "docs/blog/posts/2023-12-09-MLOps-day10/index.html#summary",
+    "href": "docs/blog/posts/2023-12-09-MLOps-day10/index.html#summary",
+    "title": "MLOps for MLE - 10",
     "section": "",
-    "text": "모델을 학습하고 MLflow 서버에 저장\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "FastAPI 을 이용하여 CRUD 를 수행하는 API 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#실습",
-    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#실습",
-    "title": "MLOps for MLE - 7",
+    "objectID": "docs/blog/posts/2023-12-09-MLOps-day10/index.html#실습",
+    "href": "docs/blog/posts/2023-12-09-MLOps-day10/index.html#실습",
+    "title": "MLOps for MLE - 10",
     "section": "실습",
-    "text": "실습\n\n1. Save Model to Registry\nday 5 에서 작성한 db_train.py 코드의 #3. save_model 부분을 변경하여 모델을 업로드하는 코드 작성\n\n1.1 환경 변수 추가\nMLflow 와 통신하기 위해서는 몇 가지 환경 변수가 설정되어야 함\n유저가 학습한 모델을 MLflow 서버를 통해 Arifact Store 인 MinIO 에 저장함\n이 과정에서 MinIO 의 접근 권한이 필요함\n이 접근 권한 정보는 day 6 에서 Docker Compose 파일의 mlflow-server 와 mlflow-artifact-store 의 정보임\n따라서 아이디와 비밀번호를 사전에 정의된 시스템 환경 변수에 설정해야 MinIO 에 접근할 수 있음\n추가로 MLflow 서버와 S3(MinIO) 의 URI 도 함께 설정해야함\nimport os\n\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\nMLFLOW_S3_ENDPOINT_URL : 모델을 저장할 스토리지 주소\nMLFLOW_TRACKING_URI : 정보를 저장하기 위해 연결할 MLflow 서버의 수조\nAWS_ACCESS_KEY_ID : MinIO 에 접근하기 위한 아이디\nAWS_SECRET_ACCESS_KEY : MinIO 에 접근하기 위한 비밀번호\n\n\n\n1.2 모델 저장하기\nMLflow 의 정보를 저장하기 위해 experiment 와 run 을 사용함\n\nexperiment : MLflow 에서 정보를 관리하기 위해 나누는 일종의 directory, 생성하지 않는 경우 Default로 저장됨\nrun : experiment 에 저장되는 모델 실험 결과, 해당 run 에 실제 정보들이 저장되며 experiment/run 의 구조로 저장됨\n\nmlflow 클래스를 이용하여 다음과 같이 코드를 작성함\nparser 를 활용하여 model_name 인자를 받아주고 experiment 는 mlflow.set_experiment(\"new-exp\") 를 이용하여 이름을 정해줌\nrun 을 담당하는 코드는 다음과 같음\nwith mlflow.start_run():\n    mlflow.log_metrics({\"train_acc\": train_acc, \"valid_acc\": valid_acc})\n    mlflow.sklearn.log_model(\n        sk_model=model_pipeline,\n        artifact_path=args.model_name,\n        signature=signature,\n        input_example=input_sample,\n    )\n\nmlflow.log_metrics : 모델의 결과 metrics 를 Python 의 dictionary 형태로 입력해 생성된 run 을 저장\nmlflow.sklearn.log_model : sklearn 모델은 mlflow.sklearn 를 사용해 간편하게 업로드가 가능함\n\n모델은 다음과 같은 구조로 저장됨\n# Directory written by mlflow.sklearn.save_model(model, \"sk_model\")\n\nsk_model/\n├── MLmodel\n├── model.pkl\n├── conda.yaml\n├── python_env.yaml\n└── requirements.txt\n\n\n\n2. 전체 코드\n# save_model_to_registry.py\nimport os\nfrom argparse import ArgumentParser\n\nimport mlflow\nimport pandas as pd\nimport psycopg2\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\n# 0. set mlflow environments\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\n# 1. get data\ndb_connect = psycopg2.connect(\n    user=\"myuser\",\n    password=\"mypassword\",\n    host=\"localhost\",\n    port=5432,\n    database=\"mydatabase\",\n)\ndf = pd.read_sql(\"SELECT * FROM iris_data ORDER BY id DESC LIMIT 100\", db_connect)\n\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\nmodel_pipeline.fit(X_train, y_train)\n\ntrain_pred = model_pipeline.predict(X_train)\nvalid_pred = model_pipeline.predict(X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\nparser = ArgumentParser()\nparser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\nargs = parser.parse_args()\n\nmlflow.set_experiment(\"new-exp\")\n\nsignature = mlflow.models.signature.infer_signature(model_input=X_train, model_output=train_pred)\ninput_sample = X_train.iloc[:10]\n\nwith mlflow.start_run():\n    mlflow.log_metrics({\"train_acc\": train_acc, \"valid_acc\": valid_acc})\n    mlflow.sklearn.log_model(\n        sk_model=model_pipeline,\n        artifact_path=args.model_name,\n        signature=signature,\n        input_example=input_sample,\n    )\n\n# 4. save data\ndf.to_csv(\"data.csv\", index=False)\n실행코드 : python save_model_to_registry.py --model-name \"sk_model\"\n실행 결과는 다음과 같음\n\n\n\n모델 저장 결과 상세"
+    "text": "실습\n\n1. API 명세서 작성\nCRUD : Create, Read, Updater, Delete 의 합친 단어\n\n1.1 Path Parameter 아용\nPath Parameter 의 경우 각 API 에서 사용되는 파라미터를 Path에 포함시켜 전달함\n이를 고려하여 명세서를 작성하면 다음과 같음\n\nCreate\n이름과 별명을 입력하여 사용자를 생성함\nPOST /users/name/{name}/nickname/{nickname}\nRead\n이름을 입력하여 해당 이름을 가진 사용자의 별명을 반환\nGET /users/name/{name}\nUpdate\n이름과 새로운 별명을 입력하여 해당 이름을 가진 사용자의 별명을 업데이트\nPUT /users/name/{name}/nickname/{nickname}\nDelete\n이름을 입력하여 해당 이름을 가진 사용자의 정보를 삭제\nDELETE /users/name/{name}\n\n\n\n1.2 Query Parameter 이용\nQuery Parameter 의 경우 각 API 에서 사용되는 파라미터를 Query 형태로 전달함\n이를 고려하여 명세서를 작성하면 다음과 같음\n\nCreate\nPOST /users?name=hello?nickname=world\nRead\nGET /users?name=hello\nUpdate\nPUT /users?name=hello&nickname=world2\nDelete\nDELETE /users?name=hello\n\n\n\n\n2. API 구현\n작성한 명세서를 FastAPI 를 이용해 구현\nFastAPI 클래스의 인스턴스를 생성한 후 입력받은 데이터를 저장할 수 있도록 USER_DB 를 생성\n또한 메모리에 존재하지 않는 이름에 대한 요청이 들어온 경우 에러를 발생할 수 있도록 HTTPException 을 이용하여 NAME_NOT_FOUND 를 선언\nfrom fastapi import FastAPI, HTTPException\n\n# Create a FastAPI instance\napp = FastAPI()\n\n# User database\nUSER_DB = {}\n\n# Fail response\nNAME_NOT_FOUND = HTTPException(status_code=400, detail=\"Name not found.\")\n\n2.1 Path Parameter 이용\n\nCreate\n이름과 별명을 입력 받아 USER_DB 에 정보를 저장하고 상태 정보를 return\n@app.post(\"/users/name/{name}/nickname/{nickname}\")\ndef create_user(name: str, nickname: str):\n    USER_DB[name] = nickname\n    return {\"status\": \"success\"}\nRead\n이름을 입력 받아 USER_DB 에서 별명을 찾아 return\n@app.get(\"/users/name/{name}\")\ndef read_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    return {\"nickname\": USER_DB[name]}\nUpdate\n이름과 새로운 별명을 입력 받아 USER_DB 의 정보를 업데이트하고 상태 정보를 return\n@app.put(\"/users/name/{name}/nickname/{nickname}\")\ndef update_user(name: str, nickname: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    USER_DB[name] = nickname\n    return {\"status\": \"success\"}\nDelete\n이름을 입력 받아 USER_DB 에서 정보를 삭제하고 상태 정보를 return\n@app.delete(\"/users/name/{name}\")\ndef delete_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    del USER_DB[name]\n    return {\"status\": \"success\"}\n\n이를 합치면 코드는 다음과 같음\n# crud_path.py\nfrom fastapi import FastAPI, HTTPException\n\n# Create a FastAPI instance\napp = FastAPI()\n\n# User database\nUSER_DB = {}\n\n# Fail response\nNAME_NOT_FOUND = HTTPException(status_code=400, detail=\"Name not found.\")\n\n\n@app.post(\"/users/name/{name}/nickname/{nickname}\")\ndef create_user(name: str, nickname: str):\n    USER_DB[name] = nickname\n    return {\"status\": \"success\"}\n\n\n@app.get(\"/users/name/{name}\")\ndef read_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    return {\"nickname\": USER_DB[name]}\n\n\n@app.put(\"/users/name/{name}/nickname/{nickname}\")\ndef update_user(name: str, nickname: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    USER_DB[name] = nickname\n    return {\"status\": \"success\"}\n\n\n@app.delete(\"/users/name/{name}\")\ndef delete_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    del USER_DB[name]\n    return {\"status\": \"success\"}\n\n\n\nhttps://localhost:8000/docs 에 접속\n\n\n\n\n2.2 Query Parameter 이용\nPath Parameter 와 같이 명세서에 따라 작성하고 코드를 하나로 합치면 다음과 같음\n# crud_query.py\nfrom fastapi import FastAPI, HTTPException\n\n# Create a FastAPI instance\napp = FastAPI()\n\n# User database\nUSER_DB = {}\n\n# Fail response\nNAME_NOT_FOUND = HTTPException(status_code=400, detail=\"Name not found.\")\n\n\n@app.post(\"/users\")\ndef create_user(name: str, nickname: str):\n    USER_DB[name] = nickname\n    return {\"status\": \"success\"}\n\n\n@app.get(\"/users\")\ndef read_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    return {\"nickname\": USER_DB[name]}\n\n\n@app.put(\"/users\")\ndef update_user(name: str, nickname: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    USER_DB[name] = nickname\n    return {\"status\": \"success\"}\n\n\n@app.delete(\"/users\")\ndef delete_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    del USER_DB[name]\n    return {\"status\": \"success\"}\n\n\n\nhttps://localhost:8000/docs 에 접속"
   },
   {
-    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#reference",
-    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#reference",
-    "title": "MLOps for MLE - 7",
+    "objectID": "docs/blog/posts/2023-12-09-MLOps-day10/index.html#reference",
+    "href": "docs/blog/posts/2023-12-09-MLOps-day10/index.html#reference",
+    "title": "MLOps for MLE - 10",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
+    "title": "MLOps for MLE - 4",
+    "section": "",
+    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
+    "title": "MLOps for MLE - 4",
+    "section": "",
+    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
+    "title": "MLOps for MLE - 4",
+    "section": "실습",
+    "text": "실습\n\n1. Base Model 코드 작성\n데이터: Iris\n데이터 스케일링: StandardScaler\n모델: SVC\n정확도 metric: accuracy_score\n모델 저장 방법: joblib\n전체 코드는 아래와 같음\nTrain 코드\nimport joblib\nfrom sklearn.datasets import load_iris\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\n# 1. get data\nX, y = load_iris(return_X_y=True, as_frame=True)\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nscaler = StandardScaler()\nclassifier = SVC()\n\nscaled_X_train = scaler.fit_transform(X_train)\nscaled_X_valid = scaler.transform(X_valid)\nclassifier.fit(scaled_X_train, y_train)\n\ntrain_pred = classifier.predict(scaled_X_train)\nvalid_pred = classifier.predict(scaled_X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\njoblib.dump(scaler, \"scaler.joblib\")\njoblib.dump(classifier, \"classifier.joblib\")\nValidate 코드\nimport joblib\nfrom sklearn.datasets import load_iris\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\n\n# 1. reproduce data\nX, y = load_iris(return_X_y=True, as_frame=True)\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. load model\nscaler_load = joblib.load(\"scaler.joblib\")\nclassifier_load = joblib.load(\"classifier.joblib\")\n\n# 3. validate\nscaled_X_train = scaler_load.transform(X_train)\nscaled_X_valid = scaler_load.transform(X_valid)\n\nload_train_pred = classifier_load.predict(scaled_X_train)\nload_valid_pred = classifier_load.predict(scaled_X_valid)\n\nload_train_acc = accuracy_score(y_true=y_train, y_pred=load_train_pred)\nload_valid_acc = accuracy_score(y_true=y_valid, y_pred=load_valid_pred)\n\nprint(\"Load Model Train Accuracy :\", load_train_acc)\nprint(\"Load Model Valid Accuracy :\", load_valid_acc)\n-&gt; joblib의 load를 통해 학습한 모델을 불러옴\n\n\n2. Model Pipeline 작성\n위에서 사용했던 모델인 scaler와 SVC를 통합\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\n\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\n-&gt; 이 코드를 활용하여 앞의 부분을 대체"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
+    "title": "MLOps for MLE - 4",
     "section": "Reference",
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
@@ -284,13 +424,13 @@
     "href": "docs/blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "공부한 내용을 정리하는 페이지입니다.\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\n머신러닝 시스템 설계 Ch.1\n\n\n\nbooks\n\n\n\n머신러닝 시스템 개요\n\n\n\nUi Seok\n\n\nDec 5, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 8\n\n\n\nmlops\n\n\n\nMLflow 서버에서 모델 불러오기\n\n\n\nUi Seok\n\n\nDec 2, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 7\n\n\n\nmlops\n\n\n\nMLflow 서버에 학습된 모델 저장\n\n\n\nUi Seok\n\n\nDec 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 6\n\n\n\nmlops\n\n\n\nMLflow 서버 구축 및 모델 저장\n\n\n\nUi Seok\n\n\nNov 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 5\n\n\n\nmlops\n\n\n\nDB에서 데이터를 가져오기\n\n\n\nUi Seok\n\n\nNov 28, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 4\n\n\n\nmlops\n\n\n\n모델 학습 및 파이프라인 작성\n\n\n\nUi Seok\n\n\nNov 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 3\n\n\n\nmlops\n\n\n\nDocker를 활용하여 DB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 26, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 2\n\n\n\nmlops\n\n\n\nDB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 24, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 1\n\n\n\nmlops\n\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\nUi Seok\n\n\nNov 23, 2023\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "공부한 내용을 정리하는 페이지입니다.\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 13\n\n\n\nmlops\n\n\n\nREST API 구현\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 12\n\n\n\nmlops\n\n\n\nDocker 를 활용하여 API 실행\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 11\n\n\n\nmlops\n\n\n\nPydantic 코드 활용\n\n\n\nUi Seok\n\n\nDec 11, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 10\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 CRUD 를 수행하는 API 작성\n\n\n\nUi Seok\n\n\nDec 9, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 9\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 간단한 API 제작\n\n\n\nUi Seok\n\n\nDec 7, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n머신러닝 시스템 설계 Ch.1\n\n\n\nbooks\n\n\n\n머신러닝 시스템 개요\n\n\n\nUi Seok\n\n\nDec 5, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 8\n\n\n\nmlops\n\n\n\nMLflow 서버에서 모델 불러오기\n\n\n\nUi Seok\n\n\nDec 2, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 7\n\n\n\nmlops\n\n\n\nMLflow 서버에 학습된 모델 저장\n\n\n\nUi Seok\n\n\nDec 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 6\n\n\n\nmlops\n\n\n\nMLflow 서버 구축 및 모델 저장\n\n\n\nUi Seok\n\n\nNov 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 5\n\n\n\nmlops\n\n\n\nDB에서 데이터를 가져오기\n\n\n\nUi Seok\n\n\nNov 28, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 4\n\n\n\nmlops\n\n\n\n모델 학습 및 파이프라인 작성\n\n\n\nUi Seok\n\n\nNov 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 3\n\n\n\nmlops\n\n\n\nDocker를 활용하여 DB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 26, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 2\n\n\n\nmlops\n\n\n\nDB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 24, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 1\n\n\n\nmlops\n\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\nUi Seok\n\n\nNov 23, 2023\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "UiSeok’s blog",
     "section": "",
-    "text": "Welcome my page!\n공부했던 내용들을 정리하는 블로그 입니다.\n상단의 Menu bar 를 참고해주세요.\nThis page made by Quarto"
+    "text": "Welcome my page!\n공부했던 내용들을 정리하는 블로그 입니다.\n상단의 Menu bar 를 참고해주세요.\nThis page made by Quarto\n\n\n\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 13\n\n\n\nmlops\n\n\n\nREST API 구현\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 12\n\n\n\nmlops\n\n\n\nDocker 를 활용하여 API 실행\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 11\n\n\n\nmlops\n\n\n\nPydantic 코드 활용\n\n\n\nUi Seok\n\n\nDec 11, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 10\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 CRUD 를 수행하는 API 작성\n\n\n\nUi Seok\n\n\nDec 9, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 9\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 간단한 API 제작\n\n\n\nUi Seok\n\n\nDec 7, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n머신러닝 시스템 설계 Ch.1\n\n\n\nbooks\n\n\n\n머신러닝 시스템 개요\n\n\n\nUi Seok\n\n\nDec 5, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 8\n\n\n\nmlops\n\n\n\nMLflow 서버에서 모델 불러오기\n\n\n\nUi Seok\n\n\nDec 2, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 7\n\n\n\nmlops\n\n\n\nMLflow 서버에 학습된 모델 저장\n\n\n\nUi Seok\n\n\nDec 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 6\n\n\n\nmlops\n\n\n\nMLflow 서버 구축 및 모델 저장\n\n\n\nUi Seok\n\n\nNov 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 5\n\n\n\nmlops\n\n\n\nDB에서 데이터를 가져오기\n\n\n\nUi Seok\n\n\nNov 28, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 4\n\n\n\nmlops\n\n\n\n모델 학습 및 파이프라인 작성\n\n\n\nUi Seok\n\n\nNov 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 3\n\n\n\nmlops\n\n\n\nDocker를 활용하여 DB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 26, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 2\n\n\n\nmlops\n\n\n\nDB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 24, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 1\n\n\n\nmlops\n\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\nUi Seok\n\n\nNov 23, 2023\n\n\n\n\n\n\n\n\n\n\n\n\nTest Page\n\n\n\ncode\n\n\ntest\n\n\n\n\n\n\n\nMe\n\n\nNov 22, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\nHarlow Malloc\n\n\nNov 21, 2023\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\nTristan O’Malley\n\n\nNov 18, 2023\n\n\n\n\n\n\n\n\nNo matching items"
   }
 ]

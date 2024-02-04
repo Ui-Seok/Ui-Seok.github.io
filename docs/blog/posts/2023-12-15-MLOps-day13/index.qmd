@@ -4,7 +4,7 @@ description: REST API 구현
 author: "Ui Seok"
 date: "2023-12-12"
 categories: [mlops]
-image: "https://picsum.photos/id/114/200/150"
+image: "https://picsum.photos/id/115/200/150"
 
 page-layout: article
 ---

@@ -1,0 +1,32 @@
+---
+title: "MLOps for MLE - 16"
+description: 주키퍼와 브로커 생성
+author: "Ui Seok"
+date: "2023-12-26"
+categories: [mlops]
+image: "https://picsum.photos/id/118/200/150"
+
+page-layout: article
+---
+
+## Summary
+
+1. Docker Compose 를 이용하여 주키퍼와 브로커를 생성
+
+2. Producer 와 Consumer 를 실행
+
+::: {.callout-note}
+실습을 진행했던 코드를 보고싶으시다면 [여기](https://github.com/Ui-Seok/mlops-tutorial)를 눌러주세요
+:::
+
+
+## 실습
+
+### 1. SAMPLE TEXT
+
+
+
+
+## Reference
+
+[ML Engineer를 위한 MLOps tutorial](https://mlops-for-mle.github.io/tutorial/)

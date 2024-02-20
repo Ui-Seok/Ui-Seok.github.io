@@ -2,7 +2,7 @@
 title: "MLOps for MLE - 13"
 description: REST API 구현
 author: "Ui Seok"
-date: "2023-12-12"
+date: "2023-12-15"
 categories: [mlops]
 image: "https://picsum.photos/id/115/200/150"
 

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ui Seok">
+<meta name="dcterms.date" content="2023-12-20">
+<meta name="description" content="Kafka 란?">
+
+<title>Home - MLOps for MLE - 15</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<script src="../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../../../index.html">
+    <span class="navbar-title">Home</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../about.html" rel="" target="">
+ <span class="menu-text">Contact Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../docs/coursera/index.html" rel="" target="">
+ <span class="menu-text">Coursera Lecture</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../docs/blog/index.html" rel="" target="">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Ui-Seok" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/uiseok-lee-34007429a/" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#실습" id="toc-실습" class="nav-link" data-scroll-target="#실습">실습</a>
+  <ul class="collapse">
+  <li><a href="#메시징-시스템" id="toc-메시징-시스템" class="nav-link" data-scroll-target="#메시징-시스템">1. 메시징 시스템</a></li>
+  <li><a href="#kafka" id="toc-kafka" class="nav-link" data-scroll-target="#kafka">2. Kafka</a></li>
+  <li><a href="#kafka-components" id="toc-kafka-components" class="nav-link" data-scroll-target="#kafka-components">3. Kafka Components</a></li>
+  </ul></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/blog/posts/2023-12-20-MLOps-day15/index.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">MLOps for MLE - 15</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">mlops</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Kafka 란?
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ui Seok </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 20, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li><p>메시징 시스템에 대한 정보</p></li>
+<li><p>Kafka 의 전체 아키텍처에 대한 정보</p></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="메시징-시스템" class="level3">
+<h3 class="anchored" data-anchor-id="메시징-시스템">1. 메시징 시스템</h3>
+<p>메시징 시스템 (Message System) : 서로 다른 어플리케이션끼리 정보를 교환하기 위해 메시지의 생성, 전송, 전달 및 저장을 가능하게 하는 시스템</p>
+<p>대표적으로 Kafka, RabbitMQ, Active MQ, AWS SQS, Java JMS 등이 있음</p>
+<p>메시지 : 하나의 entity 에서 다른 하나의 entity 로 정보를 전송하는 데 사용되는 통신 아티팩트</p>
+<p>이러한 시스템은 주로 하나의 어플리케이션이 여러 외부 어플리케이션이나 하나 이상의 데이터 소스로부터 데이터를 받는 어플리케이션에 의해 처리된 데이터를 전달받고 싶을 때 사용함</p>
+<p>메시징 시스템은 메시지 생산자 (message producer) 와 메시지 소비자 (message consumers) 사이에 약한 결합성 (loose coupling) 을 갖도록 함</p>
+<p>약한 결합성 : 한 쪽이 끊기거나 변경이 있어도 다른 쪽에는 미치는 영향이 작은 것</p>
+<p>메시징 시스템을 이용하면 메시지 생산자와 소비자는 서로를 알지 못함</p>
+<p>이러한 메시징 시스템의 특징은 동적이고, 신뢰성 있고 유연한 시스템을 구현할 수 있도록 해주며, 그에 따라 시스템의 나머지 부분에 영향을 주지 않고 하위 어플리케이션의 전체적인 구성을 변경할 수 있음</p>
+<p>또한 높은 확장석과 서로 다른 네트워크 사이의 쉬운 통합성과 안정성이 있음</p>
+<p>메시징 시스템의 안정적이고 확장 가능한 특징 때문에, 많은 개발자들이 비지니스와 컴퓨팅 사이언스 문제를 해결하기 위해 사용하고 있음</p>
+<p>Ex) 워크플로우, 네트워크 관리, 통신 서비스, 고객 관리, 일기 예보 시스템 등</p>
+<section id="용어-정리" class="level4">
+<h4 class="anchored" data-anchor-id="용어-정리">1.1 용어 정리</h4>
+<p><strong>Message Oriented Middleware (MOM)</strong></p>
+<ul>
+<li>독립된 어플리케이션 간에 데이터를 주고받을 수 있도록 하는 시스템 디자인
+<ul>
+<li>함수 호출, 공유메모리 등의 방식이 아닌, 메시지 교환을 이용하는 중간 계층에 대한 인프라 아키텍처</li>
+<li>분산 컴퓨팅이 가능해지며, 서비스간의 결합성이 낮아짐</li>
+</ul></li>
+<li>비동기 (asynchronous) 로 메시지를 전달</li>
+<li>Queue, Broadcast, Multicast 등의 방식으로 메시지를 전달</li>
+<li>Publish/Subscribe (Pub/Sub) 구조
+<ul>
+<li>메시지를 발행하는 Publisher, 메시지를 소비하는 Subscriber 로 구성</li>
+</ul></li>
+</ul>
+<p><strong>Message Broker</strong></p>
+<ul>
+<li>메시지 처리 또는 메시지 수신자에게 메시지를 전달하는 시스템이며, 일반적으로 MOM 을 기반으로 구축됨</li>
+</ul>
+<p><strong>Mesage Queue (MQ)</strong></p>
+<ul>
+<li>Message Broker 와 MOM 을 구현한 소프트웨어 (RabbitMQ, ActiveMQ, Kafka 등)</li>
+</ul>
+<p><strong>Advanced Message Queueing Protocol (AMQP)</strong></p>
+<ul>
+<li>메시지를 안정적으로 주고받기 위한 인터넷 프로토콜</li>
+<li>MOM 은 메시지 전송 보장을 해야하므로 AMQP 를 구현</li>
+</ul>
+<p>(Kafka 는 AMQP 를 구현한 MOM 시스템임)</p>
+</section>
+</section>
+<section id="kafka" class="level3">
+<h3 class="anchored" data-anchor-id="kafka">2. Kafka</h3>
+<section id="features" class="level4">
+<h4 class="anchored" data-anchor-id="features">2.1 Features</h4>
+<p>Kafka 는 Open-source Distributed Event Streaming Platform 임</p>
+<p>Event Streaming : 데이터베이스, 센서, 모바일기기, 어플리케이션 등과 같은 곳에서 발생하는 데이터를 event stream 형태로 저장해서 나중에 검색할 수 있도록 하는 것</p>
+<p>-&gt; 발생하는 데이터를 실시간으로 처리하고, 필요에 따라서 데이터가 또다른 target 시스템으로 event stream 을 라우팅 해주는 것</p>
+<p><strong>Event Streaming Platform</strong></p>
+<ul>
+<li>Event stream 을 실시간으로 처리하고 계속 쌓이는 데이터를 지속적으로 보관하다가 그 데이터를 쓰려고 하는 다른 target 시스템들이 가져갈 수 있도록 제공</li>
+</ul>
+<p><strong>Publish/Subscribe (Pub/Sub) 구조</strong></p>
+<ul>
+<li>다른 시스템에서 데이터를 가져와서 Kafka 에 publish 하거나 Kafka 로부터 데이터를 subscribe 할 수 있는 기능을 제공</li>
+</ul>
+<p><strong>Decoupling</strong></p>
+<ul>
+<li>Kafka 에서는 Pub/Sub 구조를 구현하기 위해 Producer 와 Consumer 가 존재함, 두 객체는 서로 의존적이지 않고 완벽하게 분리되어 있음
+<ul>
+<li>Producer : Kafka 에 event 를 Publish 하는 client application</li>
+<li>Consumer : Kafka 로부터 event 를 Subscribe 하는 client application</li>
+</ul></li>
+</ul>
+</section>
+<section id="kafka-architecture" class="level4">
+<h4 class="anchored" data-anchor-id="kafka-architecture">2.2 Kafka Architecture</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Kafka Architecture</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="kafka-components" class="level3">
+<h3 class="anchored" data-anchor-id="kafka-components">3. Kafka Components</h3>
+<section id="broker" class="level4">
+<h4 class="anchored" data-anchor-id="broker">3.1 Broker</h4>
+<p>브로커 (Broker) : 메시징 서비스를 담당해주는 Kafka 서버 또는 Kafka 시스템을 말함, 하나의 브로커는 하나의 Kafka Broker Process 를 의미</p>
+<p>프로세스를 구동하는 방법에 따라 다양한 방법으로 클러스터를 구성할 수 있는데 주로 단일 브로커가 아닌 다중 브로커를 사용함</p>
+<p>-&gt; 브로커가 여러 개일 경우, 각각의 브로커들은 ID 로 식별함</p>
+<p>브로커의 주요 역할은 토픽 (Topic) 내의 파티션 (Partition) 들의 분산, 유지 및 관리하는 것</p>
+</section>
+<section id="kafka-cluster" class="level4">
+<h4 class="anchored" data-anchor-id="kafka-cluster">3.2 Kafka Cluster</h4>
+<p>Kafka 클러스터는 여러 개의 브로커로 이루어진 집합체를 말함</p>
+<p>일반적으로 최소 3대 이상의 브로커를 하나의 클러스터로 구성함</p>
+</section>
+<section id="topic" class="level4">
+<h4 class="anchored" data-anchor-id="topic">3.3 Topic</h4>
+<p>토픽이란 브로커에서 event (data) 를 관리하는 “기준” 또는 어떤 event 를 저장할 지를 정하는 “주제” 임</p>
+<p>토픽은 파일 시스템의 “폴더” 와 같고, event 는 폴더 속의 “파일” 과 같음</p>
+</section>
+<section id="partition" class="level4">
+<h4 class="anchored" data-anchor-id="partition">3.4 Partition</h4>
+<p>토픽에는 파티션이 존재하며 모든 파티션들은 Producer 로부터 전달된 데이터를 보관하는 역할을 함</p>
+<p>-&gt; 리더 파티션 (Leader Partition): Producer 또는 Consumer 와 직접 통신하며 read 와 write 연산을 담당함</p>
+<p>-&gt; 팔로워 파티션 (Follower Partition): Producer 에 의해 리더 파티션으로 전달된 데이터를 복제하여 저장하고 리더 파티션이 속해있는 브로커에 장애가 발생하면 팔로워 파티션이 리더 파티션의 지위를 가지게 됨</p>
+<p>Replication Factor 에 따라 리더 파티션과 팔로워 파티션의 개수가 정해짐</p>
+<p>Ex) Replication Factor 가 1이라면 리더 파티션만 존재, 3이라면 하나의 리더 파티션과 두개의 팔로워 파티션을 가짐</p>
+</section>
+<section id="zookeeper" class="level4">
+<h4 class="anchored" data-anchor-id="zookeeper">3.5 Zookeeper</h4>
+<p>주키퍼란 분산 시스템에서 시스템 간의 정보 유지, 상태 체크, 서버들 간의 동기화 등을 처리해주는 분산 코디네이션 서비스임</p>
+<p>직접 어플리케이션 작업을 조율하지 않고, 조율하는 것을 쉽게 개발할 수 있도록 도와줌</p>
+<p>API 를 이용하여 동기화를 하거나 마스터 선출 등의 작업을 쉽게 구현할 수 있게 해줌</p>
+<p>위의 카프카 아키텍쳐 그림에서 주키퍼 앙상블이란 주키퍼 서버의 클러스터를 뜻함</p>
+<p>하나의 주키퍼 서버에 문제가 생겼을 경우, 주키퍼 서버들에 쌓이는 데이터를 기준으로 일관성을 맞추기 때문에 클러스터는 보통 홀수로 구축하며 최소 3개에서 일반적으로 5개를 권장함</p>
+<p>주키퍼에서도 파티션처럼 하나의 리더 서버가 있고, write 를 담당함</p>
+<p>나머지 팔로워 서버들은 read 를 담당함</p>
+</section>
+<section id="producer-consumer" class="level4">
+<h4 class="anchored" data-anchor-id="producer-consumer">3.6 Producer &amp; Consumer</h4>
+<p>Producer 는 “메시지를 생산” 해서 브로커의 토픽으로 메시지를 보내는 역할을 하는 어플리케이션 또는 서버임</p>
+<ul>
+<li>데이터를 전송할 때 리더 파티션을 가지고 있는 브로커와 직접 통신함</li>
+<li>원하는 토픽의 파티션에 전송만하며 이후에 어떤 Consumer 에게 전송되는 지는 신경쓰지 않음</li>
+</ul>
+<p>Consumer 는 토픽의 파티션에 저장되어 있는 “메시지를 소비” 하는 역할을 하는 어플리케이션 또는 서버임</p>
+<ul>
+<li>데이터를 요청할 때 리더 파티션을 가지고 있는 브로커와 통신하여 토픽의 파티션으로부터 데이터를 가져감</li>
+<li>토픽의 특정 파티션만 구독하는 Consumer 를 운영 or 1개 이상의 Consumer 로 이루어진 Consumer 그룹을 운영</li>
+<li>어떤 Producer 에게서 메시지가 왔는지는 관심이 없고, 원하는 토픽의 파티션을 읽어서 필요한 메시지만 받음</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">us.lee1520@gmail.com</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

@@ -42,324 +42,30 @@
     "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
   },
   {
-    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html",
-    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html",
-    "title": "MLOps for MLE - 7",
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
+    "title": "MLOps for MLE - 4",
     "section": "",
-    "text": "모델을 학습하고 MLflow 서버에 저장\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#summary",
-    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#summary",
-    "title": "MLOps for MLE - 7",
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
+    "title": "MLOps for MLE - 4",
     "section": "",
-    "text": "모델을 학습하고 MLflow 서버에 저장\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#실습",
-    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#실습",
-    "title": "MLOps for MLE - 7",
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
+    "title": "MLOps for MLE - 4",
     "section": "실습",
-    "text": "실습\n\n1. Save Model to Registry\nday 5 에서 작성한 db_train.py 코드의 #3. save_model 부분을 변경하여 모델을 업로드하는 코드 작성\n\n1.1 환경 변수 추가\nMLflow 와 통신하기 위해서는 몇 가지 환경 변수가 설정되어야 함\n유저가 학습한 모델을 MLflow 서버를 통해 Arifact Store 인 MinIO 에 저장함\n이 과정에서 MinIO 의 접근 권한이 필요함\n이 접근 권한 정보는 day 6 에서 Docker Compose 파일의 mlflow-server 와 mlflow-artifact-store 의 정보임\n따라서 아이디와 비밀번호를 사전에 정의된 시스템 환경 변수에 설정해야 MinIO 에 접근할 수 있음\n추가로 MLflow 서버와 S3(MinIO) 의 URI 도 함께 설정해야함\nimport os\n\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\nMLFLOW_S3_ENDPOINT_URL : 모델을 저장할 스토리지 주소\nMLFLOW_TRACKING_URI : 정보를 저장하기 위해 연결할 MLflow 서버의 수조\nAWS_ACCESS_KEY_ID : MinIO 에 접근하기 위한 아이디\nAWS_SECRET_ACCESS_KEY : MinIO 에 접근하기 위한 비밀번호\n\n\n\n1.2 모델 저장하기\nMLflow 의 정보를 저장하기 위해 experiment 와 run 을 사용함\n\nexperiment : MLflow 에서 정보를 관리하기 위해 나누는 일종의 directory, 생성하지 않는 경우 Default로 저장됨\nrun : experiment 에 저장되는 모델 실험 결과, 해당 run 에 실제 정보들이 저장되며 experiment/run 의 구조로 저장됨\n\nmlflow 클래스를 이용하여 다음과 같이 코드를 작성함\nparser 를 활용하여 model_name 인자를 받아주고 experiment 는 mlflow.set_experiment(\"new-exp\") 를 이용하여 이름을 정해줌\nrun 을 담당하는 코드는 다음과 같음\nwith mlflow.start_run():\n    mlflow.log_metrics({\"train_acc\": train_acc, \"valid_acc\": valid_acc})\n    mlflow.sklearn.log_model(\n        sk_model=model_pipeline,\n        artifact_path=args.model_name,\n        signature=signature,\n        input_example=input_sample,\n    )\n\nmlflow.log_metrics : 모델의 결과 metrics 를 Python 의 dictionary 형태로 입력해 생성된 run 을 저장\nmlflow.sklearn.log_model : sklearn 모델은 mlflow.sklearn 를 사용해 간편하게 업로드가 가능함\n\n모델은 다음과 같은 구조로 저장됨\n# Directory written by mlflow.sklearn.save_model(model, \"sk_model\")\n\nsk_model/\n├── MLmodel\n├── model.pkl\n├── conda.yaml\n├── python_env.yaml\n└── requirements.txt\n\n\n\n2. 전체 코드\n# save_model_to_registry.py\nimport os\nfrom argparse import ArgumentParser\n\nimport mlflow\nimport pandas as pd\nimport psycopg2\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\n# 0. set mlflow environments\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\n# 1. get data\ndb_connect = psycopg2.connect(\n    user=\"myuser\",\n    password=\"mypassword\",\n    host=\"localhost\",\n    port=5432,\n    database=\"mydatabase\",\n)\ndf = pd.read_sql(\"SELECT * FROM iris_data ORDER BY id DESC LIMIT 100\", db_connect)\n\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\nmodel_pipeline.fit(X_train, y_train)\n\ntrain_pred = model_pipeline.predict(X_train)\nvalid_pred = model_pipeline.predict(X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\nparser = ArgumentParser()\nparser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\nargs = parser.parse_args()\n\nmlflow.set_experiment(\"new-exp\")\n\nsignature = mlflow.models.signature.infer_signature(model_input=X_train, model_output=train_pred)\ninput_sample = X_train.iloc[:10]\n\nwith mlflow.start_run():\n    mlflow.log_metrics({\"train_acc\": train_acc, \"valid_acc\": valid_acc})\n    mlflow.sklearn.log_model(\n        sk_model=model_pipeline,\n        artifact_path=args.model_name,\n        signature=signature,\n        input_example=input_sample,\n    )\n\n# 4. save data\ndf.to_csv(\"data.csv\", index=False)\n실행코드 : python save_model_to_registry.py --model-name \"sk_model\"\n실행 결과는 다음과 같음\n\n\n\n모델 저장 결과 상세"
+    "text": "실습\n\n1. Base Model 코드 작성\n데이터: Iris\n데이터 스케일링: StandardScaler\n모델: SVC\n정확도 metric: accuracy_score\n모델 저장 방법: joblib\n전체 코드는 아래와 같음\nTrain 코드\nimport joblib\nfrom sklearn.datasets import load_iris\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\n# 1. get data\nX, y = load_iris(return_X_y=True, as_frame=True)\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nscaler = StandardScaler()\nclassifier = SVC()\n\nscaled_X_train = scaler.fit_transform(X_train)\nscaled_X_valid = scaler.transform(X_valid)\nclassifier.fit(scaled_X_train, y_train)\n\ntrain_pred = classifier.predict(scaled_X_train)\nvalid_pred = classifier.predict(scaled_X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\njoblib.dump(scaler, \"scaler.joblib\")\njoblib.dump(classifier, \"classifier.joblib\")\nValidate 코드\nimport joblib\nfrom sklearn.datasets import load_iris\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\n\n# 1. reproduce data\nX, y = load_iris(return_X_y=True, as_frame=True)\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. load model\nscaler_load = joblib.load(\"scaler.joblib\")\nclassifier_load = joblib.load(\"classifier.joblib\")\n\n# 3. validate\nscaled_X_train = scaler_load.transform(X_train)\nscaled_X_valid = scaler_load.transform(X_valid)\n\nload_train_pred = classifier_load.predict(scaled_X_train)\nload_valid_pred = classifier_load.predict(scaled_X_valid)\n\nload_train_acc = accuracy_score(y_true=y_train, y_pred=load_train_pred)\nload_valid_acc = accuracy_score(y_true=y_valid, y_pred=load_valid_pred)\n\nprint(\"Load Model Train Accuracy :\", load_train_acc)\nprint(\"Load Model Valid Accuracy :\", load_valid_acc)\n-&gt; joblib의 load를 통해 학습한 모델을 불러옴\n\n\n2. Model Pipeline 작성\n위에서 사용했던 모델인 scaler와 SVC를 통합\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\n\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\n-&gt; 이 코드를 활용하여 앞의 부분을 대체"
   },
   {
-    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#reference",
-    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#reference",
-    "title": "MLOps for MLE - 7",
-    "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
-    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
-    "title": "MLOps for MLE - 2",
-    "section": "",
-    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
-    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
-    "title": "MLOps for MLE - 2",
-    "section": "",
-    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#실습",
-    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#실습",
-    "title": "MLOps for MLE - 2",
-    "section": "실습",
-    "text": "실습\n\n1. 데이터 삽입\nscikit-learn 패키지의 load_iris 를 삽입하기 위해 앞에서 생성한 테이블의 columns 이름과 일치하도록 수정\nimport pandas as pd\nfrom sklearn.datasets import load_iris\n\ndef get_data():\n    X, y = load_iris(return_X_y=True, as_frame=True)\n    df = pd.concat([X, y], axis=\"columns\")\n    rename_rule = {\n        \"sepal length (cm)\": \"sepal_length\",\n        \"sepal width (cm)\": \"sepal_width\",\n        \"petal length (cm)\": \"petal_length\",\n        \"petal width (cm)\": \"petal_width\",\n    }\n    df = df.rename(columns=rename_rule)\n    return df\nData Insertion Query 작성\nDB 에 데이터를 삽입하는 query 의 포맷은 다음과 같음\nINSERT INTO {table_name} (col_1, col_2, ...) VALUES (val_1, val_2, ...)\n이를 이해하고 query를 작성\ninsert_row_query = f\"\"\"\nINSERT INTO iris_data\n    (timestamp, sepal_length, sepal_width, petal_length, petal_width, target)\n    VALUES (\n        NOW(),\n        {data.sepal_length},\n        {data.sepal_width},\n        {data.petal_length},\n        {data.petal_width},\n        {data.target}\n    );\"\"\"\n이 query 를 cursor 를 이용하여 DB 에 전달하는 코드 작성\nimport pandas as pd\nimport psycopg2\nfrom sklearn.datasets import load_iris\n\n\ndef get_data():\n    X, y = load_iris(return_X_y=True, as_frame=True)\n    df = pd.concat([X, y], axis=\"columns\")\n    rename_rule = {\n        \"sepal length (cm)\": \"sepal_length\",\n        \"sepal width (cm)\": \"sepal_width\",\n        \"petal length (cm)\": \"petal_length\",\n        \"petal width (cm)\": \"petal_width\",\n    }\n    df = df.rename(columns=rename_rule)\n    return df\n\n\ndef insert_data(db_connect, data):\n    insert_row_query = f\"\"\"\n    INSERT INTO iris_data\n        (timestamp, sepal_length, sepal_width, petal_length, petal_width, target)\n        VALUES (\n            NOW(),\n            {data.sepal_length},\n            {data.sepal_width},\n            {data.petal_length},\n            {data.petal_width},\n            {data.target}\n        );\"\"\"\n\n    with db_connect.cursor() as cur:\n        cur.execute(insert_row_query)\n        db_connect.commit()\n\n\nif __name__ == \"__main__\":\n    db_connect = psycopg2.connect(\n        user=\"myuser\",\n        password=\"mypassword\",\n        host=\"localhost\",\n        port=5432,\n        database=\"mydatabase\",\n    )\n    df = get_data()\n    insert_data(db_connect, df.sample(1).squeeze())\n-&gt; psql 로 현재는 iris_data 에서 하나의 데이터만 DB에 입력된 상태임을 확인할 수 있음\n\n\n\n데이터 삽입\n\n\n\n\n\n데이터 확인\n\n\n\n\n2. Loop 추가\ninsert_data 함수를 계속해서 반복하도록 하는 코드 작성\nimport time\n\ndef generate_data(db_connect, df):\n    while True:\n        insert_data(db_connect, df.sample(1).squeeze())\n        time.sleep(1)\n-&gt; time 패키지의 sleep 함수를 이용해서 DB의 부하 줄이기"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
-    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
-    "title": "MLOps for MLE - 2",
-    "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-06-book-review-1/index.html",
-    "href": "docs/blog/posts/2023-12-06-book-review-1/index.html",
-    "title": "머신러닝 시스템 설계 Ch.1",
-    "section": "",
-    "text": "프로덕션 환경에서 알고리즘은 ML 시스템의 일부이다. 시스템은 ML 프로젝트의 출발점이 된 비즈니스 요구 사항, 사용자와 개발자가 시스템과 상호 작용하는 인터페이스, 데이터 스택, 모델을 개발 및 모니터링하고 업데이트하기 위한 로직은 물론 해당 로직을 전달할 수 있는 인프라를 포함한다.\n\nML 시스템\n\n배포, 모니터링, 로직 업데이트\n피처 엔지니어링, ML 알고리즘, Evaluation\n데이터\n인프라\n\n\n이러한 ML 시스템과 ML 시스템 사용자, 비즈니스 요구 사항, ML 시스템 개발자 모두가 구성 요소이다."
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-06-book-review-1/index.html#머신러닝-시스템이란",
-    "href": "docs/blog/posts/2023-12-06-book-review-1/index.html#머신러닝-시스템이란",
-    "title": "머신러닝 시스템 설계 Ch.1",
-    "section": "",
-    "text": "프로덕션 환경에서 알고리즘은 ML 시스템의 일부이다. 시스템은 ML 프로젝트의 출발점이 된 비즈니스 요구 사항, 사용자와 개발자가 시스템과 상호 작용하는 인터페이스, 데이터 스택, 모델을 개발 및 모니터링하고 업데이트하기 위한 로직은 물론 해당 로직을 전달할 수 있는 인프라를 포함한다.\n\nML 시스템\n\n배포, 모니터링, 로직 업데이트\n피처 엔지니어링, ML 알고리즘, Evaluation\n데이터\n인프라\n\n\n이러한 ML 시스템과 ML 시스템 사용자, 비즈니스 요구 사항, ML 시스템 개발자 모두가 구성 요소이다."
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-06-book-review-1/index.html#머신러닝을-사용해야-하는-경우",
-    "href": "docs/blog/posts/2023-12-06-book-review-1/index.html#머신러닝을-사용해야-하는-경우",
-    "title": "머신러닝 시스템 설계 Ch.1",
-    "section": "2. 머신러닝을 사용해야 하는 경우",
-    "text": "2. 머신러닝을 사용해야 하는 경우\n먼저 프로젝트를 시작하기 전에 ML이 과연 필요한지 생각해야 한다.\nML은 기존 데이터로 부터 복잡한 패턴을 학습하고 이러한 패턴을 사용해 본 적 없는 데이터에 대해 예측을 수행하는 접근법이다.\n여기서 봐야하는 관점은 학습 가능한 점, 복잡한 패턴, 데이터(사용 가능한 데이터, 본 적 없는 데이터), 예측, 반복적, 비용, 대규모 이다.\n\n1. 학습: 시스템에 학습 능력이 있음\n흔히 알려진 관계형 데이터베이스는 학습 능력이 없기 때문에 ML 시스템이 아니다. ML 시스템이 학습을 하려면 학습할 대상이 있어야 한다. 대부분의 경우에는 데이터로 학습한다.\nEx) 지도 학습의 경우, ML 시스템은 한 쌍으로 이뤄진 입력과 출력 데이터를 이용해 입력 데이터에서 출력 데이터를 생성하는 관계를 학습한다.\n\n\n2. 복잡한 패턴: 학습할 패턴이 존재하며 복잡함\nML 시스템은 학습할 패턴이 있는 경우에만 유용하다."
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-28-MLOps-day5/index.html",
-    "href": "docs/blog/posts/2023-11-28-MLOps-day5/index.html",
-    "title": "MLOps for MLE - 5",
-    "section": "",
-    "text": "DB에서 데이터를 가져오는 파이프라인 작성\n이를 활용한 모델 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#summary",
-    "href": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#summary",
-    "title": "MLOps for MLE - 5",
-    "section": "",
-    "text": "DB에서 데이터를 가져오는 파이프라인 작성\n이를 활용한 모델 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#실습",
-    "href": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#실습",
-    "title": "MLOps for MLE - 5",
-    "section": "실습",
-    "text": "실습\n\n1. Load Data\n데이터를 추출하는 쿼리문\nSELECT * FROM iris_data ORDER BY id DESC LIMIT 100;\n\n\n\n실행결과\n\n\n-&gt; id column 을 기준으로 최신 데이터 100개를 추출하는 쿼리\nPandas를 이용한 데이터 받아오기\npandas.read_sql 은 입력 argument 로 query 와 DB connector 를 받음\nimport pandas as pd\nimport psycopg2\n\ndb_connect = psycopg2.connect(host=\"localhost\", database=\"mydatabase\", user=\"myuser\", password=\"mypassword\")\ndf = pd.read_sql(\"SELECT * FROM iris_data ORDER BY id DESC LIMIT 100\", db_connect)\n-&gt; 확인해보면 df 에 데이터가 쌓여있음\n모델 학습에 필요한 X와 y를 정의\nfrom sklearn.model_selection import train_test_split\n\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\n\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n\n2. Save Data\nDB에 계속 데이터가 쌓이고 있으므로 데이터를 불러올 때마다 데이터가 변경됨. 따라서 Validation 용 데이터를 위해 따로 저장이 필요함\ndf.to_csv(\"valid_data.csv\", index=False)\n\n\n3. 전체 코드\nTrain\nimport joblib\nimport pandas as pd\nimport psycopg2\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\n\n# 1. get data\ndb_connect = psycopg2.connect(host=\"localhost\", database=\"mydatabase\", user=\"myuser\", password=\"mypassword\")\ndf = pd.read_sql(\"SELECT * FROM iris_data ORDER BY id DESC LIMIT 100\", db_connect)\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\nmodel_pipeline.fit(X_train, y_train)\n\ntrain_pred = model_pipeline.predict(X_train)\nvalid_pred = model_pipeline.predict(X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\njoblib.dump(model_pipeline, \"db_pipeline.joblib\")\n\n# 4. save data\ndf.to_csv(\"data.csv\", index=False)\nValidation\nimport joblib\nimport pandas as pd\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\n\n# 1. reproduce data\ndf = pd.read_csv(\"data.csv\")\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. load model\npipeline_load = joblib.load(\"db_pipeline.joblib\")\n\n# 3. validate\nload_train_pred = pipeline_load.predict(X_train)\nload_valid_pred = pipeline_load.predict(X_valid)\n\nload_train_acc = accuracy_score(y_true=y_train, y_pred=load_train_pred)\nload_valid_acc = accuracy_score(y_true=y_valid, y_pred=load_valid_pred)\n\nprint(\"Load Model Train Accuracy :\", load_train_acc)\nprint(\"Load Model Valid Accuracy :\", load_valid_acc)"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#reference",
-    "href": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#reference",
-    "title": "MLOps for MLE - 5",
-    "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html",
-    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html",
-    "title": "MLOps for MLE - 13",
-    "section": "",
-    "text": "Iris 데이터를 입력받아 예측값을 반환하는 API 작성\n제대로 동작하는지 확인\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#summary",
-    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#summary",
-    "title": "MLOps for MLE - 13",
-    "section": "",
-    "text": "Iris 데이터를 입력받아 예측값을 반환하는 API 작성\n제대로 동작하는지 확인\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#실습",
-    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#실습",
-    "title": "MLOps for MLE - 13",
-    "section": "실습",
-    "text": "실습\n\n1. 모델 다운로드\n\n1.1 Environment Variables\nModel Registry 에 저장되어 있는 모델을 다운로드하기 위해 MLflow 서버와 MinIO 서버에 접속하기 위한 정보를 환경 변수로 설정\n-&gt; day 7 에서 작성한 코드와 같음\n\n\n1.2 모델 다운로드 함수 작성\nmlflow 패키지를 이용하여 model artifact 다운로드\n-&gt; model artifact 란 MLflow 에 모델이 저장될 때 함께 저장된 메타데이터와 모델 자체의 binary 파일을 의미\ndef download_model(args):\n    mlflow.artifacts.download_artifacts(artifact_uri=f\"runs:/{args.run_id}/{args.model_name}\", dst_path=\".\")\n\n\n1.3 모델 다운로드\nargparse 를 이용하여 파라미터를 입력받을 수 있도록 하고 download_model() 함수를 호출함\n\n\n1.4 전체 코드\nimport os\nfrom argparse import ArgumentParser\n\nimport mlflow\n\n# Set environments\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\n\ndef download_model(args):\n    # Download model artifacts\n    mlflow.artifacts.download_artifacts(artifact_uri=f\"runs:/{args.run_id}/{args.model_name}\", dst_path=\".\")\n\n\nif __name__ == \"__main__\":\n    parser = ArgumentParser()\n    parser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\n    parser.add_argument(\"--run-id\", dest=\"run_id\", type=str)\n    args = parser.parse_args()\n\n    download_model(args)\n\n\n1.5 스크립트 실행\nhttp://localhost:5001 에 접속하여 해당 모델이 저장된 experiment 에 들어가 run_id 와 model_name 을 확인\n$ python download_model.py --model-name {model-name} --run-id {run-id}\n이 스크립트를 실행하고 나면 model-name 의 폴더가 생성되는 것을 확인할 수 있음\n\n\n\nscript 실행 모습\n\n\n\n\n\nsk_model 모델의 폴더 이름이 생겨남\n\n\n\n\n\n2. Model API 명세서 작성\nPOST /predict 를 수행했을 때 학습한 모델의 inference 결과를 반환해주는 API 명세서를 작성\n\n\n\n\n\n\n\n3. Pydantic Model 로 스키마의 클래스 작성\n명세서에 맞게 Class PredictIn(BaseModel) 와 Class PredictOut(BaseModel) 을 작성\nfrom pydantic import BaseModel\n\nclass PredictIn(BaseModel):\n    sepal_length: float\n    sepal_width: float\n    petal_length: float\n    petal_width: float\n\nclass PredictOut(BaseModel):\n    iris_class: int\n\n\n4. Predict API 구현\n\n4.1 Load Model\nmlflow 패키지를 활용하여 모델을 불러옴\ndef get_model():\n    model = mlflow.sklearn.load_model(model_uri = \"./{model-name}\") # sk_model\n    return model\n\nMODEL = get_model()\n\n\n4.2 Create a FastAPI Instance\napp = FastAPI()\n\n\n4.3 Write predict function\nAPI 에 POST /predict 를 수행했을 때 학습한 모델의 inference 결과를 반환할 수 있도록 predict 함수 작성\n@app.post(\"/predict\", response_model = PredictOut)\ndef predict(data: PredictIn) -&gt; PredictOut:\n    df = pd.DataFrame([data.dict()])\n    pred = MODEL.predict(df).item()\n    return PredictOut(iris_class = pred)\n\npredict 함수는 PredictIn 클래스의 데이터를 입력으로 받고 PredictOut 클래스를 반환\n입력받은 데이터를 데이터프레임 형태로 변환한 후, 위에서 불러온 모델을 이용하여 inference 결과를 저장\n마지막으로 저장된 결과를 PredictOut 클래스에 넣어 반환\n\nPOST method 를 이용하여 예측할 수 있도록 @app.post 를 이용한 데코레이터로 함수를 감싸주고, response_model 은 PredictOut 클래스로 지정\n\n\n4.4 전체 코드\n# app.py\nimport mlflow\nimport pandas as pd\nfrom fastapi import FastAPI\nfrom schemas import PredictIn, PredictOut\n\n\ndef get_model():\n    model = mlflow.sklearn.load_model(model_uri=\"./sk_model\")\n    return model\n\n\nMODEL = get_model()\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.post(\"/predict\", response_model=PredictOut)\ndef predict(data: PredictIn) -&gt; PredictOut:\n    df = pd.DataFrame([data.dict()])\n    pred = MODEL.predict(df).item()\n    return PredictOut(iris_class=pred)\n\n\n\n5. API 작동 확인\n$ uvicorn app:app --reload 를 입력하고 http://localhost:8000/docs 로 이동하여 동작을 확인\n\n\n\nModel API Server 동작\n\n\n\n\n\nRequest Body 의 형태에 맞게 데이터 입력 화면, Response Body 에 추론 결과를 볼 수 있음"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#reference",
-    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#reference",
-    "title": "MLOps for MLE - 13",
-    "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html",
-    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html",
-    "title": "MLOps for MLE - 11",
-    "section": "",
-    "text": "Create 부분을 Pydantic 을 이용하여 수정\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#summary",
-    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#summary",
-    "title": "MLOps for MLE - 11",
-    "section": "",
-    "text": "Create 부분을 Pydantic 을 이용하여 수정\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#실습",
-    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#실습",
-    "title": "MLOps for MLE - 11",
-    "section": "실습",
-    "text": "실습\n\n1. Pydantic Model\nRequest Body 는 client 에서 API 로 전송하는 데이터를 의미\nResponse Body 는 API 가 client 로 전송하는 데이터를 의미\n\n1.1 Base Setting\npydantic 으로부터 BaseModel 을 import 하고 day 10 에서 작성한 API 와 마찬가지로 HTTPException 을 이용하여 에러를 발생할 수 있도록 함\n\n\n1.2 Define Input Schema\n입력받아야 하는 데이터의 형태를 지정해주는 CreateIn 클래스 작성\npydantic 의 BaseModel 을 상속받은 CreateIn 클래스에 Request Body 의 구성 요소가 될 변수들을 attribute 로 지정\nclass CreateIn(BaseModel):\n    name: str\n    nickname: str\n\n\n1.3 Define Output Schema\n반환하고자 하는 데이터의 형태를 지정해주는 CreateOut 클래스 작성\nclass CreateOut(BaseModel):\n    status: str\n    id: int\n\n\n\n2. Response Model\n\n2.1 Response Model\n@app.get(), @app.post() 등 다양한 Path Operation 에 response_model 을 이용하여 Response Body 에 사용될 데이터 모델을 지정해줄 수 있음\noutput data 의 type 을 체크하여 자동으로 변환시키고, type 이 유효한지 확인해주고, response 를 위해 자동으로 JSON Schema 를 추가해주는 등의 역할을 할 수 있음\n\n\n2.2 API Code\n다음과 같이 Response Model 을 활용하여 Create API 를 수정할 수 있음\n@app.post(\"/users\", response_model = CreateOut)\ndef create_user(user: CreateIn) -&gt; CreateOut:\n    USER_DB[user.name] = user.nickname\n    return CreateOut(status = \"success\", id = len(USER_DB))\nPath Operation Function 을 보면 parameter 로 user 를 입력 받고, type 은 CreateIn 인 것을 알 수 있음\n\n\n2.3 crud_pydantic.py\n전체 코드는 다음과 같음\n# crud_pydantic.py\nfrom fastapi import FastAPI, HTTPException\nfrom pydantic import BaseModel\n\n\nclass CreateIn(BaseModel):\n    name: str\n    nickname: str\n\n\nclass CreateOut(BaseModel):\n    status: str\n    id: int\n\n# Create a FastAPI instance\napp = FastAPI()\n\n# User database\nUSER_DB = {}\n\n# Fail response\nNAME_NOT_FOUND = HTTPException(status_code=400, detail=\"Name not found.\")\n\n\n@app.post(\"/users\", response_model=CreateOut)\ndef create_user(user: CreateIn):\n    USER_DB[user.name] = user.nickname\n    user_dict = user.dict()\n    user_dict[\"status\"] = \"success\"\n    user_dict[\"id\"] = len(USER_DB)\n    return user_dict\n\n\n@app.get(\"/users\")\ndef read_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    return {\"nickname\": USER_DB[name]}\n\n\n@app.put(\"/users\")\ndef update_user(name: str, nickname: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    USER_DB[name] = nickname\n    return {\"status\": \"success\"}\n\n\n@app.delete(\"/users\")\ndef delete_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    del USER_DB[name]\n    return {\"status\": \"success\"}\n실행하면 다음과 같은 모습을 보임\n\n\n\ncrud_pydantic.py 실행 회면"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#reference",
-    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#reference",
-    "title": "MLOps for MLE - 11",
-    "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
-  },
-  {
-    "objectID": "posts/test-page/index.html",
-    "href": "posts/test-page/index.html",
-    "title": "Test Page",
-    "section": "",
-    "text": "This is test page."
-  },
-  {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
-    "section": "",
-    "text": "This is a post with executable code."
-  },
-  {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
-    "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-29-MLOps-day6/index.html",
-    "href": "docs/blog/posts/2023-11-29-MLOps-day6/index.html",
-    "title": "MLOps for MLE - 6",
-    "section": "",
-    "text": "Docker Compose 를 이용하여 MLflow 서버를 구축 및 띄움\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#summary",
-    "href": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#summary",
-    "title": "MLOps for MLE - 6",
-    "section": "",
-    "text": "Docker Compose 를 이용하여 MLflow 서버를 구축 및 띄움\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#실습",
-    "href": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#실습",
-    "title": "MLOps for MLE - 6",
-    "section": "실습",
-    "text": "실습\n\n1. MLflow Backend Store\nBackend Store 란 수치 데이터와 MLflow 서버의 정보들을 체계적으로 관리하기 위한 DB 이다. Backend store 에는 모델의 학습 결과인 accuracy, f1-score, loss, hyperparameter 등의 수치 데이터와 run_id, run_name, experiment_name 등의 MLflow의 meta-data 가 저장된다.\nBackend Store 로 사용하기 위해 PostgreSQL DB 를 새롭게 생성\nversion: \"3\"\n\nservices:\n  mlflow-backend-store:\n    image: postgres:14.0\n    container_name: mlflow-backend-store\n    environment:\n      POSTGRES_USER: mlflowuser\n      POSTGRES_PASSWORD: mlflowpassword\n      POSTGRES_DB: mlflowdatabase\n    healthcheck:\n      test: [\"CMD\", \"pg_isready\", \"-q\", \"-U\", \"mlflowuser\", \"-d\", \"mlflowdatabase\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n\n\n2. MLflow Artifact Store\nArtifact Store 란 MLflow 에서 학습된 모델을 저장하는 Model Registry 로써 이용하기 위한 storage server 이다. 이를 이용하면 기본적인 파일 시스템 보다 체계적으로 관리 할 수 있으며 외부에 있는 storage server 도 사용 할 수 있다는 장점이 있다.\nArtifact store 로 MinIO 서버를 사용한다.\n\nMinIO 는 S3 를 대체할 수 있는 오픈 소스 개체 스토리지이다.\nAWS S3 의 API 와도 호환이 가능해서 SDK도 동일하게 사용 가능하다.\nMLflow 에서는 AWS S3 를 모델을 저장하기 위한 스토리지로 사용하도록 권장하고 있다.\n실습에서 AWS credential 을 통해 MinIO 대신 AWS S3 를 사용해도 같은 결과를 얻을 수 있다.\n\nMinIO 의 스펙을 Compose 파일에 서비스 이름, 유저 이름, 비밀번호를 환경변수로 정의하고 호스트와 연결되는 포트 또한 정의\nversion: \"3\"\n\nservices:\n  mlflow-artifact-store:\n    image: minio/minio\n    container_name: mlflow-artifact-store\n    ports:\n      - 9000:9000\n      - 9001:9001\n    environment:\n      MINIO_ROOT_USER: minio\n      MINIO_ROOT_PASSWORD: miniostorage\n    command: server /data/minio --console-address :9001\n    healthcheck:\n      test: [\"CMD\", \"curl\", \"-f\", \"http://localhost:9000/minio/health/live\"]\n      interval: 30s\n      timeout: 20s\n      retries: 3\n\n\n3. MLflow Server\n위에서 만든 Backend Store와 Artifact Store에 접근 가능한 MLflow서버 생성\nFROM amd64/python:3.9-slim\n\nRUN apt-get update && apt-get install -y \\\n    git \\\n    wget \\\n    && rm -rf /var/lib/apt/lists/*\n\nRUN pip install -U pip &&\\\n    pip install mlflow psycopg2-binary boto3\n\nRUN cd /tmp && \\\n    wget https://dl.min.io/client/mc/release/linux-amd64/mc && \\\n    chmod +x mc && \\\n    mv mc /usr/bin/mc\n작성된 Dockerfile 을 build 하도록 Compose 파일의 service 탭 밑에 정의\nversion: \"3\"\n\nservices:\n  mlflow-server:\n    build:\n      context: .\n      dockerfile: Dockerfile\n    container_name: mlflow-server\n    depends_on:\n      mlflow-backend-store:\n        condition: service_healthy\n      mlflow-artifact-store:\n        condition: service_healthy\n    ports:\n      - 5001:5000\n    environment:\n      AWS_ACCESS_KEY_ID: minio\n      AWS_SECRET_ACCESS_KEY: miniostorage\n      MLFLOW_S3_ENDPOINT_URL: http://mlflow-artifact-store:9000\n    command:\n      - /bin/sh\n      - -c\n      - |\n        mc config host add mlflowminio http://mlflow-artifact-store:9000 minio miniostorage &&\n        mc mb --ignore-existing mlflowminio/mlflow\n        mlflow server \\\n        --backend-store-uri postgresql://mlflowuser:mlflowpassword@mlflow-backend-store/mlflowdatabase \\\n        --default-artifact-root s3://mlflow/ \\\n        --host 0.0.0.0\n\nMinIO 에 접근하기 위한 계정 정보를 환경변수로 설정\n모델을 저장할 때 사용할 MinIO 초기 버켓 생성\nMLflow 서버를 끠우는 명령어 작성\n\nPostgreSQL DB 에 연결하기 위한 keyword argument 추가\nMinIO 에 연결하기 위한 keyword argument 추가\n\n\n-&gt; Compose 를 띄우면 localhost:5001 을 통해 MLflow 서버에 접속이 가능하고 localhost:9001 을 통해 MinIO 서버에 접속이 가능하다.\n\n\n\nMLflow 접속화면\n\n\n\n\n\nMinio 접속화면"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#reference",
-    "href": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#reference",
-    "title": "MLOps for MLE - 6",
-    "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html",
-    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html",
-    "title": "MLOps for MLE - 9",
-    "section": "",
-    "text": "FastAPI 의 공식 문서를 참고하여 간단한 API 제작\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#summary",
-    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#summary",
-    "title": "MLOps for MLE - 9",
-    "section": "",
-    "text": "FastAPI 의 공식 문서를 참고하여 간단한 API 제작\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#실습",
-    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#실습",
-    "title": "MLOps for MLE - 9",
-    "section": "실습",
-    "text": "실습\n\n1. FastAPI 를 이용해 간단한 API 만들어보기\n\n1.1 main.py\n다음과 같이 main.py 를 작성\n# main.py\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.get(\"/\")\ndef read_root():\n    return {\"Hello\": \"World\"}\n\n\n1.2 실행\n$ uvicorn main:app --relaod - uvicorn : FastAPI 를 실행하는 웹 서버 실행 Command Line Too - main : 위에서 작성한 Python 모듈 main.py 를 의미 - app : main.py 에서 app = FastAPI() 를 통해 생성된 객체를 의미 - –reload : 코드가 바뀌었을 때 서버가 재시작할 수 있도록 하는 옵션\n\n\n\nmain.py 실행 화면\n\n\n\n\n\ndocs 에 진입한 화면\n\n\n이는 Swagger UI 에 의해 제공되는 interactive API documentation 임\n\n\n\n2. Step by Step 으로 이해하기\n\n2.1 Step 1: Import FastAPI\nfrom fastapi import FastAPI\nAPI 를 만들 수 있도록 도와주는 Python 클래스\n\n\n2.2 Step 2: Create a FastAPI instance\nFastAPI 클래스의 인스턴스를 생성된\n여기서 생성하는 인스턴스의 이름에 따라 uvicorn main:app --reload 과 같은 형태로 실행 명령어가 달라짐\napp = FastAPI()\n\n\n2.3 Step 3: Create a Path Operation\n여기서 말하는 path 는 URL 에서 첫 번째 / 부터 시작되는 마지막 부분을 의미함\nEx) https://example.com/items/foo 에서 /items/foo 에 해당함\nOperation 은 POST, GET, PUT, DELETE 등과 같은 HTTP Method 를 의미함\n이러한 Operation 을 수행하기 위해 @app.get(\"/\") 와 같은 Path Operation Decorator 를 사용\n@app.get(\"/\") 은 FastAPI 로 하여금 path / 로 가서 GET operation 을 수행하라는 의미로 사용할 수 있음\n\n\n2.4 Step 4: Define the Path Operation Function\nPath Operation Function 은 Path Operation 이 수행되었을 때 호출될 Python 함수를 말함\n@app.get(\"/\")\ndef read_root():\n    return {\"Hello\": \"World\"}\n\n\n2.5 Step 5: Return the content\nPath Operation Function 을 통해 return 하는 값으로는 dict, list, str, int 등이 가능\n또한, 뒤에서 나올 Pydantic Model 의 형태로도 return 할 수 있음\n\n\n\n3. Path Parameter 이해하기\nPath parameter 는 Path Operation 에 포함된 변수로 사용자에게 입력받아 function 의 argument 로 사용되는 parameter 를 의미함\nPath parameter 참고\n다음과 같이 코드를 작성하고 uvicorn path_param:app --reload 를 입력하여 실행함\n# path_param.py\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.get(\"/items/{item_id}\")\ndef read_item(item_id: int):\n    return {\"item_id\": item_id}\nitem_id 와 같은 parameter 를 Path parameter 라고 함, 여기서 입력된 Path Parameter 의 값은 function 에 argument 로 전달되어 함수가 호출됨\ndef read_item(item_id: int) 와 같이 type 을 제공할 수 있음\n만약 다른 type 의 데이터가 입력되면 HTTP Error 를 return 하게 됨\n\n\n4. Query Parameter 이해하기\nQuery Parameter 는 function parameter 로는 사용되지만 Path Operation 에 포함되지 않아 Path Parameter 라고 할 수 없는 parameter 를 의미함\nQuery parameter 참고\n다음과 같이 코드를 작성하고 uvicorn query_param:app --reload 를 입력하여 실행함\n# query_param.py\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\nfake_items_db = [{\"item_name\": \"Foo\"}, {\"item_name\": \"Bar\"}, {\"item_name\": \"Baz\"}]\n\n\n@app.get(\"/items/\")\ndef read_item(skip: int = 0, limit: int = 10):\n    return fake_items_db[skip : skip + limit]\nfunction 에 parameter 로 들어있는 skip 과 limit 이 Path Operation 인 @app.get(\"/items\") 에 들어있지 않음\nQuery 는 URL 에서 ? 뒤에 key-value 쌍의 형태로 나타나고, & 로 구분되어 사용됨\nEx) http://localhost:8000/items/?skip=0&limit=10 과 같은 형태로 사용\nQuery Parameter 는 path 의 고정된 부분이 아니기 때문에 optional 로 사용될 수 있고 기본값을 가질 수 있음\n위의 예시에서는 skip=0 과 limit=10 의 기본값을 가지고 있음\n하지만 값을 입력받아야만 하는 Query Parameter 도 존재함\n이를 Required Query Parameter 라고 하고 다음과 같은 형태로 사용됨\n@app.get(\"/items/{item_id}\")\ndef read_user_item(item_id: str, needy: str):\n    item = {\"item_id\": item_id, \"needy\": needy}\n    return item\n위의 예시에서 needy 는 Path Operation @app.get(\"/items/{item_id}\") 에 포함되어 있지 않으므로 Query Parameter 이고, function read_user_item() 에서 기본값이 존재하지 않기 때문에 Required Query Parameter 임을 알 수 있음\n이러한 경우 http://localhost:8000/items/foo-item?needy=someneedy 와 같은 형태로 ? 뒤에 입력을 해주어야 에러가 발생하지 않고 함수가 제대로 동작함\n\n\n5. Multiple Path and Query Parameters 사용해보기\nMultiple Path and Query Parameter 참고\n# multi_param.py\nfrom typing import Union\n\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.get(\"/users/{user_id}/items/{item_id}\")\ndef read_user_item(user_id: int, item_id: str, q: Union[str, None] = None, short: bool = False):\n    item = {\"item_id\": item_id, \"owner_id\": user_id}\n    if q:\n        item.update({\"q\": q})\n    if not short:\n        item.update(\n            {\"description\": \"This is an amazing item that has a long description\"},\n        )\n    return item\n먼저 Path Operation 을 보면 @app.get(\"/users/{user_id}/items/{item_id}\") 로 되어 있음\n이를 통해 user_id 와 item_id 라는 Path Parameter 가 있음을 알 수 있음\nPath Operation Function 의 parameter 를 보면, user_id, item_id, q, short 가 있음을 알 수 있음\nPath Parameter 가 아닌 q 와 short 는 Query Parameter 임을 알 수 있고 각각 기본값이 None, False 임을 알 수 있음"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#reference",
-    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#reference",
-    "title": "MLOps for MLE - 9",
-    "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html",
-    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html",
-    "title": "MLOps for MLE - 3",
-    "section": "",
-    "text": "앞의 코드를 Docker 에서 활용하기 위해 Dockerfile 작성\nDocker 컨테이너 간의 네트워크를 연결하여 DB 에 데이터 삽입\nDB 컨테이너와 데이터 생성 컨테이너를 묶는 Docker Compose 파일 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#summary",
-    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#summary",
-    "title": "MLOps for MLE - 3",
-    "section": "",
-    "text": "앞의 코드를 Docker 에서 활용하기 위해 Dockerfile 작성\nDocker 컨테이너 간의 네트워크를 연결하여 DB 에 데이터 삽입\nDB 컨테이너와 데이터 생성 컨테이너를 묶는 Docker Compose 파일 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#실습",
-    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#실습",
-    "title": "MLOps for MLE - 3",
-    "section": "실습",
-    "text": "실습\n\n1. Data Generator on Docker\n앞에서 만들었던 데이터 생성 코드(data_generator.py로 부를 예정)를 활용\n\n코드 실행 순서\n\nDB에 연결하는 connector 생성\n연결된 DB에 iris_data 테이블 생성\nIris 데이터 불러오기\n불러온 데이터 중 랜덤으로 row 1개를 DB에 삽입\n4번을 계속해서 반복\n\n\nDockerfile 작성\nFROM amd64/python:3.9-slim\n\nRUN apt-get update && apt-get install -y \\ \n    postgresql-client \\ \n    && rm -rf /var/lib/apt/lists/*\n\nWORKDIR /usr/app\n\nRUN pip install -U pip &&\\ \n    pip install scikit-learn pandas psycopg2-binary\n\nCOPY data_generator.py data_generator.py\n\nENTRYPOINT [\"python\", \"data_generator.py\", \"--db-host\"]\n\nCMD [\"localhost\"]\n\nfrom : 이미지를 만들 때 base 가 되는 이미지 지정\nRUN : 이미지를 만들 때 실행할 코드를 지정, 첫 번째 RUN 에서는 해당 Dockerfile 을 이용하여 컨테이너에 접근하여 psql 을 사용하기 위해 postgresql-client 을 설치\nWORKDIR : 작업 directory 지정\nRUN : 두 번째 RUN 에서는 컨테이너에서 python 스크립트를 실행할 때 필요한 패키지 설치\nCOPY : WORKDIR 로 지정한 directory 를 기준으로 파일이나 폴더를 이미지에 복사\nENTRYPOINT : 컨테이너가 실행될 때 시작할 프로세스를 입력\nCMD : 컨테이너가 실행될 때 ENTRYPOINT 에 전달할 argument 를 입력\n\nDocker build\n$ docker build [OPTIONS] PATH | URL | -\n-&gt; 이 명령어를 통해 dockerfile 을 기준으로 이미지를 생성\n$ docker run [docker image name]\n-&gt; build 한 이미지 실행\n하지만 port 및 TCP/IP 관련 에러가 뜨는데 이는 local 과 DB container 는 연결되어 있지만 Data Generator 과 DB Container 가 연결되어 있지 않음\n이를 해결하기 위해 컨테이너 간 통신할 수 있도록 네트워크를 생성해야 함\n\n\n\n에러 발생 예시\n\n\n\n\n2. 네트워크 연결\ndocker network 사용\n네트워크 정의 및 생성\n$ docker network create [network-name]\n실행 중인 DB 컨테이너를 생성된 네트워크에 연결\n$ docker network connect [network-name] [DB container name]\n\nEX)\n$ docker network connect my-network postgres-server\n\n네트워크 삭제\n$ docker network rm [network-name]\ndocker 재 실행\n$ docker run -d \\\n    --name [docker image name] \\ \n    --network [\"network-name\"] \\ \n\nEX)\n$ docker run -d \\ \n    --name data-generator \\ \n    --network \"my-network\" \\ \n    data-generator \"postgres-server\"\n\n-&gt; psql 을 이용하여 DB에 접속해서 확인해보면 추가되는 것을 확인할 수 있음\n\n\n3. Docker Compose\nCompose 파일의 아키텍처\nversion: \"3\"\n\nservices:\n    postgres-server:\n        ...\n\n    data-generator:\n        ...\n\nversion : Compose 파일의 버전\nservices : Compose 에 묶일 서비스들을 의미\n\nPostgres server service\nversion: \"3\"\n\nservices:\n    postgres-server:\n        image: postgres:14.0\n        container_name: postgres-server\n        ports:\n            - 5432:5432\n        environment:\n            POSTGRES_USER: myuser\n            POSTGRES_PASSWORD: mypassword\n            POSTGRES_DB: mydatabase\n\npostgres-server : 서비스의 이름, 실행되는 컨테이너 호스트의 이름\nports : 컨테이너에서 외부로 노출할 포트 포워딩을 설정, host:container 형식으로 사용되고 여러 개 지정 가능\nenvironment : 컨테이너를 실행할 때 사용한 -e 옵션과 같은 역할\n\nData generator service\nversion: \"3\"\n\nservices:\n    data-generator:\n        build:\n            context: .\n            dockerfile: Dockerfile\n        container_name: data-generator\n        depends_on:\n            - postgres_server\n        command: [\"postgres-server\"]\n\nbuild :\n\ncontext : 이미지를 build 하기 위해 dockerfile 이 있는 절대경로 및 상대경로 설정\ndockerfile : context 에서 설정한 경로에 있는 dockerfile 의 파일명 입력\n\ndepends_on : Compose 로 띄워지는 서비스 간의 종속성 순서대로 서비스를 시작할 때 사용\ncommand : Dockerfile 에 작성되어 있는 CMD 를 덮어씀\n\n위에서 작성한 코드를 하나의 파일로 합쳐 만들고 실행\n$ docker compose up -d\n\n-d : Detached 모드(백그라운드에서 컨테이를 실행 후 유지)로 실행\n\n하지만 docker ps 를 입력해보면 postgres server 만 띄워져있음\ndepends on 으로 서비스 간의 종속성은 정해졌지만, 실제로 postgres-server 가 띄워진 뒤에 곧바로 data-generator 가 띄워짐\npostgres-server 의 준비가 되지 않은 상태로 data-generator 가 DB 와 연결을 하려다 보니 Exited 문제가 발생\n-&gt; 이를 해결하기 위해 healthcheck 와 condition 을 추가\nhealthcheck 와 condition 추가하기\n### postgres-server에 추가\nhealthcheck:\n    test: [\"CMD\", \"pg_isready\", \"-q\", \"-U\", \"myuser\", \"-d\", \"mydatabase\"]\n    interval: 10s\n    timeout: 5s\n    retries: 5\n\n### data-generator에 추가\ndepends_on: \n    postgres-server:\n        condition: service_healthy\n\ntest : 테스트 할 명령어 입력\ninterval : Healthcheck 의 간격 설정\ntimeout : Healthcheck 의 timeout 을 설정\nretries : Timeout 의 횟수 설정\ncondition : Healthcheck 기능을 사용하기 위해 depends_on 의 parameter 로 condition: service_healthy 를 넣어줌\n\n이후 서비스를 다시 실행하면 문제 없이 실행이 가능"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#reference",
-    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#reference",
-    "title": "MLOps for MLE - 3",
-    "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-02-MLOps-day8/index.html",
-    "href": "docs/blog/posts/2023-12-02-MLOps-day8/index.html",
-    "title": "MLOps for MLE - 8",
-    "section": "",
-    "text": "MLflow 서버에 저장된 모델을 불러오는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#summary",
-    "href": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#summary",
-    "title": "MLOps for MLE - 8",
-    "section": "",
-    "text": "MLflow 서버에 저장된 모델을 불러오는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#실습",
-    "href": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#실습",
-    "title": "MLOps for MLE - 8",
-    "section": "실습",
-    "text": "실습\n\n1. 모델 불러오기\nday 7 에서 작성한 코드로 학습된 모델을 서버로부터 불러오는 코드를 작성함\n\n1.1 환경 변수 설정\nday 7 에서와 같이 MLflow 서버에 접근하기 위한 환경 변수 설정\n\n\n1.2 모델 불러오기\nsklearn 모델 불러오기\nmlflow.sklearn.load_model 함수를 사용해서 저장된 모델을 불러옴\nrun_id 와 모델을 저장할 때 설정했던 모델 이름을 받을 수 있도록 외부 변수 설정\nparser = ArgumentParser()\nparser.add_argument(\"--run-id\", dest=\"run_id\", type=str)\nparser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\nargs = parser.parse_args()\n위에서 받은 변수를 이용해 runs:/run_id/model_name 의 형식으로 문자열을 만들어 줌\nmodel_pipeline = mlflow.sklearn.load_model(f\"runs:/{args.run_id}/{args.model_name}\")\n이 때, pyfunc 로도 모델을 불러올수있음\nmlflow.pyfunc.load_model 을 사용 -&gt; mlflow.pyfunc.PyFuncModel 클래스로 불러와짐\nmodel_pipeline = mlflow.pyfunc.load_model(f\"runs:/{args.run_id}/{args.model_name}\")\n\n\n\n2. inference 코드를 작성하고 마무리하면 전체 코드는 다음과 같음\n# load_model_from_registry.py\nimport os\nfrom argparse import ArgumentParser\n\nimport mlflow\nimport pandas as pd\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\n\n# 0. set mlflow environments\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\n# 1. load model from mlflow\nparser = ArgumentParser()\nparser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\nparser.add_argument(\"--run-id\", dest=\"run_id\", type=str)\nargs = parser.parse_args()\n\nmodel_pipeline = mlflow.sklearn.load_model(f\"runs:/{args.run_id}/{args.model_name}\")\n\n# 2. get data\ndf = pd.read_csv(\"data.csv\")\n\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 3. predict results\ntrain_pred = model_pipeline.predict(X_train)\nvalid_pred = model_pipeline.predict(X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n\n3. 실행 결과\nlocalhost:5001 에 접속하여 저장된 모델의 run 을 클릭하여 run_id 와 model_name 을 확인\n\n\n\nrun_id 및 model_name 확인\n\n\npython load_model_from_registry.py --model-name \"sk_model\" --run-id \"RUN_ID\"\n에 값을 넣어서 실행\nMLflow 서버의 metrics 를 확인하여 학습했던 결과와 같은지 확인\n\n\n\n\n\n\nMLflow 서버의 결과: train_acc = 0.975, valid_acc = 0.9\n\n\n\n\n\n\n\nLocal 환경의 결과: train_acc = 0.975, valid_acc = 0.9"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#reference",
-    "href": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#reference",
-    "title": "MLOps for MLE - 8",
-    "section": "Reference",
-    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nMLflow Storage Format"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
-    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
-    "title": "MLOps for MLE - 1",
-    "section": "",
-    "text": "Docker 설치 및 PostgreSQL DB 서버 생성\nDB 의 role name 과 attribute 확인\n생성된 DB 에 query 를 작성하여 테이블 생성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#summary",
-    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#summary",
-    "title": "MLOps for MLE - 1",
-    "section": "",
-    "text": "Docker 설치 및 PostgreSQL DB 서버 생성\nDB 의 role name 과 attribute 확인\n생성된 DB 에 query 를 작성하여 테이블 생성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
-    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
-    "title": "MLOps for MLE - 1",
-    "section": "실습",
-    "text": "실습\n\n1. DB 서버 생성 및 확인\nDocker 설치 후 docker run 명령어를 사용하여 DB 서버 생성\n$ docker run -d \\\n  --name postgres-server \\\n  -p 5432:5432 \\\n  -e POSTGRES_USER=myuser \\\n  -e POSTGRES_PASSWORD=mypassword \\\n  -e POSTGRES_DB=mydatabase \\\n  postgres:14.0\n\n-d : 컨테이너가 detached 모드로 실행\n-p : port forwarding 설정\n-e : 환경 변수 설정\n\n\n\n\ndocker ps 로 현재 컨테이너 동작 확인\n\n\npsql 을 통해 PostgreSQL DB 서버 접속\n-&gt; psql은 PostgreSQL DB 서버를 확인할때 사용하는 CLI 툴\n$ PGPASSWORD=mypassword psql -h localhost -p {port} -U myuser -d mydatabase\n\nPGPASSWORD : 접속할 유저의 비밀번호\nh : 호스트 지정\nU : 접속할 유저 이름 입력\nd : DB 이름 입력\n\n\n\n\nSQL 서버에 접속 한 모습과 \\du 를 입력해 DB 의 role name 과 arrtributes 를 확인\n\n\n\n\n2. DB Table 생성\npsycopg2 를 이용하여 DB 접근\n-&gt; connect 함수 사용\nimport psycopg2\n\ndb_connect = psycopg2.connect(\n    user=\"myuser\",\n    password=\"mypassword\",\n    host=\"localhost\",\n    port=5432,\n    database=\"mydatabase\",\n)\n-&gt; DB 를 생성할 때 입력한 정보 입력\nSQL Table Creation\n아래와 같은 형식으로 작성\nCREATE TABLE table_name (\n    column1 datatype,\n    column2 datatype,\n    column3 datatype,\n    ...\n);\n-&gt; 이 실습에서는 scikit-learn 패캐지의 load_iris 사용\ncreate_table_query = \"\"\"\nCREATE TABLE IF NOT EXISTS iris_data (\n    id SERIAL PRIMARY KEY,\n    timestamp timestamp,\n    sepal_length float8,\n    sepal_width float8,\n    petal_length float8,\n    petal_width float8,\n    target int\n);\"\"\"\nSend Query to DB\n\nConnector 에서 cursor 를 열고, cursor 에 query 전달\ncur = db_connect.cursor()\ncur.execute(create_table_query)\n전달된 query 를 실행하기 위해 connector에 commit\ndb_connect.commit()\nCursor 의 사용이 끝나면 cursor를 close\ncur.close()\n\n하나의 프로세스로 만들게되면 다음과 같음\nwith db_connect.cursor() as cur:\n    cur.execute(create_table_query)\n    db_connect.commit()\n테이블 확인\npsql 을 이용하여 DB에 접속하고 \\d 를 입력하여 생성된 테이블들의 목록을 확인\nselect * from iris_data; 를 입력하면 iris_data 테이블에 있는 데이터를 확인 할 수 있음\n\n\n\n테이블 확인"
-  },
-  {
-    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
-    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
-    "title": "MLOps for MLE - 1",
+    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
+    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
+    "title": "MLOps for MLE - 4",
     "section": "Reference",
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
@@ -392,30 +98,408 @@
     "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
-    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html",
-    "title": "MLOps for MLE - 4",
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html",
+    "title": "MLOps for MLE - 1",
     "section": "",
-    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "Docker 설치 및 PostgreSQL DB 서버 생성\nDB 의 role name 과 attribute 확인\n생성된 DB 에 query 를 작성하여 테이블 생성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
-    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#summary",
-    "title": "MLOps for MLE - 4",
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#summary",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#summary",
+    "title": "MLOps for MLE - 1",
     "section": "",
-    "text": "기본적인 모델 학습 및 저장\n모델 파이프라인 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+    "text": "Docker 설치 및 PostgreSQL DB 서버 생성\nDB 의 role name 과 attribute 확인\n생성된 DB 에 query 를 작성하여 테이블 생성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
-    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#실습",
-    "title": "MLOps for MLE - 4",
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#실습",
+    "title": "MLOps for MLE - 1",
     "section": "실습",
-    "text": "실습\n\n1. Base Model 코드 작성\n데이터: Iris\n데이터 스케일링: StandardScaler\n모델: SVC\n정확도 metric: accuracy_score\n모델 저장 방법: joblib\n전체 코드는 아래와 같음\nTrain 코드\nimport joblib\nfrom sklearn.datasets import load_iris\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\n# 1. get data\nX, y = load_iris(return_X_y=True, as_frame=True)\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nscaler = StandardScaler()\nclassifier = SVC()\n\nscaled_X_train = scaler.fit_transform(X_train)\nscaled_X_valid = scaler.transform(X_valid)\nclassifier.fit(scaled_X_train, y_train)\n\ntrain_pred = classifier.predict(scaled_X_train)\nvalid_pred = classifier.predict(scaled_X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\njoblib.dump(scaler, \"scaler.joblib\")\njoblib.dump(classifier, \"classifier.joblib\")\nValidate 코드\nimport joblib\nfrom sklearn.datasets import load_iris\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\n\n# 1. reproduce data\nX, y = load_iris(return_X_y=True, as_frame=True)\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. load model\nscaler_load = joblib.load(\"scaler.joblib\")\nclassifier_load = joblib.load(\"classifier.joblib\")\n\n# 3. validate\nscaled_X_train = scaler_load.transform(X_train)\nscaled_X_valid = scaler_load.transform(X_valid)\n\nload_train_pred = classifier_load.predict(scaled_X_train)\nload_valid_pred = classifier_load.predict(scaled_X_valid)\n\nload_train_acc = accuracy_score(y_true=y_train, y_pred=load_train_pred)\nload_valid_acc = accuracy_score(y_true=y_valid, y_pred=load_valid_pred)\n\nprint(\"Load Model Train Accuracy :\", load_train_acc)\nprint(\"Load Model Valid Accuracy :\", load_valid_acc)\n-&gt; joblib의 load를 통해 학습한 모델을 불러옴\n\n\n2. Model Pipeline 작성\n위에서 사용했던 모델인 scaler와 SVC를 통합\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\n\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\n-&gt; 이 코드를 활용하여 앞의 부분을 대체"
+    "text": "실습\n\n1. DB 서버 생성 및 확인\nDocker 설치 후 docker run 명령어를 사용하여 DB 서버 생성\n$ docker run -d \\\n  --name postgres-server \\\n  -p 5432:5432 \\\n  -e POSTGRES_USER=myuser \\\n  -e POSTGRES_PASSWORD=mypassword \\\n  -e POSTGRES_DB=mydatabase \\\n  postgres:14.0\n\n-d : 컨테이너가 detached 모드로 실행\n-p : port forwarding 설정\n-e : 환경 변수 설정\n\n\n\n\ndocker ps 로 현재 컨테이너 동작 확인\n\n\npsql 을 통해 PostgreSQL DB 서버 접속\n-&gt; psql은 PostgreSQL DB 서버를 확인할때 사용하는 CLI 툴\n$ PGPASSWORD=mypassword psql -h localhost -p {port} -U myuser -d mydatabase\n\nPGPASSWORD : 접속할 유저의 비밀번호\nh : 호스트 지정\nU : 접속할 유저 이름 입력\nd : DB 이름 입력\n\n\n\n\nSQL 서버에 접속 한 모습과 \\du 를 입력해 DB 의 role name 과 arrtributes 를 확인\n\n\n\n\n2. DB Table 생성\npsycopg2 를 이용하여 DB 접근\n-&gt; connect 함수 사용\nimport psycopg2\n\ndb_connect = psycopg2.connect(\n    user=\"myuser\",\n    password=\"mypassword\",\n    host=\"localhost\",\n    port=5432,\n    database=\"mydatabase\",\n)\n-&gt; DB 를 생성할 때 입력한 정보 입력\nSQL Table Creation\n아래와 같은 형식으로 작성\nCREATE TABLE table_name (\n    column1 datatype,\n    column2 datatype,\n    column3 datatype,\n    ...\n);\n-&gt; 이 실습에서는 scikit-learn 패캐지의 load_iris 사용\ncreate_table_query = \"\"\"\nCREATE TABLE IF NOT EXISTS iris_data (\n    id SERIAL PRIMARY KEY,\n    timestamp timestamp,\n    sepal_length float8,\n    sepal_width float8,\n    petal_length float8,\n    petal_width float8,\n    target int\n);\"\"\"\nSend Query to DB\n\nConnector 에서 cursor 를 열고, cursor 에 query 전달\ncur = db_connect.cursor()\ncur.execute(create_table_query)\n전달된 query 를 실행하기 위해 connector에 commit\ndb_connect.commit()\nCursor 의 사용이 끝나면 cursor를 close\ncur.close()\n\n하나의 프로세스로 만들게되면 다음과 같음\nwith db_connect.cursor() as cur:\n    cur.execute(create_table_query)\n    db_connect.commit()\n테이블 확인\npsql 을 이용하여 DB에 접속하고 \\d 를 입력하여 생성된 테이블들의 목록을 확인\nselect * from iris_data; 를 입력하면 iris_data 테이블에 있는 데이터를 확인 할 수 있음\n\n\n\n테이블 확인"
   },
   {
-    "objectID": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
-    "href": "docs/blog/posts/2023-11-26-MLOps-day4/index.html#reference",
-    "title": "MLOps for MLE - 4",
+    "objectID": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
+    "href": "docs/blog/posts/2023-11-23-MLOps-day1/index.html#reference",
+    "title": "MLOps for MLE - 1",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-16-MLOps-day14/index.html",
+    "href": "docs/blog/posts/2023-12-16-MLOps-day14/index.html",
+    "title": "MLOps for MLE - 14",
+    "section": "",
+    "text": "Dockerfile 과 Docker Compose 파일 작성\nAPI 서버 동작 확인\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-16-MLOps-day14/index.html#summary",
+    "href": "docs/blog/posts/2023-12-16-MLOps-day14/index.html#summary",
+    "title": "MLOps for MLE - 14",
+    "section": "",
+    "text": "Dockerfile 과 Docker Compose 파일 작성\nAPI 서버 동작 확인\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-16-MLOps-day14/index.html#실습",
+    "href": "docs/blog/posts/2023-12-16-MLOps-day14/index.html#실습",
+    "title": "MLOps for MLE - 14",
+    "section": "실습",
+    "text": "실습\n\n1. Dockerfile 작성\nModel API 를 작동시킬 수 있는 API 서버의 Docker Image\nFROM amd64/python:3.9-slim\n\nWORKDIR /usr/app\n\nRUN pip install -U pip &&\\\n    pip install mlflow==1.30.0 pandas scikit-learn \"fastapi[all]\"\n\nCOPY schemas.py schemas.py\nCOPY app.py app.py\nCOPY sk_model/ sk_model/\n\nCMD [\"uvicorn\", \"app:app\", \"--host\", \"0.0.0.0\", \"--reload\"]\n\n\n2. Docker Compose\nversion: \"3\"\n\nservices:\n  api-with-model:\n    build:\n      context: .\n      dockerfile: Dockerfile\n    container_name: api-with-model\n    ports:\n      - 8000:8000\n    healthcheck:\n      test:\n        - CMD\n        - curl -X POST http://localhost:8000/predict\n        - -H\n        - \"Content-Type: application/json\"\n        - -d\n        - '{\"sepal_length\": 6.7, \"sepal_width\": 3.3, \"petal_length\": 5.7, \"petal_width\": 2.1}'\n      interval: 10s\n      timeout: 5s\n      retries: 5\n\nnetworks:\n  default:\n    name: mlops-network\n    external: true\n\n\n3. API 서버 작동 확인\nhttp://localhost:8000/docs 에 접속하여 Request Body 의 형태에 맞게 데이터를 전달해주면 Response Body 로 inference 결과를 확인할 수 있음\ncurl 을 이용하여 API 가 잘 작동하는지 확인하는 방법도 있음\n\n\n\ncurl 로 정보를 전달하여 inference 결과를 확인할 수 있음"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-16-MLOps-day14/index.html#reference",
+    "href": "docs/blog/posts/2023-12-16-MLOps-day14/index.html#reference",
+    "title": "MLOps for MLE - 14",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-26-MLOps-day16/index.html",
+    "href": "docs/blog/posts/2023-12-26-MLOps-day16/index.html",
+    "title": "MLOps for MLE - 16",
+    "section": "",
+    "text": "Docker Compose 를 이용하여 주키퍼와 브로커를 생성\nProducer 와 Consumer 를 실행\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-26-MLOps-day16/index.html#summary",
+    "href": "docs/blog/posts/2023-12-26-MLOps-day16/index.html#summary",
+    "title": "MLOps for MLE - 16",
+    "section": "",
+    "text": "Docker Compose 를 이용하여 주키퍼와 브로커를 생성\nProducer 와 Consumer 를 실행\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-26-MLOps-day16/index.html#실습",
+    "href": "docs/blog/posts/2023-12-26-MLOps-day16/index.html#실습",
+    "title": "MLOps for MLE - 16",
+    "section": "실습",
+    "text": "실습\n\n1. SAMPLE TEXT"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-26-MLOps-day16/index.html#reference",
+    "href": "docs/blog/posts/2023-12-26-MLOps-day16/index.html#reference",
+    "title": "MLOps for MLE - 16",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html",
+    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html",
+    "title": "MLOps for MLE - 3",
+    "section": "",
+    "text": "앞의 코드를 Docker 에서 활용하기 위해 Dockerfile 작성\nDocker 컨테이너 간의 네트워크를 연결하여 DB 에 데이터 삽입\nDB 컨테이너와 데이터 생성 컨테이너를 묶는 Docker Compose 파일 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#summary",
+    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#summary",
+    "title": "MLOps for MLE - 3",
+    "section": "",
+    "text": "앞의 코드를 Docker 에서 활용하기 위해 Dockerfile 작성\nDocker 컨테이너 간의 네트워크를 연결하여 DB 에 데이터 삽입\nDB 컨테이너와 데이터 생성 컨테이너를 묶는 Docker Compose 파일 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#실습",
+    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#실습",
+    "title": "MLOps for MLE - 3",
+    "section": "실습",
+    "text": "실습\n\n1. Data Generator on Docker\n앞에서 만들었던 데이터 생성 코드(data_generator.py로 부를 예정)를 활용\n\n코드 실행 순서\n\nDB에 연결하는 connector 생성\n연결된 DB에 iris_data 테이블 생성\nIris 데이터 불러오기\n불러온 데이터 중 랜덤으로 row 1개를 DB에 삽입\n4번을 계속해서 반복\n\n\nDockerfile 작성\nFROM amd64/python:3.9-slim\n\nRUN apt-get update && apt-get install -y \\ \n    postgresql-client \\ \n    && rm -rf /var/lib/apt/lists/*\n\nWORKDIR /usr/app\n\nRUN pip install -U pip &&\\ \n    pip install scikit-learn pandas psycopg2-binary\n\nCOPY data_generator.py data_generator.py\n\nENTRYPOINT [\"python\", \"data_generator.py\", \"--db-host\"]\n\nCMD [\"localhost\"]\n\nfrom : 이미지를 만들 때 base 가 되는 이미지 지정\nRUN : 이미지를 만들 때 실행할 코드를 지정, 첫 번째 RUN 에서는 해당 Dockerfile 을 이용하여 컨테이너에 접근하여 psql 을 사용하기 위해 postgresql-client 을 설치\nWORKDIR : 작업 directory 지정\nRUN : 두 번째 RUN 에서는 컨테이너에서 python 스크립트를 실행할 때 필요한 패키지 설치\nCOPY : WORKDIR 로 지정한 directory 를 기준으로 파일이나 폴더를 이미지에 복사\nENTRYPOINT : 컨테이너가 실행될 때 시작할 프로세스를 입력\nCMD : 컨테이너가 실행될 때 ENTRYPOINT 에 전달할 argument 를 입력\n\nDocker build\n$ docker build [OPTIONS] PATH | URL | -\n-&gt; 이 명령어를 통해 dockerfile 을 기준으로 이미지를 생성\n$ docker run [docker image name]\n-&gt; build 한 이미지 실행\n하지만 port 및 TCP/IP 관련 에러가 뜨는데 이는 local 과 DB container 는 연결되어 있지만 Data Generator 과 DB Container 가 연결되어 있지 않음\n이를 해결하기 위해 컨테이너 간 통신할 수 있도록 네트워크를 생성해야 함\n\n\n\n에러 발생 예시\n\n\n\n\n2. 네트워크 연결\ndocker network 사용\n네트워크 정의 및 생성\n$ docker network create [network-name]\n실행 중인 DB 컨테이너를 생성된 네트워크에 연결\n$ docker network connect [network-name] [DB container name]\n\nEX)\n$ docker network connect my-network postgres-server\n\n네트워크 삭제\n$ docker network rm [network-name]\ndocker 재 실행\n$ docker run -d \\\n    --name [docker image name] \\ \n    --network [\"network-name\"] \\ \n\nEX)\n$ docker run -d \\ \n    --name data-generator \\ \n    --network \"my-network\" \\ \n    data-generator \"postgres-server\"\n\n-&gt; psql 을 이용하여 DB에 접속해서 확인해보면 추가되는 것을 확인할 수 있음\n\n\n3. Docker Compose\nCompose 파일의 아키텍처\nversion: \"3\"\n\nservices:\n    postgres-server:\n        ...\n\n    data-generator:\n        ...\n\nversion : Compose 파일의 버전\nservices : Compose 에 묶일 서비스들을 의미\n\nPostgres server service\nversion: \"3\"\n\nservices:\n    postgres-server:\n        image: postgres:14.0\n        container_name: postgres-server\n        ports:\n            - 5432:5432\n        environment:\n            POSTGRES_USER: myuser\n            POSTGRES_PASSWORD: mypassword\n            POSTGRES_DB: mydatabase\n\npostgres-server : 서비스의 이름, 실행되는 컨테이너 호스트의 이름\nports : 컨테이너에서 외부로 노출할 포트 포워딩을 설정, host:container 형식으로 사용되고 여러 개 지정 가능\nenvironment : 컨테이너를 실행할 때 사용한 -e 옵션과 같은 역할\n\nData generator service\nversion: \"3\"\n\nservices:\n    data-generator:\n        build:\n            context: .\n            dockerfile: Dockerfile\n        container_name: data-generator\n        depends_on:\n            - postgres_server\n        command: [\"postgres-server\"]\n\nbuild :\n\ncontext : 이미지를 build 하기 위해 dockerfile 이 있는 절대경로 및 상대경로 설정\ndockerfile : context 에서 설정한 경로에 있는 dockerfile 의 파일명 입력\n\ndepends_on : Compose 로 띄워지는 서비스 간의 종속성 순서대로 서비스를 시작할 때 사용\ncommand : Dockerfile 에 작성되어 있는 CMD 를 덮어씀\n\n위에서 작성한 코드를 하나의 파일로 합쳐 만들고 실행\n$ docker compose up -d\n\n-d : Detached 모드(백그라운드에서 컨테이를 실행 후 유지)로 실행\n\n하지만 docker ps 를 입력해보면 postgres server 만 띄워져있음\ndepends on 으로 서비스 간의 종속성은 정해졌지만, 실제로 postgres-server 가 띄워진 뒤에 곧바로 data-generator 가 띄워짐\npostgres-server 의 준비가 되지 않은 상태로 data-generator 가 DB 와 연결을 하려다 보니 Exited 문제가 발생\n-&gt; 이를 해결하기 위해 healthcheck 와 condition 을 추가\nhealthcheck 와 condition 추가하기\n### postgres-server에 추가\nhealthcheck:\n    test: [\"CMD\", \"pg_isready\", \"-q\", \"-U\", \"myuser\", \"-d\", \"mydatabase\"]\n    interval: 10s\n    timeout: 5s\n    retries: 5\n\n### data-generator에 추가\ndepends_on: \n    postgres-server:\n        condition: service_healthy\n\ntest : 테스트 할 명령어 입력\ninterval : Healthcheck 의 간격 설정\ntimeout : Healthcheck 의 timeout 을 설정\nretries : Timeout 의 횟수 설정\ncondition : Healthcheck 기능을 사용하기 위해 depends_on 의 parameter 로 condition: service_healthy 를 넣어줌\n\n이후 서비스를 다시 실행하면 문제 없이 실행이 가능"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#reference",
+    "href": "docs/blog/posts/2023-11-25-MLOps-day3/index.html#reference",
+    "title": "MLOps for MLE - 3",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html",
+    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html",
+    "title": "MLOps for MLE - 9",
+    "section": "",
+    "text": "FastAPI 의 공식 문서를 참고하여 간단한 API 제작\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#summary",
+    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#summary",
+    "title": "MLOps for MLE - 9",
+    "section": "",
+    "text": "FastAPI 의 공식 문서를 참고하여 간단한 API 제작\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#실습",
+    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#실습",
+    "title": "MLOps for MLE - 9",
+    "section": "실습",
+    "text": "실습\n\n1. FastAPI 를 이용해 간단한 API 만들어보기\n\n1.1 main.py\n다음과 같이 main.py 를 작성\n# main.py\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.get(\"/\")\ndef read_root():\n    return {\"Hello\": \"World\"}\n\n\n1.2 실행\n$ uvicorn main:app --relaod - uvicorn : FastAPI 를 실행하는 웹 서버 실행 Command Line Too - main : 위에서 작성한 Python 모듈 main.py 를 의미 - app : main.py 에서 app = FastAPI() 를 통해 생성된 객체를 의미 - –reload : 코드가 바뀌었을 때 서버가 재시작할 수 있도록 하는 옵션\n\n\n\nmain.py 실행 화면\n\n\n\n\n\ndocs 에 진입한 화면\n\n\n이는 Swagger UI 에 의해 제공되는 interactive API documentation 임\n\n\n\n2. Step by Step 으로 이해하기\n\n2.1 Step 1: Import FastAPI\nfrom fastapi import FastAPI\nAPI 를 만들 수 있도록 도와주는 Python 클래스\n\n\n2.2 Step 2: Create a FastAPI instance\nFastAPI 클래스의 인스턴스를 생성된\n여기서 생성하는 인스턴스의 이름에 따라 uvicorn main:app --reload 과 같은 형태로 실행 명령어가 달라짐\napp = FastAPI()\n\n\n2.3 Step 3: Create a Path Operation\n여기서 말하는 path 는 URL 에서 첫 번째 / 부터 시작되는 마지막 부분을 의미함\nEx) https://example.com/items/foo 에서 /items/foo 에 해당함\nOperation 은 POST, GET, PUT, DELETE 등과 같은 HTTP Method 를 의미함\n이러한 Operation 을 수행하기 위해 @app.get(\"/\") 와 같은 Path Operation Decorator 를 사용\n@app.get(\"/\") 은 FastAPI 로 하여금 path / 로 가서 GET operation 을 수행하라는 의미로 사용할 수 있음\n\n\n2.4 Step 4: Define the Path Operation Function\nPath Operation Function 은 Path Operation 이 수행되었을 때 호출될 Python 함수를 말함\n@app.get(\"/\")\ndef read_root():\n    return {\"Hello\": \"World\"}\n\n\n2.5 Step 5: Return the content\nPath Operation Function 을 통해 return 하는 값으로는 dict, list, str, int 등이 가능\n또한, 뒤에서 나올 Pydantic Model 의 형태로도 return 할 수 있음\n\n\n\n3. Path Parameter 이해하기\nPath parameter 는 Path Operation 에 포함된 변수로 사용자에게 입력받아 function 의 argument 로 사용되는 parameter 를 의미함\nPath parameter 참고\n다음과 같이 코드를 작성하고 uvicorn path_param:app --reload 를 입력하여 실행함\n# path_param.py\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.get(\"/items/{item_id}\")\ndef read_item(item_id: int):\n    return {\"item_id\": item_id}\nitem_id 와 같은 parameter 를 Path parameter 라고 함, 여기서 입력된 Path Parameter 의 값은 function 에 argument 로 전달되어 함수가 호출됨\ndef read_item(item_id: int) 와 같이 type 을 제공할 수 있음\n만약 다른 type 의 데이터가 입력되면 HTTP Error 를 return 하게 됨\n\n\n4. Query Parameter 이해하기\nQuery Parameter 는 function parameter 로는 사용되지만 Path Operation 에 포함되지 않아 Path Parameter 라고 할 수 없는 parameter 를 의미함\nQuery parameter 참고\n다음과 같이 코드를 작성하고 uvicorn query_param:app --reload 를 입력하여 실행함\n# query_param.py\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\nfake_items_db = [{\"item_name\": \"Foo\"}, {\"item_name\": \"Bar\"}, {\"item_name\": \"Baz\"}]\n\n\n@app.get(\"/items/\")\ndef read_item(skip: int = 0, limit: int = 10):\n    return fake_items_db[skip : skip + limit]\nfunction 에 parameter 로 들어있는 skip 과 limit 이 Path Operation 인 @app.get(\"/items\") 에 들어있지 않음\nQuery 는 URL 에서 ? 뒤에 key-value 쌍의 형태로 나타나고, & 로 구분되어 사용됨\nEx) http://localhost:8000/items/?skip=0&limit=10 과 같은 형태로 사용\nQuery Parameter 는 path 의 고정된 부분이 아니기 때문에 optional 로 사용될 수 있고 기본값을 가질 수 있음\n위의 예시에서는 skip=0 과 limit=10 의 기본값을 가지고 있음\n하지만 값을 입력받아야만 하는 Query Parameter 도 존재함\n이를 Required Query Parameter 라고 하고 다음과 같은 형태로 사용됨\n@app.get(\"/items/{item_id}\")\ndef read_user_item(item_id: str, needy: str):\n    item = {\"item_id\": item_id, \"needy\": needy}\n    return item\n위의 예시에서 needy 는 Path Operation @app.get(\"/items/{item_id}\") 에 포함되어 있지 않으므로 Query Parameter 이고, function read_user_item() 에서 기본값이 존재하지 않기 때문에 Required Query Parameter 임을 알 수 있음\n이러한 경우 http://localhost:8000/items/foo-item?needy=someneedy 와 같은 형태로 ? 뒤에 입력을 해주어야 에러가 발생하지 않고 함수가 제대로 동작함\n\n\n5. Multiple Path and Query Parameters 사용해보기\nMultiple Path and Query Parameter 참고\n# multi_param.py\nfrom typing import Union\n\nfrom fastapi import FastAPI\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.get(\"/users/{user_id}/items/{item_id}\")\ndef read_user_item(user_id: int, item_id: str, q: Union[str, None] = None, short: bool = False):\n    item = {\"item_id\": item_id, \"owner_id\": user_id}\n    if q:\n        item.update({\"q\": q})\n    if not short:\n        item.update(\n            {\"description\": \"This is an amazing item that has a long description\"},\n        )\n    return item\n먼저 Path Operation 을 보면 @app.get(\"/users/{user_id}/items/{item_id}\") 로 되어 있음\n이를 통해 user_id 와 item_id 라는 Path Parameter 가 있음을 알 수 있음\nPath Operation Function 의 parameter 를 보면, user_id, item_id, q, short 가 있음을 알 수 있음\nPath Parameter 가 아닌 q 와 short 는 Query Parameter 임을 알 수 있고 각각 기본값이 None, False 임을 알 수 있음"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#reference",
+    "href": "docs/blog/posts/2023-12-07-MLOps-day9/index.html#reference",
+    "title": "MLOps for MLE - 9",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-29-MLOps-day6/index.html",
+    "href": "docs/blog/posts/2023-11-29-MLOps-day6/index.html",
+    "title": "MLOps for MLE - 6",
+    "section": "",
+    "text": "Docker Compose 를 이용하여 MLflow 서버를 구축 및 띄움\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#summary",
+    "href": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#summary",
+    "title": "MLOps for MLE - 6",
+    "section": "",
+    "text": "Docker Compose 를 이용하여 MLflow 서버를 구축 및 띄움\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#실습",
+    "href": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#실습",
+    "title": "MLOps for MLE - 6",
+    "section": "실습",
+    "text": "실습\n\n1. MLflow Backend Store\nBackend Store 란 수치 데이터와 MLflow 서버의 정보들을 체계적으로 관리하기 위한 DB 이다. Backend store 에는 모델의 학습 결과인 accuracy, f1-score, loss, hyperparameter 등의 수치 데이터와 run_id, run_name, experiment_name 등의 MLflow의 meta-data 가 저장된다.\nBackend Store 로 사용하기 위해 PostgreSQL DB 를 새롭게 생성\nversion: \"3\"\n\nservices:\n  mlflow-backend-store:\n    image: postgres:14.0\n    container_name: mlflow-backend-store\n    environment:\n      POSTGRES_USER: mlflowuser\n      POSTGRES_PASSWORD: mlflowpassword\n      POSTGRES_DB: mlflowdatabase\n    healthcheck:\n      test: [\"CMD\", \"pg_isready\", \"-q\", \"-U\", \"mlflowuser\", \"-d\", \"mlflowdatabase\"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n\n\n2. MLflow Artifact Store\nArtifact Store 란 MLflow 에서 학습된 모델을 저장하는 Model Registry 로써 이용하기 위한 storage server 이다. 이를 이용하면 기본적인 파일 시스템 보다 체계적으로 관리 할 수 있으며 외부에 있는 storage server 도 사용 할 수 있다는 장점이 있다.\nArtifact store 로 MinIO 서버를 사용한다.\n\nMinIO 는 S3 를 대체할 수 있는 오픈 소스 개체 스토리지이다.\nAWS S3 의 API 와도 호환이 가능해서 SDK도 동일하게 사용 가능하다.\nMLflow 에서는 AWS S3 를 모델을 저장하기 위한 스토리지로 사용하도록 권장하고 있다.\n실습에서 AWS credential 을 통해 MinIO 대신 AWS S3 를 사용해도 같은 결과를 얻을 수 있다.\n\nMinIO 의 스펙을 Compose 파일에 서비스 이름, 유저 이름, 비밀번호를 환경변수로 정의하고 호스트와 연결되는 포트 또한 정의\nversion: \"3\"\n\nservices:\n  mlflow-artifact-store:\n    image: minio/minio\n    container_name: mlflow-artifact-store\n    ports:\n      - 9000:9000\n      - 9001:9001\n    environment:\n      MINIO_ROOT_USER: minio\n      MINIO_ROOT_PASSWORD: miniostorage\n    command: server /data/minio --console-address :9001\n    healthcheck:\n      test: [\"CMD\", \"curl\", \"-f\", \"http://localhost:9000/minio/health/live\"]\n      interval: 30s\n      timeout: 20s\n      retries: 3\n\n\n3. MLflow Server\n위에서 만든 Backend Store와 Artifact Store에 접근 가능한 MLflow서버 생성\nFROM amd64/python:3.9-slim\n\nRUN apt-get update && apt-get install -y \\\n    git \\\n    wget \\\n    && rm -rf /var/lib/apt/lists/*\n\nRUN pip install -U pip &&\\\n    pip install mlflow psycopg2-binary boto3\n\nRUN cd /tmp && \\\n    wget https://dl.min.io/client/mc/release/linux-amd64/mc && \\\n    chmod +x mc && \\\n    mv mc /usr/bin/mc\n작성된 Dockerfile 을 build 하도록 Compose 파일의 service 탭 밑에 정의\nversion: \"3\"\n\nservices:\n  mlflow-server:\n    build:\n      context: .\n      dockerfile: Dockerfile\n    container_name: mlflow-server\n    depends_on:\n      mlflow-backend-store:\n        condition: service_healthy\n      mlflow-artifact-store:\n        condition: service_healthy\n    ports:\n      - 5001:5000\n    environment:\n      AWS_ACCESS_KEY_ID: minio\n      AWS_SECRET_ACCESS_KEY: miniostorage\n      MLFLOW_S3_ENDPOINT_URL: http://mlflow-artifact-store:9000\n    command:\n      - /bin/sh\n      - -c\n      - |\n        mc config host add mlflowminio http://mlflow-artifact-store:9000 minio miniostorage &&\n        mc mb --ignore-existing mlflowminio/mlflow\n        mlflow server \\\n        --backend-store-uri postgresql://mlflowuser:mlflowpassword@mlflow-backend-store/mlflowdatabase \\\n        --default-artifact-root s3://mlflow/ \\\n        --host 0.0.0.0\n\nMinIO 에 접근하기 위한 계정 정보를 환경변수로 설정\n모델을 저장할 때 사용할 MinIO 초기 버켓 생성\nMLflow 서버를 끠우는 명령어 작성\n\nPostgreSQL DB 에 연결하기 위한 keyword argument 추가\nMinIO 에 연결하기 위한 keyword argument 추가\n\n\n-&gt; Compose 를 띄우면 localhost:5001 을 통해 MLflow 서버에 접속이 가능하고 localhost:9001 을 통해 MinIO 서버에 접속이 가능하다.\n\n\n\nMLflow 접속화면\n\n\n\n\n\nMinio 접속화면"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#reference",
+    "href": "docs/blog/posts/2023-11-29-MLOps-day6/index.html#reference",
+    "title": "MLOps for MLE - 6",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code."
+  },
+  {
+    "objectID": "posts/test-page/index.html",
+    "href": "posts/test-page/index.html",
+    "title": "Test Page",
+    "section": "",
+    "text": "This is test page."
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html",
+    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html",
+    "title": "MLOps for MLE - 11",
+    "section": "",
+    "text": "Create 부분을 Pydantic 을 이용하여 수정\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#summary",
+    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#summary",
+    "title": "MLOps for MLE - 11",
+    "section": "",
+    "text": "Create 부분을 Pydantic 을 이용하여 수정\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#실습",
+    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#실습",
+    "title": "MLOps for MLE - 11",
+    "section": "실습",
+    "text": "실습\n\n1. Pydantic Model\nRequest Body 는 client 에서 API 로 전송하는 데이터를 의미\nResponse Body 는 API 가 client 로 전송하는 데이터를 의미\n\n1.1 Base Setting\npydantic 으로부터 BaseModel 을 import 하고 day 10 에서 작성한 API 와 마찬가지로 HTTPException 을 이용하여 에러를 발생할 수 있도록 함\n\n\n1.2 Define Input Schema\n입력받아야 하는 데이터의 형태를 지정해주는 CreateIn 클래스 작성\npydantic 의 BaseModel 을 상속받은 CreateIn 클래스에 Request Body 의 구성 요소가 될 변수들을 attribute 로 지정\nclass CreateIn(BaseModel):\n    name: str\n    nickname: str\n\n\n1.3 Define Output Schema\n반환하고자 하는 데이터의 형태를 지정해주는 CreateOut 클래스 작성\nclass CreateOut(BaseModel):\n    status: str\n    id: int\n\n\n\n2. Response Model\n\n2.1 Response Model\n@app.get(), @app.post() 등 다양한 Path Operation 에 response_model 을 이용하여 Response Body 에 사용될 데이터 모델을 지정해줄 수 있음\noutput data 의 type 을 체크하여 자동으로 변환시키고, type 이 유효한지 확인해주고, response 를 위해 자동으로 JSON Schema 를 추가해주는 등의 역할을 할 수 있음\n\n\n2.2 API Code\n다음과 같이 Response Model 을 활용하여 Create API 를 수정할 수 있음\n@app.post(\"/users\", response_model = CreateOut)\ndef create_user(user: CreateIn) -&gt; CreateOut:\n    USER_DB[user.name] = user.nickname\n    return CreateOut(status = \"success\", id = len(USER_DB))\nPath Operation Function 을 보면 parameter 로 user 를 입력 받고, type 은 CreateIn 인 것을 알 수 있음\n\n\n2.3 crud_pydantic.py\n전체 코드는 다음과 같음\n# crud_pydantic.py\nfrom fastapi import FastAPI, HTTPException\nfrom pydantic import BaseModel\n\n\nclass CreateIn(BaseModel):\n    name: str\n    nickname: str\n\n\nclass CreateOut(BaseModel):\n    status: str\n    id: int\n\n# Create a FastAPI instance\napp = FastAPI()\n\n# User database\nUSER_DB = {}\n\n# Fail response\nNAME_NOT_FOUND = HTTPException(status_code=400, detail=\"Name not found.\")\n\n\n@app.post(\"/users\", response_model=CreateOut)\ndef create_user(user: CreateIn):\n    USER_DB[user.name] = user.nickname\n    user_dict = user.dict()\n    user_dict[\"status\"] = \"success\"\n    user_dict[\"id\"] = len(USER_DB)\n    return user_dict\n\n\n@app.get(\"/users\")\ndef read_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    return {\"nickname\": USER_DB[name]}\n\n\n@app.put(\"/users\")\ndef update_user(name: str, nickname: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    USER_DB[name] = nickname\n    return {\"status\": \"success\"}\n\n\n@app.delete(\"/users\")\ndef delete_user(name: str):\n    if name not in USER_DB:\n        raise NAME_NOT_FOUND\n    del USER_DB[name]\n    return {\"status\": \"success\"}\n실행하면 다음과 같은 모습을 보임\n\n\n\ncrud_pydantic.py 실행 회면"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#reference",
+    "href": "docs/blog/posts/2023-12-11-MLOps-day11/index.html#reference",
+    "title": "MLOps for MLE - 11",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nFastAPI 튜토리얼"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html",
+    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html",
+    "title": "MLOps for MLE - 13",
+    "section": "",
+    "text": "Iris 데이터를 입력받아 예측값을 반환하는 API 작성\n제대로 동작하는지 확인\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#summary",
+    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#summary",
+    "title": "MLOps for MLE - 13",
+    "section": "",
+    "text": "Iris 데이터를 입력받아 예측값을 반환하는 API 작성\n제대로 동작하는지 확인\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#실습",
+    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#실습",
+    "title": "MLOps for MLE - 13",
+    "section": "실습",
+    "text": "실습\n\n1. 모델 다운로드\n\n1.1 Environment Variables\nModel Registry 에 저장되어 있는 모델을 다운로드하기 위해 MLflow 서버와 MinIO 서버에 접속하기 위한 정보를 환경 변수로 설정\n-&gt; day 7 에서 작성한 코드와 같음\n\n\n1.2 모델 다운로드 함수 작성\nmlflow 패키지를 이용하여 model artifact 다운로드\n-&gt; model artifact 란 MLflow 에 모델이 저장될 때 함께 저장된 메타데이터와 모델 자체의 binary 파일을 의미\ndef download_model(args):\n    mlflow.artifacts.download_artifacts(artifact_uri=f\"runs:/{args.run_id}/{args.model_name}\", dst_path=\".\")\n\n\n1.3 모델 다운로드\nargparse 를 이용하여 파라미터를 입력받을 수 있도록 하고 download_model() 함수를 호출함\n\n\n1.4 전체 코드\nimport os\nfrom argparse import ArgumentParser\n\nimport mlflow\n\n# Set environments\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\n\ndef download_model(args):\n    # Download model artifacts\n    mlflow.artifacts.download_artifacts(artifact_uri=f\"runs:/{args.run_id}/{args.model_name}\", dst_path=\".\")\n\n\nif __name__ == \"__main__\":\n    parser = ArgumentParser()\n    parser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\n    parser.add_argument(\"--run-id\", dest=\"run_id\", type=str)\n    args = parser.parse_args()\n\n    download_model(args)\n\n\n1.5 스크립트 실행\nhttp://localhost:5001 에 접속하여 해당 모델이 저장된 experiment 에 들어가 run_id 와 model_name 을 확인\n$ python download_model.py --model-name {model-name} --run-id {run-id}\n이 스크립트를 실행하고 나면 model-name 의 폴더가 생성되는 것을 확인할 수 있음\n\n\n\nscript 실행 모습\n\n\n\n\n\nsk_model 모델의 폴더 이름이 생겨남\n\n\n\n\n\n2. Model API 명세서 작성\nPOST /predict 를 수행했을 때 학습한 모델의 inference 결과를 반환해주는 API 명세서를 작성\n\n\n\n\n\n\n\n3. Pydantic Model 로 스키마의 클래스 작성\n명세서에 맞게 Class PredictIn(BaseModel) 와 Class PredictOut(BaseModel) 을 작성\nfrom pydantic import BaseModel\n\nclass PredictIn(BaseModel):\n    sepal_length: float\n    sepal_width: float\n    petal_length: float\n    petal_width: float\n\nclass PredictOut(BaseModel):\n    iris_class: int\n\n\n4. Predict API 구현\n\n4.1 Load Model\nmlflow 패키지를 활용하여 모델을 불러옴\ndef get_model():\n    model = mlflow.sklearn.load_model(model_uri = \"./{model-name}\") # sk_model\n    return model\n\nMODEL = get_model()\n\n\n4.2 Create a FastAPI Instance\napp = FastAPI()\n\n\n4.3 Write predict function\nAPI 에 POST /predict 를 수행했을 때 학습한 모델의 inference 결과를 반환할 수 있도록 predict 함수 작성\n@app.post(\"/predict\", response_model = PredictOut)\ndef predict(data: PredictIn) -&gt; PredictOut:\n    df = pd.DataFrame([data.dict()])\n    pred = MODEL.predict(df).item()\n    return PredictOut(iris_class = pred)\n\npredict 함수는 PredictIn 클래스의 데이터를 입력으로 받고 PredictOut 클래스를 반환\n입력받은 데이터를 데이터프레임 형태로 변환한 후, 위에서 불러온 모델을 이용하여 inference 결과를 저장\n마지막으로 저장된 결과를 PredictOut 클래스에 넣어 반환\n\nPOST method 를 이용하여 예측할 수 있도록 @app.post 를 이용한 데코레이터로 함수를 감싸주고, response_model 은 PredictOut 클래스로 지정\n\n\n4.4 전체 코드\n# app.py\nimport mlflow\nimport pandas as pd\nfrom fastapi import FastAPI\nfrom schemas import PredictIn, PredictOut\n\n\ndef get_model():\n    model = mlflow.sklearn.load_model(model_uri=\"./sk_model\")\n    return model\n\n\nMODEL = get_model()\n\n# Create a FastAPI instance\napp = FastAPI()\n\n\n@app.post(\"/predict\", response_model=PredictOut)\ndef predict(data: PredictIn) -&gt; PredictOut:\n    df = pd.DataFrame([data.dict()])\n    pred = MODEL.predict(df).item()\n    return PredictOut(iris_class=pred)\n\n\n\n5. API 작동 확인\n$ uvicorn app:app --reload 를 입력하고 http://localhost:8000/docs 로 이동하여 동작을 확인\n\n\n\nModel API Server 동작\n\n\n\n\n\nRequest Body 의 형태에 맞게 데이터 입력 화면, Response Body 에 추론 결과를 볼 수 있음"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#reference",
+    "href": "docs/blog/posts/2023-12-15-MLOps-day13/index.html#reference",
+    "title": "MLOps for MLE - 13",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-28-MLOps-day5/index.html",
+    "href": "docs/blog/posts/2023-11-28-MLOps-day5/index.html",
+    "title": "MLOps for MLE - 5",
+    "section": "",
+    "text": "DB에서 데이터를 가져오는 파이프라인 작성\n이를 활용한 모델 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#summary",
+    "href": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#summary",
+    "title": "MLOps for MLE - 5",
+    "section": "",
+    "text": "DB에서 데이터를 가져오는 파이프라인 작성\n이를 활용한 모델 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#실습",
+    "href": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#실습",
+    "title": "MLOps for MLE - 5",
+    "section": "실습",
+    "text": "실습\n\n1. Load Data\n데이터를 추출하는 쿼리문\nSELECT * FROM iris_data ORDER BY id DESC LIMIT 100;\n\n\n\n실행결과\n\n\n-&gt; id column 을 기준으로 최신 데이터 100개를 추출하는 쿼리\nPandas를 이용한 데이터 받아오기\npandas.read_sql 은 입력 argument 로 query 와 DB connector 를 받음\nimport pandas as pd\nimport psycopg2\n\ndb_connect = psycopg2.connect(host=\"localhost\", database=\"mydatabase\", user=\"myuser\", password=\"mypassword\")\ndf = pd.read_sql(\"SELECT * FROM iris_data ORDER BY id DESC LIMIT 100\", db_connect)\n-&gt; 확인해보면 df 에 데이터가 쌓여있음\n모델 학습에 필요한 X와 y를 정의\nfrom sklearn.model_selection import train_test_split\n\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\n\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n\n2. Save Data\nDB에 계속 데이터가 쌓이고 있으므로 데이터를 불러올 때마다 데이터가 변경됨. 따라서 Validation 용 데이터를 위해 따로 저장이 필요함\ndf.to_csv(\"valid_data.csv\", index=False)\n\n\n3. 전체 코드\nTrain\nimport joblib\nimport pandas as pd\nimport psycopg2\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\n\n# 1. get data\ndb_connect = psycopg2.connect(host=\"localhost\", database=\"mydatabase\", user=\"myuser\", password=\"mypassword\")\ndf = pd.read_sql(\"SELECT * FROM iris_data ORDER BY id DESC LIMIT 100\", db_connect)\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\nmodel_pipeline.fit(X_train, y_train)\n\ntrain_pred = model_pipeline.predict(X_train)\nvalid_pred = model_pipeline.predict(X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\njoblib.dump(model_pipeline, \"db_pipeline.joblib\")\n\n# 4. save data\ndf.to_csv(\"data.csv\", index=False)\nValidation\nimport joblib\nimport pandas as pd\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\n\n# 1. reproduce data\ndf = pd.read_csv(\"data.csv\")\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. load model\npipeline_load = joblib.load(\"db_pipeline.joblib\")\n\n# 3. validate\nload_train_pred = pipeline_load.predict(X_train)\nload_valid_pred = pipeline_load.predict(X_valid)\n\nload_train_acc = accuracy_score(y_true=y_train, y_pred=load_train_pred)\nload_valid_acc = accuracy_score(y_true=y_valid, y_pred=load_valid_pred)\n\nprint(\"Load Model Train Accuracy :\", load_train_acc)\nprint(\"Load Model Valid Accuracy :\", load_valid_acc)"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#reference",
+    "href": "docs/blog/posts/2023-11-28-MLOps-day5/index.html#reference",
+    "title": "MLOps for MLE - 5",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-02-MLOps-day8/index.html",
+    "href": "docs/blog/posts/2023-12-02-MLOps-day8/index.html",
+    "title": "MLOps for MLE - 8",
+    "section": "",
+    "text": "MLflow 서버에 저장된 모델을 불러오는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#summary",
+    "href": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#summary",
+    "title": "MLOps for MLE - 8",
+    "section": "",
+    "text": "MLflow 서버에 저장된 모델을 불러오는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#실습",
+    "href": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#실습",
+    "title": "MLOps for MLE - 8",
+    "section": "실습",
+    "text": "실습\n\n1. 모델 불러오기\nday 7 에서 작성한 코드로 학습된 모델을 서버로부터 불러오는 코드를 작성함\n\n1.1 환경 변수 설정\nday 7 에서와 같이 MLflow 서버에 접근하기 위한 환경 변수 설정\n\n\n1.2 모델 불러오기\nsklearn 모델 불러오기\nmlflow.sklearn.load_model 함수를 사용해서 저장된 모델을 불러옴\nrun_id 와 모델을 저장할 때 설정했던 모델 이름을 받을 수 있도록 외부 변수 설정\nparser = ArgumentParser()\nparser.add_argument(\"--run-id\", dest=\"run_id\", type=str)\nparser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\nargs = parser.parse_args()\n위에서 받은 변수를 이용해 runs:/run_id/model_name 의 형식으로 문자열을 만들어 줌\nmodel_pipeline = mlflow.sklearn.load_model(f\"runs:/{args.run_id}/{args.model_name}\")\n이 때, pyfunc 로도 모델을 불러올수있음\nmlflow.pyfunc.load_model 을 사용 -&gt; mlflow.pyfunc.PyFuncModel 클래스로 불러와짐\nmodel_pipeline = mlflow.pyfunc.load_model(f\"runs:/{args.run_id}/{args.model_name}\")\n\n\n\n2. inference 코드를 작성하고 마무리하면 전체 코드는 다음과 같음\n# load_model_from_registry.py\nimport os\nfrom argparse import ArgumentParser\n\nimport mlflow\nimport pandas as pd\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\n\n# 0. set mlflow environments\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\n# 1. load model from mlflow\nparser = ArgumentParser()\nparser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\nparser.add_argument(\"--run-id\", dest=\"run_id\", type=str)\nargs = parser.parse_args()\n\nmodel_pipeline = mlflow.sklearn.load_model(f\"runs:/{args.run_id}/{args.model_name}\")\n\n# 2. get data\ndf = pd.read_csv(\"data.csv\")\n\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 3. predict results\ntrain_pred = model_pipeline.predict(X_train)\nvalid_pred = model_pipeline.predict(X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n\n3. 실행 결과\nlocalhost:5001 에 접속하여 저장된 모델의 run 을 클릭하여 run_id 와 model_name 을 확인\n\n\n\nrun_id 및 model_name 확인\n\n\npython load_model_from_registry.py --model-name \"sk_model\" --run-id \"RUN_ID\"\n에 값을 넣어서 실행\nMLflow 서버의 metrics 를 확인하여 학습했던 결과와 같은지 확인\n\n\n\n\n\n\nMLflow 서버의 결과: train_acc = 0.975, valid_acc = 0.9\n\n\n\n\n\n\n\nLocal 환경의 결과: train_acc = 0.975, valid_acc = 0.9"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#reference",
+    "href": "docs/blog/posts/2023-12-02-MLOps-day8/index.html#reference",
+    "title": "MLOps for MLE - 8",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial\nMLflow Storage Format"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-06-book-review-1/index.html",
+    "href": "docs/blog/posts/2023-12-06-book-review-1/index.html",
+    "title": "머신러닝 시스템 설계 Ch.1",
+    "section": "",
+    "text": "프로덕션 환경에서 알고리즘은 ML 시스템의 일부이다. 시스템은 ML 프로젝트의 출발점이 된 비즈니스 요구 사항, 사용자와 개발자가 시스템과 상호 작용하는 인터페이스, 데이터 스택, 모델을 개발 및 모니터링하고 업데이트하기 위한 로직은 물론 해당 로직을 전달할 수 있는 인프라를 포함한다.\n\nML 시스템\n\n배포, 모니터링, 로직 업데이트\n피처 엔지니어링, ML 알고리즘, Evaluation\n데이터\n인프라\n\n\n이러한 ML 시스템과 ML 시스템 사용자, 비즈니스 요구 사항, ML 시스템 개발자 모두가 구성 요소이다."
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-06-book-review-1/index.html#머신러닝-시스템이란",
+    "href": "docs/blog/posts/2023-12-06-book-review-1/index.html#머신러닝-시스템이란",
+    "title": "머신러닝 시스템 설계 Ch.1",
+    "section": "",
+    "text": "프로덕션 환경에서 알고리즘은 ML 시스템의 일부이다. 시스템은 ML 프로젝트의 출발점이 된 비즈니스 요구 사항, 사용자와 개발자가 시스템과 상호 작용하는 인터페이스, 데이터 스택, 모델을 개발 및 모니터링하고 업데이트하기 위한 로직은 물론 해당 로직을 전달할 수 있는 인프라를 포함한다.\n\nML 시스템\n\n배포, 모니터링, 로직 업데이트\n피처 엔지니어링, ML 알고리즘, Evaluation\n데이터\n인프라\n\n\n이러한 ML 시스템과 ML 시스템 사용자, 비즈니스 요구 사항, ML 시스템 개발자 모두가 구성 요소이다."
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-06-book-review-1/index.html#머신러닝을-사용해야-하는-경우",
+    "href": "docs/blog/posts/2023-12-06-book-review-1/index.html#머신러닝을-사용해야-하는-경우",
+    "title": "머신러닝 시스템 설계 Ch.1",
+    "section": "2. 머신러닝을 사용해야 하는 경우",
+    "text": "2. 머신러닝을 사용해야 하는 경우\n먼저 프로젝트를 시작하기 전에 ML이 과연 필요한지 생각해야 한다.\nML은 기존 데이터로 부터 복잡한 패턴을 학습하고 이러한 패턴을 사용해 본 적 없는 데이터에 대해 예측을 수행하는 접근법이다.\n여기서 봐야하는 관점은 학습 가능한 점, 복잡한 패턴, 데이터(사용 가능한 데이터, 본 적 없는 데이터), 예측, 반복적, 비용, 대규모 이다.\n\n1. 학습: 시스템에 학습 능력이 있음\n흔히 알려진 관계형 데이터베이스는 학습 능력이 없기 때문에 ML 시스템이 아니다. ML 시스템이 학습을 하려면 학습할 대상이 있어야 한다. 대부분의 경우에는 데이터로 학습한다.\nEx) 지도 학습의 경우, ML 시스템은 한 쌍으로 이뤄진 입력과 출력 데이터를 이용해 입력 데이터에서 출력 데이터를 생성하는 관계를 학습한다.\n\n\n2. 복잡한 패턴: 학습할 패턴이 존재하며 복잡함\nML 시스템은 학습할 패턴이 있는 경우에만 유용하다."
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html",
+    "title": "MLOps for MLE - 2",
+    "section": "",
+    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#summary",
+    "title": "MLOps for MLE - 2",
+    "section": "",
+    "text": "생성한 테이블에 iris 데이터 삽입\n자동으로 삽입해주는 스크립트 작성\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#실습",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#실습",
+    "title": "MLOps for MLE - 2",
+    "section": "실습",
+    "text": "실습\n\n1. 데이터 삽입\nscikit-learn 패키지의 load_iris 를 삽입하기 위해 앞에서 생성한 테이블의 columns 이름과 일치하도록 수정\nimport pandas as pd\nfrom sklearn.datasets import load_iris\n\ndef get_data():\n    X, y = load_iris(return_X_y=True, as_frame=True)\n    df = pd.concat([X, y], axis=\"columns\")\n    rename_rule = {\n        \"sepal length (cm)\": \"sepal_length\",\n        \"sepal width (cm)\": \"sepal_width\",\n        \"petal length (cm)\": \"petal_length\",\n        \"petal width (cm)\": \"petal_width\",\n    }\n    df = df.rename(columns=rename_rule)\n    return df\nData Insertion Query 작성\nDB 에 데이터를 삽입하는 query 의 포맷은 다음과 같음\nINSERT INTO {table_name} (col_1, col_2, ...) VALUES (val_1, val_2, ...)\n이를 이해하고 query를 작성\ninsert_row_query = f\"\"\"\nINSERT INTO iris_data\n    (timestamp, sepal_length, sepal_width, petal_length, petal_width, target)\n    VALUES (\n        NOW(),\n        {data.sepal_length},\n        {data.sepal_width},\n        {data.petal_length},\n        {data.petal_width},\n        {data.target}\n    );\"\"\"\n이 query 를 cursor 를 이용하여 DB 에 전달하는 코드 작성\nimport pandas as pd\nimport psycopg2\nfrom sklearn.datasets import load_iris\n\n\ndef get_data():\n    X, y = load_iris(return_X_y=True, as_frame=True)\n    df = pd.concat([X, y], axis=\"columns\")\n    rename_rule = {\n        \"sepal length (cm)\": \"sepal_length\",\n        \"sepal width (cm)\": \"sepal_width\",\n        \"petal length (cm)\": \"petal_length\",\n        \"petal width (cm)\": \"petal_width\",\n    }\n    df = df.rename(columns=rename_rule)\n    return df\n\n\ndef insert_data(db_connect, data):\n    insert_row_query = f\"\"\"\n    INSERT INTO iris_data\n        (timestamp, sepal_length, sepal_width, petal_length, petal_width, target)\n        VALUES (\n            NOW(),\n            {data.sepal_length},\n            {data.sepal_width},\n            {data.petal_length},\n            {data.petal_width},\n            {data.target}\n        );\"\"\"\n\n    with db_connect.cursor() as cur:\n        cur.execute(insert_row_query)\n        db_connect.commit()\n\n\nif __name__ == \"__main__\":\n    db_connect = psycopg2.connect(\n        user=\"myuser\",\n        password=\"mypassword\",\n        host=\"localhost\",\n        port=5432,\n        database=\"mydatabase\",\n    )\n    df = get_data()\n    insert_data(db_connect, df.sample(1).squeeze())\n-&gt; psql 로 현재는 iris_data 에서 하나의 데이터만 DB에 입력된 상태임을 확인할 수 있음\n\n\n\n데이터 삽입\n\n\n\n\n\n데이터 확인\n\n\n\n\n2. Loop 추가\ninsert_data 함수를 계속해서 반복하도록 하는 코드 작성\nimport time\n\ndef generate_data(db_connect, df):\n    while True:\n        insert_data(db_connect, df.sample(1).squeeze())\n        time.sleep(1)\n-&gt; time 패키지의 sleep 함수를 이용해서 DB의 부하 줄이기"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
+    "href": "docs/blog/posts/2023-11-24-MLOps-day2/index.html#reference",
+    "title": "MLOps for MLE - 2",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html",
+    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html",
+    "title": "MLOps for MLE - 7",
+    "section": "",
+    "text": "모델을 학습하고 MLflow 서버에 저장\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#summary",
+    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#summary",
+    "title": "MLOps for MLE - 7",
+    "section": "",
+    "text": "모델을 학습하고 MLflow 서버에 저장\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#실습",
+    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#실습",
+    "title": "MLOps for MLE - 7",
+    "section": "실습",
+    "text": "실습\n\n1. Save Model to Registry\nday 5 에서 작성한 db_train.py 코드의 #3. save_model 부분을 변경하여 모델을 업로드하는 코드 작성\n\n1.1 환경 변수 추가\nMLflow 와 통신하기 위해서는 몇 가지 환경 변수가 설정되어야 함\n유저가 학습한 모델을 MLflow 서버를 통해 Arifact Store 인 MinIO 에 저장함\n이 과정에서 MinIO 의 접근 권한이 필요함\n이 접근 권한 정보는 day 6 에서 Docker Compose 파일의 mlflow-server 와 mlflow-artifact-store 의 정보임\n따라서 아이디와 비밀번호를 사전에 정의된 시스템 환경 변수에 설정해야 MinIO 에 접근할 수 있음\n추가로 MLflow 서버와 S3(MinIO) 의 URI 도 함께 설정해야함\nimport os\n\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\nMLFLOW_S3_ENDPOINT_URL : 모델을 저장할 스토리지 주소\nMLFLOW_TRACKING_URI : 정보를 저장하기 위해 연결할 MLflow 서버의 수조\nAWS_ACCESS_KEY_ID : MinIO 에 접근하기 위한 아이디\nAWS_SECRET_ACCESS_KEY : MinIO 에 접근하기 위한 비밀번호\n\n\n\n1.2 모델 저장하기\nMLflow 의 정보를 저장하기 위해 experiment 와 run 을 사용함\n\nexperiment : MLflow 에서 정보를 관리하기 위해 나누는 일종의 directory, 생성하지 않는 경우 Default로 저장됨\nrun : experiment 에 저장되는 모델 실험 결과, 해당 run 에 실제 정보들이 저장되며 experiment/run 의 구조로 저장됨\n\nmlflow 클래스를 이용하여 다음과 같이 코드를 작성함\nparser 를 활용하여 model_name 인자를 받아주고 experiment 는 mlflow.set_experiment(\"new-exp\") 를 이용하여 이름을 정해줌\nrun 을 담당하는 코드는 다음과 같음\nwith mlflow.start_run():\n    mlflow.log_metrics({\"train_acc\": train_acc, \"valid_acc\": valid_acc})\n    mlflow.sklearn.log_model(\n        sk_model=model_pipeline,\n        artifact_path=args.model_name,\n        signature=signature,\n        input_example=input_sample,\n    )\n\nmlflow.log_metrics : 모델의 결과 metrics 를 Python 의 dictionary 형태로 입력해 생성된 run 을 저장\nmlflow.sklearn.log_model : sklearn 모델은 mlflow.sklearn 를 사용해 간편하게 업로드가 가능함\n\n모델은 다음과 같은 구조로 저장됨\n# Directory written by mlflow.sklearn.save_model(model, \"sk_model\")\n\nsk_model/\n├── MLmodel\n├── model.pkl\n├── conda.yaml\n├── python_env.yaml\n└── requirements.txt\n\n\n\n2. 전체 코드\n# save_model_to_registry.py\nimport os\nfrom argparse import ArgumentParser\n\nimport mlflow\nimport pandas as pd\nimport psycopg2\nfrom sklearn.metrics import accuracy_score\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.svm import SVC\n\n# 0. set mlflow environments\nos.environ[\"MLFLOW_S3_ENDPOINT_URL\"] = \"http://localhost:9000\"\nos.environ[\"MLFLOW_TRACKING_URI\"] = \"http://localhost:5001\"\nos.environ[\"AWS_ACCESS_KEY_ID\"] = \"minio\"\nos.environ[\"AWS_SECRET_ACCESS_KEY\"] = \"miniostorage\"\n\n# 1. get data\ndb_connect = psycopg2.connect(\n    user=\"myuser\",\n    password=\"mypassword\",\n    host=\"localhost\",\n    port=5432,\n    database=\"mydatabase\",\n)\ndf = pd.read_sql(\"SELECT * FROM iris_data ORDER BY id DESC LIMIT 100\", db_connect)\n\nX = df.drop([\"id\", \"timestamp\", \"target\"], axis=\"columns\")\ny = df[\"target\"]\nX_train, X_valid, y_train, y_valid = train_test_split(X, y, train_size=0.8, random_state=2022)\n\n# 2. model development and train\nmodel_pipeline = Pipeline([(\"scaler\", StandardScaler()), (\"svc\", SVC())])\nmodel_pipeline.fit(X_train, y_train)\n\ntrain_pred = model_pipeline.predict(X_train)\nvalid_pred = model_pipeline.predict(X_valid)\n\ntrain_acc = accuracy_score(y_true=y_train, y_pred=train_pred)\nvalid_acc = accuracy_score(y_true=y_valid, y_pred=valid_pred)\n\nprint(\"Train Accuracy :\", train_acc)\nprint(\"Valid Accuracy :\", valid_acc)\n\n# 3. save model\nparser = ArgumentParser()\nparser.add_argument(\"--model-name\", dest=\"model_name\", type=str, default=\"sk_model\")\nargs = parser.parse_args()\n\nmlflow.set_experiment(\"new-exp\")\n\nsignature = mlflow.models.signature.infer_signature(model_input=X_train, model_output=train_pred)\ninput_sample = X_train.iloc[:10]\n\nwith mlflow.start_run():\n    mlflow.log_metrics({\"train_acc\": train_acc, \"valid_acc\": valid_acc})\n    mlflow.sklearn.log_model(\n        sk_model=model_pipeline,\n        artifact_path=args.model_name,\n        signature=signature,\n        input_example=input_sample,\n    )\n\n# 4. save data\ndf.to_csv(\"data.csv\", index=False)\n실행코드 : python save_model_to_registry.py --model-name \"sk_model\"\n실행 결과는 다음과 같음\n\n\n\n모델 저장 결과 상세"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#reference",
+    "href": "docs/blog/posts/2023-12-01-MLOps-day7/index.html#reference",
+    "title": "MLOps for MLE - 7",
+    "section": "Reference",
+    "text": "Reference\nML Engineer를 위한 MLOps tutorial"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-20-MLOps-day15/index.html",
+    "href": "docs/blog/posts/2023-12-20-MLOps-day15/index.html",
+    "title": "MLOps for MLE - 15",
+    "section": "",
+    "text": "메시징 시스템에 대한 정보\nKafka 의 전체 아키텍처에 대한 정보\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-20-MLOps-day15/index.html#summary",
+    "href": "docs/blog/posts/2023-12-20-MLOps-day15/index.html#summary",
+    "title": "MLOps for MLE - 15",
+    "section": "",
+    "text": "메시징 시스템에 대한 정보\nKafka 의 전체 아키텍처에 대한 정보\n\n\n\n\n\n\n\nNote\n\n\n\n실습을 진행했던 코드를 보고싶으시다면 여기를 눌러주세요"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-20-MLOps-day15/index.html#실습",
+    "href": "docs/blog/posts/2023-12-20-MLOps-day15/index.html#실습",
+    "title": "MLOps for MLE - 15",
+    "section": "실습",
+    "text": "실습\n\n1. 메시징 시스템\n메시징 시스템 (Message System) : 서로 다른 어플리케이션끼리 정보를 교환하기 위해 메시지의 생성, 전송, 전달 및 저장을 가능하게 하는 시스템\n대표적으로 Kafka, RabbitMQ, Active MQ, AWS SQS, Java JMS 등이 있음\n메시지 : 하나의 entity 에서 다른 하나의 entity 로 정보를 전송하는 데 사용되는 통신 아티팩트\n이러한 시스템은 주로 하나의 어플리케이션이 여러 외부 어플리케이션이나 하나 이상의 데이터 소스로부터 데이터를 받는 어플리케이션에 의해 처리된 데이터를 전달받고 싶을 때 사용함\n메시징 시스템은 메시지 생산자 (message producer) 와 메시지 소비자 (message consumers) 사이에 약한 결합성 (loose coupling) 을 갖도록 함\n약한 결합성 : 한 쪽이 끊기거나 변경이 있어도 다른 쪽에는 미치는 영향이 작은 것\n메시징 시스템을 이용하면 메시지 생산자와 소비자는 서로를 알지 못함\n이러한 메시징 시스템의 특징은 동적이고, 신뢰성 있고 유연한 시스템을 구현할 수 있도록 해주며, 그에 따라 시스템의 나머지 부분에 영향을 주지 않고 하위 어플리케이션의 전체적인 구성을 변경할 수 있음\n또한 높은 확장석과 서로 다른 네트워크 사이의 쉬운 통합성과 안정성이 있음\n메시징 시스템의 안정적이고 확장 가능한 특징 때문에, 많은 개발자들이 비지니스와 컴퓨팅 사이언스 문제를 해결하기 위해 사용하고 있음\nEx) 워크플로우, 네트워크 관리, 통신 서비스, 고객 관리, 일기 예보 시스템 등\n\n1.1 용어 정리\nMessage Oriented Middleware (MOM)\n\n독립된 어플리케이션 간에 데이터를 주고받을 수 있도록 하는 시스템 디자인\n\n함수 호출, 공유메모리 등의 방식이 아닌, 메시지 교환을 이용하는 중간 계층에 대한 인프라 아키텍처\n분산 컴퓨팅이 가능해지며, 서비스간의 결합성이 낮아짐\n\n비동기 (asynchronous) 로 메시지를 전달\nQueue, Broadcast, Multicast 등의 방식으로 메시지를 전달\nPublish/Subscribe (Pub/Sub) 구조\n\n메시지를 발행하는 Publisher, 메시지를 소비하는 Subscriber 로 구성\n\n\nMessage Broker\n\n메시지 처리 또는 메시지 수신자에게 메시지를 전달하는 시스템이며, 일반적으로 MOM 을 기반으로 구축됨\n\nMesage Queue (MQ)\n\nMessage Broker 와 MOM 을 구현한 소프트웨어 (RabbitMQ, ActiveMQ, Kafka 등)\n\nAdvanced Message Queueing Protocol (AMQP)\n\n메시지를 안정적으로 주고받기 위한 인터넷 프로토콜\nMOM 은 메시지 전송 보장을 해야하므로 AMQP 를 구현\n\n(Kafka 는 AMQP 를 구현한 MOM 시스템임)\n\n\n\n2. Kafka\n\n2.1 Features\nKafka 는 Open-source Distributed Event Streaming Platform 임\nEvent Streaming : 데이터베이스, 센서, 모바일기기, 어플리케이션 등과 같은 곳에서 발생하는 데이터를 event stream 형태로 저장해서 나중에 검색할 수 있도록 하는 것\n-&gt; 발생하는 데이터를 실시간으로 처리하고, 필요에 따라서 데이터가 또다른 target 시스템으로 event stream 을 라우팅 해주는 것\nEvent Streaming Platform\n\nEvent stream 을 실시간으로 처리하고 계속 쌓이는 데이터를 지속적으로 보관하다가 그 데이터를 쓰려고 하는 다른 target 시스템들이 가져갈 수 있도록 제공\n\nPublish/Subscribe (Pub/Sub) 구조\n\n다른 시스템에서 데이터를 가져와서 Kafka 에 publish 하거나 Kafka 로부터 데이터를 subscribe 할 수 있는 기능을 제공\n\nDecoupling\n\nKafka 에서는 Pub/Sub 구조를 구현하기 위해 Producer 와 Consumer 가 존재함, 두 객체는 서로 의존적이지 않고 완벽하게 분리되어 있음\n\nProducer : Kafka 에 event 를 Publish 하는 client application\nConsumer : Kafka 로부터 event 를 Subscribe 하는 client application\n\n\n\n\n2.2 Kafka Architecture\n\n\n\nKafka Architecture\n\n\n\n\n\n3. Kafka Components\n\n3.1 Broker\n브로커 (Broker) : 메시징 서비스를 담당해주는 Kafka 서버 또는 Kafka 시스템을 말함, 하나의 브로커는 하나의 Kafka Broker Process 를 의미\n프로세스를 구동하는 방법에 따라 다양한 방법으로 클러스터를 구성할 수 있는데 주로 단일 브로커가 아닌 다중 브로커를 사용함\n-&gt; 브로커가 여러 개일 경우, 각각의 브로커들은 ID 로 식별함\n브로커의 주요 역할은 토픽 (Topic) 내의 파티션 (Partition) 들의 분산, 유지 및 관리하는 것\n\n\n3.2 Kafka Cluster\nKafka 클러스터는 여러 개의 브로커로 이루어진 집합체를 말함\n일반적으로 최소 3대 이상의 브로커를 하나의 클러스터로 구성함\n\n\n3.3 Topic\n토픽이란 브로커에서 event (data) 를 관리하는 “기준” 또는 어떤 event 를 저장할 지를 정하는 “주제” 임\n토픽은 파일 시스템의 “폴더” 와 같고, event 는 폴더 속의 “파일” 과 같음\n\n\n3.4 Partition\n토픽에는 파티션이 존재하며 모든 파티션들은 Producer 로부터 전달된 데이터를 보관하는 역할을 함\n-&gt; 리더 파티션 (Leader Partition): Producer 또는 Consumer 와 직접 통신하며 read 와 write 연산을 담당함\n-&gt; 팔로워 파티션 (Follower Partition): Producer 에 의해 리더 파티션으로 전달된 데이터를 복제하여 저장하고 리더 파티션이 속해있는 브로커에 장애가 발생하면 팔로워 파티션이 리더 파티션의 지위를 가지게 됨\nReplication Factor 에 따라 리더 파티션과 팔로워 파티션의 개수가 정해짐\nEx) Replication Factor 가 1이라면 리더 파티션만 존재, 3이라면 하나의 리더 파티션과 두개의 팔로워 파티션을 가짐\n\n\n3.5 Zookeeper\n주키퍼란 분산 시스템에서 시스템 간의 정보 유지, 상태 체크, 서버들 간의 동기화 등을 처리해주는 분산 코디네이션 서비스임\n직접 어플리케이션 작업을 조율하지 않고, 조율하는 것을 쉽게 개발할 수 있도록 도와줌\nAPI 를 이용하여 동기화를 하거나 마스터 선출 등의 작업을 쉽게 구현할 수 있게 해줌\n위의 카프카 아키텍쳐 그림에서 주키퍼 앙상블이란 주키퍼 서버의 클러스터를 뜻함\n하나의 주키퍼 서버에 문제가 생겼을 경우, 주키퍼 서버들에 쌓이는 데이터를 기준으로 일관성을 맞추기 때문에 클러스터는 보통 홀수로 구축하며 최소 3개에서 일반적으로 5개를 권장함\n주키퍼에서도 파티션처럼 하나의 리더 서버가 있고, write 를 담당함\n나머지 팔로워 서버들은 read 를 담당함\n\n\n3.6 Producer & Consumer\nProducer 는 “메시지를 생산” 해서 브로커의 토픽으로 메시지를 보내는 역할을 하는 어플리케이션 또는 서버임\n\n데이터를 전송할 때 리더 파티션을 가지고 있는 브로커와 직접 통신함\n원하는 토픽의 파티션에 전송만하며 이후에 어떤 Consumer 에게 전송되는 지는 신경쓰지 않음\n\nConsumer 는 토픽의 파티션에 저장되어 있는 “메시지를 소비” 하는 역할을 하는 어플리케이션 또는 서버임\n\n데이터를 요청할 때 리더 파티션을 가지고 있는 브로커와 통신하여 토픽의 파티션으로부터 데이터를 가져감\n토픽의 특정 파티션만 구독하는 Consumer 를 운영 or 1개 이상의 Consumer 로 이루어진 Consumer 그룹을 운영\n어떤 Producer 에게서 메시지가 왔는지는 관심이 없고, 원하는 토픽의 파티션을 읽어서 필요한 메시지만 받음"
+  },
+  {
+    "objectID": "docs/blog/posts/2023-12-20-MLOps-day15/index.html#reference",
+    "href": "docs/blog/posts/2023-12-20-MLOps-day15/index.html#reference",
+    "title": "MLOps for MLE - 15",
     "section": "Reference",
     "text": "Reference\nML Engineer를 위한 MLOps tutorial"
   },
@@ -424,13 +508,13 @@
     "href": "docs/blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "공부한 내용을 정리하는 페이지입니다.\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 13\n\n\n\nmlops\n\n\n\nREST API 구현\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 12\n\n\n\nmlops\n\n\n\nDocker 를 활용하여 API 실행\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 11\n\n\n\nmlops\n\n\n\nPydantic 코드 활용\n\n\n\nUi Seok\n\n\nDec 11, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 10\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 CRUD 를 수행하는 API 작성\n\n\n\nUi Seok\n\n\nDec 9, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 9\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 간단한 API 제작\n\n\n\nUi Seok\n\n\nDec 7, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n머신러닝 시스템 설계 Ch.1\n\n\n\nbooks\n\n\n\n머신러닝 시스템 개요\n\n\n\nUi Seok\n\n\nDec 5, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 8\n\n\n\nmlops\n\n\n\nMLflow 서버에서 모델 불러오기\n\n\n\nUi Seok\n\n\nDec 2, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 7\n\n\n\nmlops\n\n\n\nMLflow 서버에 학습된 모델 저장\n\n\n\nUi Seok\n\n\nDec 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 6\n\n\n\nmlops\n\n\n\nMLflow 서버 구축 및 모델 저장\n\n\n\nUi Seok\n\n\nNov 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 5\n\n\n\nmlops\n\n\n\nDB에서 데이터를 가져오기\n\n\n\nUi Seok\n\n\nNov 28, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 4\n\n\n\nmlops\n\n\n\n모델 학습 및 파이프라인 작성\n\n\n\nUi Seok\n\n\nNov 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 3\n\n\n\nmlops\n\n\n\nDocker를 활용하여 DB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 26, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 2\n\n\n\nmlops\n\n\n\nDB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 24, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 1\n\n\n\nmlops\n\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\nUi Seok\n\n\nNov 23, 2023\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "공부한 내용을 정리하는 페이지입니다.\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 16\n\n\n\nmlops\n\n\n\n주키퍼와 브로커 생성\n\n\n\nUi Seok\n\n\nDec 26, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 15\n\n\n\nmlops\n\n\n\nKafka 란?\n\n\n\nUi Seok\n\n\nDec 20, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 14\n\n\n\nmlops\n\n\n\nDocker 를 활용한 API 서버 띄우기\n\n\n\nUi Seok\n\n\nDec 16, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 13\n\n\n\nmlops\n\n\n\nREST API 구현\n\n\n\nUi Seok\n\n\nDec 15, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 12\n\n\n\nmlops\n\n\n\nDocker 를 활용하여 API 실행\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 11\n\n\n\nmlops\n\n\n\nPydantic 코드 활용\n\n\n\nUi Seok\n\n\nDec 11, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 10\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 CRUD 를 수행하는 API 작성\n\n\n\nUi Seok\n\n\nDec 9, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 9\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 간단한 API 제작\n\n\n\nUi Seok\n\n\nDec 7, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n머신러닝 시스템 설계 Ch.1\n\n\n\nbooks\n\n\n\n머신러닝 시스템 개요\n\n\n\nUi Seok\n\n\nDec 5, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 8\n\n\n\nmlops\n\n\n\nMLflow 서버에서 모델 불러오기\n\n\n\nUi Seok\n\n\nDec 2, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 7\n\n\n\nmlops\n\n\n\nMLflow 서버에 학습된 모델 저장\n\n\n\nUi Seok\n\n\nDec 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 6\n\n\n\nmlops\n\n\n\nMLflow 서버 구축 및 모델 저장\n\n\n\nUi Seok\n\n\nNov 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 5\n\n\n\nmlops\n\n\n\nDB에서 데이터를 가져오기\n\n\n\nUi Seok\n\n\nNov 28, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 4\n\n\n\nmlops\n\n\n\n모델 학습 및 파이프라인 작성\n\n\n\nUi Seok\n\n\nNov 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 3\n\n\n\nmlops\n\n\n\nDocker를 활용하여 DB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 26, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 2\n\n\n\nmlops\n\n\n\nDB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 24, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 1\n\n\n\nmlops\n\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\nUi Seok\n\n\nNov 23, 2023\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "UiSeok’s blog",
     "section": "",
-    "text": "Welcome my page!\n공부했던 내용들을 정리하는 블로그 입니다.\n상단의 Menu bar 를 참고해주세요.\nThis page made by Quarto\n\n\n\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 13\n\n\n\nmlops\n\n\n\nREST API 구현\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 12\n\n\n\nmlops\n\n\n\nDocker 를 활용하여 API 실행\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 11\n\n\n\nmlops\n\n\n\nPydantic 코드 활용\n\n\n\nUi Seok\n\n\nDec 11, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 10\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 CRUD 를 수행하는 API 작성\n\n\n\nUi Seok\n\n\nDec 9, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 9\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 간단한 API 제작\n\n\n\nUi Seok\n\n\nDec 7, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n머신러닝 시스템 설계 Ch.1\n\n\n\nbooks\n\n\n\n머신러닝 시스템 개요\n\n\n\nUi Seok\n\n\nDec 5, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 8\n\n\n\nmlops\n\n\n\nMLflow 서버에서 모델 불러오기\n\n\n\nUi Seok\n\n\nDec 2, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 7\n\n\n\nmlops\n\n\n\nMLflow 서버에 학습된 모델 저장\n\n\n\nUi Seok\n\n\nDec 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 6\n\n\n\nmlops\n\n\n\nMLflow 서버 구축 및 모델 저장\n\n\n\nUi Seok\n\n\nNov 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 5\n\n\n\nmlops\n\n\n\nDB에서 데이터를 가져오기\n\n\n\nUi Seok\n\n\nNov 28, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 4\n\n\n\nmlops\n\n\n\n모델 학습 및 파이프라인 작성\n\n\n\nUi Seok\n\n\nNov 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 3\n\n\n\nmlops\n\n\n\nDocker를 활용하여 DB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 26, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 2\n\n\n\nmlops\n\n\n\nDB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 24, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 1\n\n\n\nmlops\n\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\nUi Seok\n\n\nNov 23, 2023\n\n\n\n\n\n\n\n\n\n\n\n\nTest Page\n\n\n\ncode\n\n\ntest\n\n\n\n\n\n\n\nMe\n\n\nNov 22, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\nHarlow Malloc\n\n\nNov 21, 2023\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\nTristan O’Malley\n\n\nNov 18, 2023\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Welcome my page!\n공부했던 내용들을 정리하는 블로그 입니다.\n상단의 Menu bar 를 참고해주세요.\nThis page made by Quarto\n\n\n\n\n\n\n\n\n\n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 16\n\n\n\nmlops\n\n\n\n주키퍼와 브로커 생성\n\n\n\nUi Seok\n\n\nDec 26, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 15\n\n\n\nmlops\n\n\n\nKafka 란?\n\n\n\nUi Seok\n\n\nDec 20, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 14\n\n\n\nmlops\n\n\n\nDocker 를 활용한 API 서버 띄우기\n\n\n\nUi Seok\n\n\nDec 16, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 13\n\n\n\nmlops\n\n\n\nREST API 구현\n\n\n\nUi Seok\n\n\nDec 15, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 12\n\n\n\nmlops\n\n\n\nDocker 를 활용하여 API 실행\n\n\n\nUi Seok\n\n\nDec 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 11\n\n\n\nmlops\n\n\n\nPydantic 코드 활용\n\n\n\nUi Seok\n\n\nDec 11, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 10\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 CRUD 를 수행하는 API 작성\n\n\n\nUi Seok\n\n\nDec 9, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 9\n\n\n\nmlops\n\n\n\nFastAPI 을 이용하여 간단한 API 제작\n\n\n\nUi Seok\n\n\nDec 7, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n머신러닝 시스템 설계 Ch.1\n\n\n\nbooks\n\n\n\n머신러닝 시스템 개요\n\n\n\nUi Seok\n\n\nDec 5, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 8\n\n\n\nmlops\n\n\n\nMLflow 서버에서 모델 불러오기\n\n\n\nUi Seok\n\n\nDec 2, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 7\n\n\n\nmlops\n\n\n\nMLflow 서버에 학습된 모델 저장\n\n\n\nUi Seok\n\n\nDec 1, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 6\n\n\n\nmlops\n\n\n\nMLflow 서버 구축 및 모델 저장\n\n\n\nUi Seok\n\n\nNov 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 5\n\n\n\nmlops\n\n\n\nDB에서 데이터를 가져오기\n\n\n\nUi Seok\n\n\nNov 28, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 4\n\n\n\nmlops\n\n\n\n모델 학습 및 파이프라인 작성\n\n\n\nUi Seok\n\n\nNov 27, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 3\n\n\n\nmlops\n\n\n\nDocker를 활용하여 DB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 26, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 2\n\n\n\nmlops\n\n\n\nDB에 데이터 삽입\n\n\n\nUi Seok\n\n\nNov 24, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMLOps for MLE - 1\n\n\n\nmlops\n\n\n\nDocker 환경 설정 및 DB 설정\n\n\n\nUi Seok\n\n\nNov 23, 2023\n\n\n\n\n\n\n\n\n\n\n\n\nTest Page\n\n\n\ncode\n\n\ntest\n\n\n\n\n\n\n\nMe\n\n\nNov 22, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\nHarlow Malloc\n\n\nNov 21, 2023\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\nTristan O’Malley\n\n\nNov 18, 2023\n\n\n\n\n\n\n\n\nNo matching items"
   }
 ]

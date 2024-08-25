@@ -10,7 +10,199 @@
 <atom:link href="https://ui-seok.github.io/docs/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Mon, 25 Dec 2023 15:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 02 Jan 2024 15:00:00 GMT</lastBuildDate>
+<item>
+  <title>MLOps for MLE - 18</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/blog/posts/2024-1-3-MLOps-day18/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li>Docker Compose 를 활용하여 Zookeeper, Broker, Schema Registry, Connect 를 생성함</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="review" class="level3">
+<h3 class="anchored" data-anchor-id="review">1. Review</h3>
+<ul>
+<li>Zookeeper : 브로커 서버의 상태 감지를 위해 사용되는 주키퍼 서버</li>
+<li>Broker : Source Connector 에서 데이터를 받아 토픽에 저장하고, Sink Connector 로 데이터를 넘겨줄 브로커 서버</li>
+<li>Schema Registry : 메시지의 schema 를 저장하기 위한 Schema Registry 서버</li>
+<li>Connect : Connector 를 띄우기 위한 Connect 서버</li>
+</ul>
+</section>
+<section id="kafka-system" class="level3">
+<h3 class="anchored" data-anchor-id="kafka-system">2. Kafka System</h3>
+<section id="zookeeper-broker" class="level4">
+<h4 class="anchored" data-anchor-id="zookeeper-broker">2.1 Zookeeper &amp; Broker</h4>
+</section>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>mlops</category>
+  <guid>https://ui-seok.github.io/docs/blog/posts/2024-1-3-MLOps-day18/index.html</guid>
+  <pubDate>Tue, 02 Jan 2024 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/120/200/150" medium="image"/>
+</item>
+<item>
+  <title>MLOps for MLE - 17</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/blog/posts/2023-12-29-MLOps-day17/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li>Kafka 의 Connect 와 Connector 에 대해 알아봄</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="producer-consumer-의-한계" class="level3">
+<h3 class="anchored" data-anchor-id="producer-consumer-의-한계">1. Producer &amp; Consumer 의 한계</h3>
+<p>Kafka 는 이전의 내용(Day16 참고)처럼 Producer 와 Consumer client 를 통해 메시지 파이프라인을 쉽게 구성할 수 있음</p>
+<p>하지만 실제 시스템에서는 다름</p>
+<p>DB Server 1 로부터 데이터를 가져오는 Producer 가 있고, 데이터를 브로커의 어떤 토픽으로 보낸 뒤, Consumer 가 DB Server 2에 데이터를 전달하는 과정이 있음</p>
+<p>하지만 이렇게 전달할 DB 들이 100개, 1000개가 된다면 Producer 와 Consumer 를 100개, 1000개로 만들어야 함</p>
+<p>하지만 메시지 파이프라인 구성을 위해 매번 Producer 와 Consumer 를 개발하는 것은 쉽지않음</p>
+<p>이러한 문제를 해결하여 더 간편하고 효율적으로 메시지 파이프라인을 구축하는 방법으로 Connect 와 Connector 라는 것이 탄생하게 되었음</p>
+</section>
+<section id="connect-connector-소개" class="level3">
+<h3 class="anchored" data-anchor-id="connect-connector-소개">2. Connect &amp; Connector 소개</h3>
+<p>Connect 는 데이터 시스템과 Kafka 간의 데이터를 확장 가능하고, 안전한 방법으로 streaming 하기 위한 도구임</p>
+<p>Connect 를 사용하기 위해서는 데이터를 어디로부터 가져오는지, 어디에다가 전달해야 하는지를 알려주는 Connector 를 정의해야 함</p>
+<p>여기서 Connector 는 메시지 파이프라인에 대한 추상 객체이며, task 들을 관리함</p>
+<p>Connect 와 Connector 의 역할을 살펴보면, Connect 는 프레임워크이고 Connector 는 그 안에서 돌아가는 플러그인임</p>
+<p>따라서 Connect 프레임워크를 실행하고 특정 Connector 플러그인을 실행시키면 메시지 파이프라인을 쉽게 구축할 수 있음</p>
+<section id="connector-의-종류" class="level4">
+<h4 class="anchored" data-anchor-id="connector-의-종류">2.1 Connector 의 종류</h4>
+<p><strong>Source Connector</strong></p>
+<ul>
+<li>Source system 의 데이터를 브로커의 토픽으로 publish 하는 Connector 임</li>
+<li>Producer 의 역할을 하는 Connector</li>
+</ul>
+<p><strong>Sink Connector</strong></p>
+<ul>
+<li>브로커의 토픽에 있는 데이터를 subscribe 해서 target system 에 전달하는 Connector 임</li>
+<li>Consumer 의 역할을 하는 Connector</li>
+</ul>
+<p>이를 그림으로 나타내면 다음과 같음</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-29-MLOps-day17/fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Kafka System wtih Connect &amp; Connector</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="schema-registry-소개" class="level3">
+<h3 class="anchored" data-anchor-id="schema-registry-소개">3. Schema Registry 소개</h3>
+<p>Kafka 는 decoupling 이라는 특징을 가지고 있음</p>
+<p>Producer 와 Consumer 가 존재하고, 서로 의존적이지 않고 완벽하게 분리되어 있음</p>
+<p>또한 브로커는 메시지를 한 번 저장하면 이후에는 수정할 수 없음</p>
+<p>이러한 구조적인 특징과 내부 구조로 인해 Kafka 운영에서는 다음과 같은 상황이 발생할 수 있음</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-29-MLOps-day17/fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Consume Fail</figcaption>
+</figure>
+</div>
+<ol type="1">
+<li>Producer 1과 2는 각자 브로커의 토픽 A 에 메시지를 보냄</li>
+<li>Consumer 는 토픽 A 에 있는 메시지를 읽음</li>
+<li>이때, Producer 2가 schema 를 변경하여 메시지 (4번)를 발행함</li>
+<li>하지만 Consumer 는 이 상황을 알지 못하기 때문에 4번 메시지를 구독하여 처리하는 과정에서 메시지를 읽어들이지 못하고 장애가 발생함</li>
+</ol>
+<p>위와 같은 상황처럼 결국 구조적인 결합도는 낮췄지만 내부적인 결합도 문제는 여전히 가지고 있게 됨</p>
+<p>이러한 문제에 더하여 동일한 schema 의 메시지가 계속 들어오는 경우, 같은 schema 를 계속해서 저장해야하기 때문에 메시지의 크기가 커지며, schema 가 중복이 되어 불필요한 데이터 용량을 차지하게 됨</p>
+<p>이러한 구조적인 결합도를 낮추고 불필요한 데이터 용량을 줄이기 위해 Kafka 에서는 Schema Registry 를 사용함</p>
+<p>Schema Registry 란 메시지의 Schema 를 저장해주는 일종의 저장소임</p>
+<p>다음은 Kafka Connector 가 만들어 내는 메시지 구조임</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-29-MLOps-day17/fig3.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">메시지 구조</figcaption>
+</figure>
+</div>
+<p>메시지는 key 와 value 로 구성되어 있으며, 각 key 와 value 는 schema 와 payload 로 구성되어 있음</p>
+<p>여기서 key 는 PK 와 같이 데이터를 식별할 수 있는 정보가 들어있고, value 는 데이터의 전체 값이 들어있음</p>
+<p>payload 는 데이터 값이 저장되며, schema 에는 이 데이터 값의 데이터 타입이 명시되어 있음</p>
+<p>다음 그림은 Producer, Schema Registry, Kafka 간의 관계를 나타냄</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/blog/posts/2023-12-29-MLOps-day17/fig4.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Schema Registry Architecture</figcaption>
+</figure>
+</div>
+<p>각 컴포넌트가 작동하는 순서는 다음과 같음</p>
+<ol type="1">
+<li>Producer 에서 Kafka 의 Serializer (또는 Converter) 에게 메시지를 보냄</li>
+<li>Serializer 는 메시지를 받아 메시지의 schema 를 Schema Registry 에 보냄</li>
+<li>이어서 schema ID 를 받고, schema ID 와 데이터를 Kafka 에게 보냄</li>
+</ol>
+<p>-&gt; Connect 와 Connector 를 이용할 때는 Serializer 를 직접 구현할 필요없이 Connect 를 띄울 때 환경 변수로 적어주면 됨</p>
+<p>앞서 살펴봤던 schema 중복 문제는 Schema Registry 에 key 와 value 에 명시된 schema 를 따로 저장하기 때문에 Connector 가 schema 대신 Schema Registry 의 schema ID 를 명시하여 해결할 수 있게 됨</p>
+<p>Schema ID 를 쓰면 메시지의 크기가 줄어들어 불필요한 데이터의 용량도 줄일 수 있음</p>
+<p>또한 내부적인 결합도 문제는 Schema Registry 에서 제공하는 기능 중 하나인 schema 호환성 규칙 강제 기능으로 해결할 수 있음</p>
+<p>Schema 호환성 규칙 강제란 schema 를 등록하여 사용할 수 있지만, schema 버전 간의 호환성을 강제함으로써 일종의 규칙을 세우는 것임</p>
+<p>Ex) Backward, Forward, Full compatibility</p>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+<p><a href="https://always-kimkim.tistory.com/entry/kafka101-schema-registry">Kafka 101</a></p>
+<p><a href="https://scorpio-mercury.tistory.com/30">Kafka Connect 란?</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>mlops</category>
+  <guid>https://ui-seok.github.io/docs/blog/posts/2023-12-29-MLOps-day17/index.html</guid>
+  <pubDate>Thu, 28 Dec 2023 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/119/200/150" medium="image"/>
+</item>
 <item>
   <title>MLOps for MLE - 16</title>
   <dc:creator>Ui Seok</dc:creator>
@@ -41,8 +233,531 @@ Note
 </section>
 <section id="실습" class="level2">
 <h2 class="anchored" data-anchor-id="실습">실습</h2>
-<section id="sample-text" class="level3">
-<h3 class="anchored" data-anchor-id="sample-text">1. SAMPLE TEXT</h3>
+<section id="zookeeper-broker-setup" class="level3">
+<h3 class="anchored" data-anchor-id="zookeeper-broker-setup">1. Zookeeper &amp; Broker Setup</h3>
+<section id="zookeeper-service" class="level4">
+<h4 class="anchored" data-anchor-id="zookeeper-service">1.1 Zookeeper Service</h4>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">version</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"3"</span></span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">services</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb1-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">zookeeper</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb1-5"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">image</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> confluentinc/cp-zookeeper:7.3.0</span></span>
+<span id="cb1-6"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">container_name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> zookeeper</span></span>
+<span id="cb1-7"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ports</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb1-8"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> 2181:2181</span></span>
+<span id="cb1-9"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">environment</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb1-10"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ZOOKEEPER_SERVER_ID</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb1-11"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ZOOKEEPER_CLIENT_PORT</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2181</span></span></code></pre></div>
+<ul>
+<li><em>ZOOKEEPER_SERVER_ID</em> : 주키퍼 클러스터에서 해당 주키퍼를 식별할 ID</li>
+<li><em>ZOOKEEPER_CLIENT_PORT</em> : 주키퍼 client 의 포트를 지정 (기본 주키퍼 포트인 <code>2181</code>로 지정)</li>
+</ul>
+</section>
+<section id="broker-service" class="level4">
+<h4 class="anchored" data-anchor-id="broker-service">1.2 Broker Service</h4>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">version</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"3"</span></span>
+<span id="cb2-2"></span>
+<span id="cb2-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">services</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb2-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">broker</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb2-5"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">image</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> confluentinc/cp-kafka:7.3.0</span></span>
+<span id="cb2-6"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">container_name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> broker</span></span>
+<span id="cb2-7"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">depends_on</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb2-8"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> zookeeper</span></span>
+<span id="cb2-9"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ports</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb2-10"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> 9092:9092</span></span>
+<span id="cb2-11"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">environment</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb2-12"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_BROKER_ID</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb2-13"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_ZOOKEEPER_CONNECT</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> zookeeper:2181</span></span>
+<span id="cb2-14"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_ADVERTISED_LISTENERS</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092</span></span>
+<span id="cb2-15"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span></span>
+<span id="cb2-16"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> PLAINTEXT</span></span>
+<span id="cb2-17"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb2-18"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span></code></pre></div>
+<ul>
+<li><em>KAFKA_BROKER_ID</em> : 브로커의 ID 지정</li>
+<li><em>KAFKA_ZOOKEEPER_CONNECT</em> : 브로커가 주키퍼에 연결하기 위한 주소 지정 (일반적으로 <code>주키퍼 서비스 이름: 주키퍼 서비스 포트</code> 형식)</li>
+<li><em>KAFKA_ADVERTISED_LISTENERS</em> : 내부와 외부에서 접속하기 위한 리스너를 설정, 일반적으로 internal 과 external 를 같이 설정</li>
+<li><em>KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</em> : 보안을 위한 protocol mapping 을 설정, key/value 로 매핑됨</li>
+<li><em>KAFKA_INTER_BROKER_LISTENER_NAME</em> : 컨테이너 내부에서 사용할 리스너 이름을 지정</li>
+<li><em>KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</em> : 토픽을 분산하여 저장할 Replication Factor 를 설정</li>
+<li><em>KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</em> : 카프카 클러스터에서 초기에 rebalancing 할 때 Consumer 들이 Consumer group 에 조인할 때 대기하는 시간</li>
+</ul>
+</section>
+<section id="전체-코드와-실행" class="level4">
+<h4 class="anchored" data-anchor-id="전체-코드와-실행">1.3 전체 코드와 실행</h4>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># naive-docker-compose.yaml</span></span>
+<span id="cb3-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">version</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"3"</span></span>
+<span id="cb3-3"></span>
+<span id="cb3-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">services</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb3-5"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">zookeeper</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb3-6"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">image</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> confluentinc/cp-zookeeper:7.3.0</span></span>
+<span id="cb3-7"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">container_name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> zookeeper</span></span>
+<span id="cb3-8"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ports</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb3-9"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> 2181:2181</span></span>
+<span id="cb3-10"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">environment</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb3-11"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ZOOKEEPER_SERVER_ID</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb3-12"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ZOOKEEPER_CLIENT_PORT</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2181</span></span>
+<span id="cb3-13"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">broker</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb3-14"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">image</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> confluentinc/cp-kafka:7.3.0</span></span>
+<span id="cb3-15"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">container_name</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> broker</span></span>
+<span id="cb3-16"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">depends_on</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb3-17"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> zookeeper</span></span>
+<span id="cb3-18"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ports</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb3-19"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">-</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> 9092:9092</span></span>
+<span id="cb3-20"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">environment</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span></span>
+<span id="cb3-21"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_BROKER_ID</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb3-22"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_ZOOKEEPER_CONNECT</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> zookeeper:2181</span></span>
+<span id="cb3-23"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_ADVERTISED_LISTENERS</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092</span></span>
+<span id="cb3-24"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span></span>
+<span id="cb3-25"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> PLAINTEXT</span></span>
+<span id="cb3-26"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb3-27"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span></code></pre></div>
+<p><code>$ docker compose -p part7-naive -f naive-docker-compose.yaml up -d</code> 를 이용하여 서비스를 실행시킴</p>
+<ul>
+<li><em>-f</em> : 해당 도커 컴포즈 파일의 이름을 입력</li>
+</ul>
+</section>
+</section>
+<section id="producer-consumer-setup" class="level3">
+<h3 class="anchored" data-anchor-id="producer-consumer-setup">2. Producer &amp; Consumer Setup</h3>
+<p>토픽과 Producer 와 Consumer 를 생성</p>
+<section id="topic" class="level4">
+<h4 class="anchored" data-anchor-id="topic">2.1 Topic</h4>
+<p><code>$ docker compose -p part7-naive exec broker kafka-topics --create --topic topic-test --bootstrap-server broker:29092 --partitions 1 --replication-factor 1</code> 명령어 입력</p>
+<ul>
+<li><em>docker compose exec</em> : 컨테이너 내에 명령어 수행</li>
+<li><em>broker</em> : 생성된 브로커 서비스의 이름을 적음</li>
+<li><em>kafka-topics</em> : 토픽에 대한 명령을 실행</li>
+<li><em>–create</em> : 토픽 생성</li>
+<li><em>–topic</em> : 생성할 토픽의 이름 지정</li>
+<li><em>–bootstrap-server</em> : 브로커 서비스에 대한 호스트 이름과 포트를 지정</li>
+<li><em>–partitions</em> : 토픽 내에 파티션 개수를 설정</li>
+<li><em>–replication-factor</em> : Replication Factor 지정</li>
+</ul>
+<p><code>$ docker compose -p part7-naive exec broker kafka-topics --describe --topic topic-test --bootstrap-server broker:29092</code> 명령어 입력</p>
+<ul>
+<li><em>–describe</em> : 생성된 토픽에 대한 상세 설명을 보여줌</li>
+</ul>
+</section>
+<section id="consumer" class="level4">
+<h4 class="anchored" data-anchor-id="consumer">2.2 Consumer</h4>
+<p>토픽을 생성했으니 생성한 토픽을 사용할 Consumer 를 만듬</p>
+<p>Consumer 를 먼저 실행하는 이유는 일반적으로 Consumer 가 메시지를 subscribe 하려고 대기하는 상태에서 Producer 가 메시지를 생성해서 보내기 때문</p>
+<ol type="1">
+<li><p><code>docker compose exec</code> 명령어를 통해 컨테이너 내부로 접속</p>
+<pre class="terminal"><code># terminal 1
+$ docker compose -p part7-naive exec broker /bin/bash
+</code></pre></li>
+<li><p><code>kafka-console-consumer</code> 를 이용하여 <code>topic-test</code> 토픽을 subscribe 함</p>
+<pre class="terminal"><code>$ kafka-console-consumer --topic topic-test --bootstrap-server broker:29092
+</code></pre>
+<p>-&gt; 수신 대기 하는 모습을 보임</p></li>
+</ol>
+</section>
+<section id="producer" class="level4">
+<h4 class="anchored" data-anchor-id="producer">2.3 Producer</h4>
+<ol type="1">
+<li><p>Consumer 와 같이 <code>docker compose exec</code> 명령어를 통해 컨테이너 내부로 접속</p>
+<pre class="terminal"><code># terminal 2
+$ docker compose -p part7-naive exec broker /bin/bash
+</code></pre>
+<p>-&gt; 이 때 위에서 사용했던 터미널이 아닌 새로운 터미널을 사용해야 함</p></li>
+<li><p><code>kafka-console-producer</code> 를 이용하여 <code>topic-test</code> 토픽에 접근하여 publish 할 준비를 함</p>
+<pre class="terminal"><code>$ kafka-console-producer --topic topic-test --broker-list broker:29092
+</code></pre>
+<p>-&gt; 명령어를 실행하면 publish 할 수 있는 상태가 됨</p></li>
+</ol>
+</section>
+<section id="communicate" class="level4">
+<h4 class="anchored" data-anchor-id="communicate">2.4 Communicate</h4>
+<p>Producer 가 열려 있는 두 번째 터미널에서 메시지를 입력하면 Consumer 가 열려 있는 첫 번째 터미널에서 메시지를 확인할 수 있음</p>
+</section>
 </section>
 </section>
 <section id="reference" class="level2">

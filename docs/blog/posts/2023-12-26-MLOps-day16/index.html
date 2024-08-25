@@ -23,6 +23,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -127,7 +161,8 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">Summary</a></li>
   <li><a href="#실습" id="toc-실습" class="nav-link" data-scroll-target="#실습">실습</a>
   <ul class="collapse">
-  <li><a href="#sample-text" id="toc-sample-text" class="nav-link" data-scroll-target="#sample-text">1. SAMPLE TEXT</a></li>
+  <li><a href="#zookeeper-broker-setup" id="toc-zookeeper-broker-setup" class="nav-link" data-scroll-target="#zookeeper-broker-setup">1. Zookeeper &amp; Broker Setup</a></li>
+  <li><a href="#producer-consumer-setup" id="toc-producer-consumer-setup" class="nav-link" data-scroll-target="#producer-consumer-setup">2. Producer &amp; Consumer Setup</a></li>
   </ul></li>
   <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
   </ul>
@@ -195,8 +230,145 @@ Note
 </section>
 <section id="실습" class="level2">
 <h2 class="anchored" data-anchor-id="실습">실습</h2>
-<section id="sample-text" class="level3">
-<h3 class="anchored" data-anchor-id="sample-text">1. SAMPLE TEXT</h3>
+<section id="zookeeper-broker-setup" class="level3">
+<h3 class="anchored" data-anchor-id="zookeeper-broker-setup">1. Zookeeper &amp; Broker Setup</h3>
+<section id="zookeeper-service" class="level4">
+<h4 class="anchored" data-anchor-id="zookeeper-service">1.1 Zookeeper Service</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">"3"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">zookeeper</span><span class="kw">:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> confluentinc/cp-zookeeper:7.3.0</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> zookeeper</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 2181:2181</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ZOOKEEPER_SERVER_ID</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ZOOKEEPER_CLIENT_PORT</span><span class="kw">:</span><span class="at"> </span><span class="dv">2181</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><em>ZOOKEEPER_SERVER_ID</em> : 주키퍼 클러스터에서 해당 주키퍼를 식별할 ID</li>
+<li><em>ZOOKEEPER_CLIENT_PORT</em> : 주키퍼 client 의 포트를 지정 (기본 주키퍼 포트인 <code>2181</code>로 지정)</li>
+</ul>
+</section>
+<section id="broker-service" class="level4">
+<h4 class="anchored" data-anchor-id="broker-service">1.2 Broker Service</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">"3"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">broker</span><span class="kw">:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> confluentinc/cp-kafka:7.3.0</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> broker</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> zookeeper</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 9092:9092</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_BROKER_ID</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_ZOOKEEPER_CONNECT</span><span class="kw">:</span><span class="at"> zookeeper:2181</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_ADVERTISED_LISTENERS</span><span class="kw">:</span><span class="at"> PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="kw">:</span><span class="at"> PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="kw">:</span><span class="at"> PLAINTEXT</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</span><span class="kw">:</span><span class="at"> </span><span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><em>KAFKA_BROKER_ID</em> : 브로커의 ID 지정</li>
+<li><em>KAFKA_ZOOKEEPER_CONNECT</em> : 브로커가 주키퍼에 연결하기 위한 주소 지정 (일반적으로 <code>주키퍼 서비스 이름: 주키퍼 서비스 포트</code> 형식)</li>
+<li><em>KAFKA_ADVERTISED_LISTENERS</em> : 내부와 외부에서 접속하기 위한 리스너를 설정, 일반적으로 internal 과 external 를 같이 설정</li>
+<li><em>KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</em> : 보안을 위한 protocol mapping 을 설정, key/value 로 매핑됨</li>
+<li><em>KAFKA_INTER_BROKER_LISTENER_NAME</em> : 컨테이너 내부에서 사용할 리스너 이름을 지정</li>
+<li><em>KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</em> : 토픽을 분산하여 저장할 Replication Factor 를 설정</li>
+<li><em>KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</em> : 카프카 클러스터에서 초기에 rebalancing 할 때 Consumer 들이 Consumer group 에 조인할 때 대기하는 시간</li>
+</ul>
+</section>
+<section id="전체-코드와-실행" class="level4">
+<h4 class="anchored" data-anchor-id="전체-코드와-실행">1.3 전체 코드와 실행</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># naive-docker-compose.yaml</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">"3"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">zookeeper</span><span class="kw">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> confluentinc/cp-zookeeper:7.3.0</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> zookeeper</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 2181:2181</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ZOOKEEPER_SERVER_ID</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ZOOKEEPER_CLIENT_PORT</span><span class="kw">:</span><span class="at"> </span><span class="dv">2181</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">broker</span><span class="kw">:</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> confluentinc/cp-kafka:7.3.0</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> broker</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> zookeeper</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 9092:9092</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_BROKER_ID</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_ZOOKEEPER_CONNECT</span><span class="kw">:</span><span class="at"> zookeeper:2181</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_ADVERTISED_LISTENERS</span><span class="kw">:</span><span class="at"> PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="kw">:</span><span class="at"> PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="kw">:</span><span class="at"> PLAINTEXT</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</span><span class="kw">:</span><span class="at"> </span><span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>$ docker compose -p part7-naive -f naive-docker-compose.yaml up -d</code> 를 이용하여 서비스를 실행시킴</p>
+<ul>
+<li><em>-f</em> : 해당 도커 컴포즈 파일의 이름을 입력</li>
+</ul>
+</section>
+</section>
+<section id="producer-consumer-setup" class="level3">
+<h3 class="anchored" data-anchor-id="producer-consumer-setup">2. Producer &amp; Consumer Setup</h3>
+<p>토픽과 Producer 와 Consumer 를 생성</p>
+<section id="topic" class="level4">
+<h4 class="anchored" data-anchor-id="topic">2.1 Topic</h4>
+<p><code>$ docker compose -p part7-naive exec broker kafka-topics --create --topic topic-test --bootstrap-server broker:29092 --partitions 1 --replication-factor 1</code> 명령어 입력</p>
+<ul>
+<li><em>docker compose exec</em> : 컨테이너 내에 명령어 수행</li>
+<li><em>broker</em> : 생성된 브로커 서비스의 이름을 적음</li>
+<li><em>kafka-topics</em> : 토픽에 대한 명령을 실행</li>
+<li><em>–create</em> : 토픽 생성</li>
+<li><em>–topic</em> : 생성할 토픽의 이름 지정</li>
+<li><em>–bootstrap-server</em> : 브로커 서비스에 대한 호스트 이름과 포트를 지정</li>
+<li><em>–partitions</em> : 토픽 내에 파티션 개수를 설정</li>
+<li><em>–replication-factor</em> : Replication Factor 지정</li>
+</ul>
+<p><code>$ docker compose -p part7-naive exec broker kafka-topics --describe --topic topic-test --bootstrap-server broker:29092</code> 명령어 입력</p>
+<ul>
+<li><em>–describe</em> : 생성된 토픽에 대한 상세 설명을 보여줌</li>
+</ul>
+</section>
+<section id="consumer" class="level4">
+<h4 class="anchored" data-anchor-id="consumer">2.2 Consumer</h4>
+<p>토픽을 생성했으니 생성한 토픽을 사용할 Consumer 를 만듬</p>
+<p>Consumer 를 먼저 실행하는 이유는 일반적으로 Consumer 가 메시지를 subscribe 하려고 대기하는 상태에서 Producer 가 메시지를 생성해서 보내기 때문</p>
+<ol type="1">
+<li><p><code>docker compose exec</code> 명령어를 통해 컨테이너 내부로 접속</p>
+<pre class="terminal"><code># terminal 1
+$ docker compose -p part7-naive exec broker /bin/bash
+</code></pre></li>
+<li><p><code>kafka-console-consumer</code> 를 이용하여 <code>topic-test</code> 토픽을 subscribe 함</p>
+<pre class="terminal"><code>$ kafka-console-consumer --topic topic-test --bootstrap-server broker:29092
+</code></pre>
+<p>-&gt; 수신 대기 하는 모습을 보임</p></li>
+</ol>
+</section>
+<section id="producer" class="level4">
+<h4 class="anchored" data-anchor-id="producer">2.3 Producer</h4>
+<ol type="1">
+<li><p>Consumer 와 같이 <code>docker compose exec</code> 명령어를 통해 컨테이너 내부로 접속</p>
+<pre class="terminal"><code># terminal 2
+$ docker compose -p part7-naive exec broker /bin/bash
+</code></pre>
+<p>-&gt; 이 때 위에서 사용했던 터미널이 아닌 새로운 터미널을 사용해야 함</p></li>
+<li><p><code>kafka-console-producer</code> 를 이용하여 <code>topic-test</code> 토픽에 접근하여 publish 할 준비를 함</p>
+<pre class="terminal"><code>$ kafka-console-producer --topic topic-test --broker-list broker:29092
+</code></pre>
+<p>-&gt; 명령어를 실행하면 publish 할 수 있는 상태가 됨</p></li>
+</ol>
+</section>
+<section id="communicate" class="level4">
+<h4 class="anchored" data-anchor-id="communicate">2.4 Communicate</h4>
+<p>Producer 가 열려 있는 두 번째 터미널에서 메시지를 입력하면 Consumer 가 열려 있는 첫 번째 터미널에서 메시지를 확인할 수 있음</p>
+</section>
 </section>
 </section>
 <section id="reference" class="level2">

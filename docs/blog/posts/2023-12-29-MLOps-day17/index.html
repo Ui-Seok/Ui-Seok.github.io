@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ui Seok">
+<meta name="dcterms.date" content="2023-12-29">
+<meta name="description" content="Connect 와 Connector">
+
+<title>Home - MLOps for MLE - 17</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<script src="../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../../../index.html">
+    <span class="navbar-title">Home</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../about.html" rel="" target="">
+ <span class="menu-text">Contact Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../docs/coursera/index.html" rel="" target="">
+ <span class="menu-text">Coursera Lecture</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../docs/blog/index.html" rel="" target="">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Ui-Seok" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/uiseok-lee-34007429a/" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#summary" id="toc-summary" class="nav-link active" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#실습" id="toc-실습" class="nav-link" data-scroll-target="#실습">실습</a>
+  <ul class="collapse">
+  <li><a href="#producer-consumer-의-한계" id="toc-producer-consumer-의-한계" class="nav-link" data-scroll-target="#producer-consumer-의-한계">1. Producer &amp; Consumer 의 한계</a></li>
+  <li><a href="#connect-connector-소개" id="toc-connect-connector-소개" class="nav-link" data-scroll-target="#connect-connector-소개">2. Connect &amp; Connector 소개</a></li>
+  <li><a href="#schema-registry-소개" id="toc-schema-registry-소개" class="nav-link" data-scroll-target="#schema-registry-소개">3. Schema Registry 소개</a></li>
+  </ul></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/blog/posts/2023-12-29-MLOps-day17/index.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">MLOps for MLE - 17</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">mlops</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Connect 와 Connector
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ui Seok </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 29, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ol type="1">
+<li>Kafka 의 Connect 와 Connector 에 대해 알아봄</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>실습을 진행했던 코드를 보고싶으시다면 <a href="https://github.com/Ui-Seok/mlops-tutorial">여기</a>를 눌러주세요</p>
+</div>
+</div>
+</section>
+<section id="실습" class="level2">
+<h2 class="anchored" data-anchor-id="실습">실습</h2>
+<section id="producer-consumer-의-한계" class="level3">
+<h3 class="anchored" data-anchor-id="producer-consumer-의-한계">1. Producer &amp; Consumer 의 한계</h3>
+<p>Kafka 는 이전의 내용(Day16 참고)처럼 Producer 와 Consumer client 를 통해 메시지 파이프라인을 쉽게 구성할 수 있음</p>
+<p>하지만 실제 시스템에서는 다름</p>
+<p>DB Server 1 로부터 데이터를 가져오는 Producer 가 있고, 데이터를 브로커의 어떤 토픽으로 보낸 뒤, Consumer 가 DB Server 2에 데이터를 전달하는 과정이 있음</p>
+<p>하지만 이렇게 전달할 DB 들이 100개, 1000개가 된다면 Producer 와 Consumer 를 100개, 1000개로 만들어야 함</p>
+<p>하지만 메시지 파이프라인 구성을 위해 매번 Producer 와 Consumer 를 개발하는 것은 쉽지않음</p>
+<p>이러한 문제를 해결하여 더 간편하고 효율적으로 메시지 파이프라인을 구축하는 방법으로 Connect 와 Connector 라는 것이 탄생하게 되었음</p>
+</section>
+<section id="connect-connector-소개" class="level3">
+<h3 class="anchored" data-anchor-id="connect-connector-소개">2. Connect &amp; Connector 소개</h3>
+<p>Connect 는 데이터 시스템과 Kafka 간의 데이터를 확장 가능하고, 안전한 방법으로 streaming 하기 위한 도구임</p>
+<p>Connect 를 사용하기 위해서는 데이터를 어디로부터 가져오는지, 어디에다가 전달해야 하는지를 알려주는 Connector 를 정의해야 함</p>
+<p>여기서 Connector 는 메시지 파이프라인에 대한 추상 객체이며, task 들을 관리함</p>
+<p>Connect 와 Connector 의 역할을 살펴보면, Connect 는 프레임워크이고 Connector 는 그 안에서 돌아가는 플러그인임</p>
+<p>따라서 Connect 프레임워크를 실행하고 특정 Connector 플러그인을 실행시키면 메시지 파이프라인을 쉽게 구축할 수 있음</p>
+<section id="connector-의-종류" class="level4">
+<h4 class="anchored" data-anchor-id="connector-의-종류">2.1 Connector 의 종류</h4>
+<p><strong>Source Connector</strong></p>
+<ul>
+<li>Source system 의 데이터를 브로커의 토픽으로 publish 하는 Connector 임</li>
+<li>Producer 의 역할을 하는 Connector</li>
+</ul>
+<p><strong>Sink Connector</strong></p>
+<ul>
+<li>브로커의 토픽에 있는 데이터를 subscribe 해서 target system 에 전달하는 Connector 임</li>
+<li>Consumer 의 역할을 하는 Connector</li>
+</ul>
+<p>이를 그림으로 나타내면 다음과 같음</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Kafka System wtih Connect &amp; Connector</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="schema-registry-소개" class="level3">
+<h3 class="anchored" data-anchor-id="schema-registry-소개">3. Schema Registry 소개</h3>
+<p>Kafka 는 decoupling 이라는 특징을 가지고 있음</p>
+<p>Producer 와 Consumer 가 존재하고, 서로 의존적이지 않고 완벽하게 분리되어 있음</p>
+<p>또한 브로커는 메시지를 한 번 저장하면 이후에는 수정할 수 없음</p>
+<p>이러한 구조적인 특징과 내부 구조로 인해 Kafka 운영에서는 다음과 같은 상황이 발생할 수 있음</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Consume Fail</figcaption>
+</figure>
+</div>
+<ol type="1">
+<li>Producer 1과 2는 각자 브로커의 토픽 A 에 메시지를 보냄</li>
+<li>Consumer 는 토픽 A 에 있는 메시지를 읽음</li>
+<li>이때, Producer 2가 schema 를 변경하여 메시지 (4번)를 발행함</li>
+<li>하지만 Consumer 는 이 상황을 알지 못하기 때문에 4번 메시지를 구독하여 처리하는 과정에서 메시지를 읽어들이지 못하고 장애가 발생함</li>
+</ol>
+<p>위와 같은 상황처럼 결국 구조적인 결합도는 낮췄지만 내부적인 결합도 문제는 여전히 가지고 있게 됨</p>
+<p>이러한 문제에 더하여 동일한 schema 의 메시지가 계속 들어오는 경우, 같은 schema 를 계속해서 저장해야하기 때문에 메시지의 크기가 커지며, schema 가 중복이 되어 불필요한 데이터 용량을 차지하게 됨</p>
+<p>이러한 구조적인 결합도를 낮추고 불필요한 데이터 용량을 줄이기 위해 Kafka 에서는 Schema Registry 를 사용함</p>
+<p>Schema Registry 란 메시지의 Schema 를 저장해주는 일종의 저장소임</p>
+<p>다음은 Kafka Connector 가 만들어 내는 메시지 구조임</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig3.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">메시지 구조</figcaption>
+</figure>
+</div>
+<p>메시지는 key 와 value 로 구성되어 있으며, 각 key 와 value 는 schema 와 payload 로 구성되어 있음</p>
+<p>여기서 key 는 PK 와 같이 데이터를 식별할 수 있는 정보가 들어있고, value 는 데이터의 전체 값이 들어있음</p>
+<p>payload 는 데이터 값이 저장되며, schema 에는 이 데이터 값의 데이터 타입이 명시되어 있음</p>
+<p>다음 그림은 Producer, Schema Registry, Kafka 간의 관계를 나타냄</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="fig4.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Schema Registry Architecture</figcaption>
+</figure>
+</div>
+<p>각 컴포넌트가 작동하는 순서는 다음과 같음</p>
+<ol type="1">
+<li>Producer 에서 Kafka 의 Serializer (또는 Converter) 에게 메시지를 보냄</li>
+<li>Serializer 는 메시지를 받아 메시지의 schema 를 Schema Registry 에 보냄</li>
+<li>이어서 schema ID 를 받고, schema ID 와 데이터를 Kafka 에게 보냄</li>
+</ol>
+<p>-&gt; Connect 와 Connector 를 이용할 때는 Serializer 를 직접 구현할 필요없이 Connect 를 띄울 때 환경 변수로 적어주면 됨</p>
+<p>앞서 살펴봤던 schema 중복 문제는 Schema Registry 에 key 와 value 에 명시된 schema 를 따로 저장하기 때문에 Connector 가 schema 대신 Schema Registry 의 schema ID 를 명시하여 해결할 수 있게 됨</p>
+<p>Schema ID 를 쓰면 메시지의 크기가 줄어들어 불필요한 데이터의 용량도 줄일 수 있음</p>
+<p>또한 내부적인 결합도 문제는 Schema Registry 에서 제공하는 기능 중 하나인 schema 호환성 규칙 강제 기능으로 해결할 수 있음</p>
+<p>Schema 호환성 규칙 강제란 schema 를 등록하여 사용할 수 있지만, schema 버전 간의 호환성을 강제함으로써 일종의 규칙을 세우는 것임</p>
+<p>Ex) Backward, Forward, Full compatibility</p>
+</section>
+</section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<p><a href="https://mlops-for-mle.github.io/tutorial/">ML Engineer를 위한 MLOps tutorial</a></p>
+<p><a href="https://always-kimkim.tistory.com/entry/kafka101-schema-registry">Kafka 101</a></p>
+<p><a href="https://scorpio-mercury.tistory.com/30">Kafka Connect 란?</a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">us.lee1520@gmail.com</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

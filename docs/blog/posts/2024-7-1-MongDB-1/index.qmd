@@ -1,0 +1,106 @@
+---
+title: "MongoDB Tutorial"
+description: 몽고DB 사용방법
+author: "Ui Seok"
+date: "2024-07-01"
+categories: [DB]
+image: "https://picsum.photos/id/201/200/150"
+
+page-layout: article
+---
+
+## 용어 정리
+
+- Total Dataset (= Database Deployments, Databases)
+
+    가장 최상위 데이터 베이스
+
+    이 데이터 베이스 안에 여러개의 Cluster 를 구성할 수 있음 (여러개의 소 단위 데이터 베이스)
+
+- Cluster (= Database)
+
+    테이블들을 관리하는 집단
+
+    Ex) sample_mflix 라는 이름의 클러스터가 있고, 여기 안에 comments, movies, users, etc.. 등 다양한 table 들이 존재
+
+- Collections
+
+    해당 collection 안에 여러개의 데이터들이 존재
+
+- Cloud MongoDB 와 Local MongoDB 의 차이
+
+    Cloud MongoDB 는 Atlas 라는 웹을 통해 온라인 상으로 데이터 베이스가 관리 가능하게끔 되어있고, `mongodb+srv://~` 라는 형식으로 주소가 발급된다. 
+
+    Local MongoDB 는 MongoDB Community Edition or MongoDB Enterprise 를 설치하면 Local 저장소에 데이터를 저장할 수 있게 되고, localhost 주소에 27017 포트로 접근이 가능하게 된다.
+
+- GUI 프로그램
+
+    Cloud MongoDB 혹은 Local MongoDB 의 주소를 확인하고 [MongoDB Compass](https://www.mongodb.com/try/download/compass) 를 설치하고 해당 주소를 입력하면 GUI 로 데이터를 관리 할 수 있다.
+
+## 간단한 사용 방법
+
+- Python 으로 연결 하는 방법
+
+    ``` python
+        uri = "mongodb+srv://seok:{password}@{cluster_name}~~~"
+        client = MongoClient(uri)
+        db = client["sample_mflix"]
+
+    ```
+    
+    `uri` 를 이용해 사용하고자 하는 MongoDB 의 주소를 받아온다.
+
+    `client` 를 만들어 MongoClient 에 위에서 받아온 주소를 입력한다.
+
+    `db` 변수를 하나 할당하여 사용하고자 하는 cluster 의 이름을 입력한다. (만약 해당 cluster 가 없다면 알아서 생성하고 데이터를 관리함)
+
+- 데이터 삽입
+
+    ``` python
+        def input_table(db):
+            doc = {
+                    "name": "Test input",
+                    "address": "111",
+                    "class_name": "1",
+                    "time": "2024-04",
+            }
+		
+		    db.test.insert_one(doc)
+		    # db["test"].insert_one(doc) 같은 표현이다
+
+    ```
+
+    위에서 만든 `db` 변수를 활용하여 데이터를 넣게 된다.
+
+    `insert_one` 이라는 변수를 사용한다.
+
+- 데이터 가져오기
+
+    ``` pyhton
+        def get_table(db):
+            all_data = list(db.test.find({}, {"_id": False}))
+            # all_data = list(db["test"].find({}, {"_id": False}) 같은 표현이다
+            print(all_data)
+
+    ```
+
+    `find` 라는 함수를 사용하여 DB 에 접근하고 데이터를 불러온다.
+
+    위의 예시 코드에서는 각 데이터를 나타내는 고유 값인 `_id` 를 제외하고 데이터를 가져오도록 설정하였다.
+
+    만약 `class_name` 이라는 데이터 중에서 값이 `1` 인 값만 들고오고 싶다면 다음과 같이 하면 된다.
+
+    ``` python
+        filtered_data = list(db["test"].find({"class_name": 1}, {"_id": False}))
+
+    ```
+
+    여기서 사용되는 필터링 방법을 condition 설정 이라고 한다.
+
+## Reference
+
+[Python 초기 파일 만들어서 MongoDB에 저장시키기](https://velog.io/@twinsjbu/Python-초기-파일-만들어서-MongoDB에-insert시키기)
+
+[홈짱닷컴](https://homzzang.com/b/py-55)
+
+[Python MongoDB 데이터 find하기](https://velog.io/@twinsjbu/Python-MongoDB-데이터-find하기)

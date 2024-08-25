@@ -6,6 +6,7 @@
   {
     "listing": "/docs/blog/index.html",
     "items": [
+      "/docs/blog/posts/2024-7-1-MongDB-1/index.html",
       "/docs/blog/posts/2024-1-3-MLOps-day18/index.html",
       "/docs/blog/posts/2023-12-29-MLOps-day17/index.html",
       "/docs/blog/posts/2023-12-26-MLOps-day16/index.html",
@@ -30,6 +31,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/docs/blog/posts/2024-7-1-MongDB-1/index.html",
       "/docs/blog/posts/2024-1-3-MLOps-day18/index.html",
       "/docs/blog/posts/2023-12-29-MLOps-day17/index.html",
       "/docs/blog/posts/2023-12-26-MLOps-day16/index.html",

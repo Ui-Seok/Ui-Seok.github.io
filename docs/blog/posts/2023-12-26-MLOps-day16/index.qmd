@@ -22,9 +22,164 @@ page-layout: article
 
 ## 실습
 
-### 1. SAMPLE TEXT
+### 1. Zookeeper & Broker Setup
+
+#### 1.1 Zookeeper Service
+
+``` yaml
+version: "3"
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+```
+- _ZOOKEEPER_SERVER_ID_ : 주키퍼 클러스터에서 해당 주키퍼를 식별할 ID
+- _ZOOKEEPER_CLIENT_PORT_ : 주키퍼 client 의 포트를 지정 (기본 주키퍼 포트인 `2181`로 지정)
+
+#### 1.2 Broker Service
+
+``` yaml
+version: "3"
+
+services:
+  broker:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: broker
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+```
+- _KAFKA_BROKER_ID_ : 브로커의 ID 지정
+- _KAFKA_ZOOKEEPER_CONNECT_ : 브로커가 주키퍼에 연결하기 위한 주소 지정 (일반적으로 `주키퍼 서비스 이름: 주키퍼 서비스 포트` 형식)
+- _KAFKA_ADVERTISED_LISTENERS_ : 내부와 외부에서 접속하기 위한 리스너를 설정, 일반적으로 internal 과 external 를 같이 설정
+- _KAFKA_LISTENER_SECURITY_PROTOCOL_MAP_ : 보안을 위한 protocol mapping 을 설정, key/value 로 매핑됨
+- _KAFKA_INTER_BROKER_LISTENER_NAME_ : 컨테이너 내부에서 사용할 리스너 이름을 지정
+- _KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR_ : 토픽을 분산하여 저장할 Replication Factor 를 설정
+- _KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS_ : 카프카 클러스터에서 초기에 rebalancing 할 때 Consumer 들이 Consumer group 에 조인할 때 대기하는 시간
+
+#### 1.3 전체 코드와 실행
+
+``` yaml
+# naive-docker-compose.yaml
+version: "3"
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+  broker:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: broker
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+```
+
+`$ docker compose -p part7-naive -f naive-docker-compose.yaml up -d` 를 이용하여 서비스를 실행시킴
+
+- _-f_ : 해당 도커 컴포즈 파일의 이름을 입력
 
 
+### 2. Producer & Consumer Setup
+
+토픽과 Producer 와 Consumer 를 생성
+
+#### 2.1 Topic
+
+`$ docker compose -p part7-naive exec broker kafka-topics --create --topic topic-test --bootstrap-server broker:29092 --partitions 1 --replication-factor 1` 명령어 입력
+
+- _docker compose exec_ : 컨테이너 내에 명령어 수행
+- _broker_ : 생성된 브로커 서비스의 이름을 적음
+- _kafka-topics_ : 토픽에 대한 명령을 실행
+- _--create_ : 토픽 생성
+- _--topic_ : 생성할 토픽의 이름 지정
+- _--bootstrap-server_ : 브로커 서비스에 대한 호스트 이름과 포트를 지정
+- _--partitions_ : 토픽 내에 파티션 개수를 설정
+- _--replication-factor_ : Replication Factor 지정
+
+`$ docker compose -p part7-naive exec broker kafka-topics --describe --topic topic-test --bootstrap-server broker:29092` 명령어 입력
+
+- _--describe_ : 생성된 토픽에 대한 상세 설명을 보여줌
+
+#### 2.2 Consumer
+
+토픽을 생성했으니 생성한 토픽을 사용할 Consumer 를 만듬
+
+Consumer 를 먼저 실행하는 이유는 일반적으로 Consumer 가 메시지를 subscribe 하려고 대기하는 상태에서 Producer 가 메시지를 생성해서 보내기 때문
+
+1. `docker compose exec` 명령어를 통해 컨테이너 내부로 접속
+
+    ``` terminal
+    # terminal 1
+    $ docker compose -p part7-naive exec broker /bin/bash
+
+    ```
+
+2. `kafka-console-consumer` 를 이용하여 `topic-test` 토픽을 subscribe 함
+
+    ``` terminal
+    $ kafka-console-consumer --topic topic-test --bootstrap-server broker:29092
+
+    ```
+
+    -> 수신 대기 하는 모습을 보임
+
+#### 2.3 Producer
+
+1. Consumer 와 같이 `docker compose exec` 명령어를 통해 컨테이너 내부로 접속
+
+    ``` terminal
+    # terminal 2
+    $ docker compose -p part7-naive exec broker /bin/bash
+
+    ```
+    
+    -> 이 때 위에서 사용했던 터미널이 아닌 새로운 터미널을 사용해야 함
+
+2. `kafka-console-producer` 를 이용하여 `topic-test` 토픽에 접근하여 publish 할 준비를 함
+
+    ``` terminal
+    $ kafka-console-producer --topic topic-test --broker-list broker:29092
+
+    ```
+
+    -> 명령어를 실행하면 publish 할 수 있는 상태가 됨
+
+#### 2.4 Communicate
+
+Producer 가 열려 있는 두 번째 터미널에서 메시지를 입력하면 Consumer 가 열려 있는 첫 번째 터미널에서 메시지를 확인할 수 있음
 
 
 ## Reference

@@ -117,7 +117,7 @@ page-layout: article
 
 - Chain Rule
 
-- (이미지 추가 예정)
+![Chain Rule](fig1.png){fig-align="left"}
 
 $$
 \frac{dJ}{da} = \frac{dJ}{dv} \frac{dv}{da}
@@ -125,5 +125,5 @@ $$
 
 ### 9. Logistic Regression Gradient descent
 
-- (이미지 추가 예정)
+![Logistic Regression Derivative](fig2.png){fig-align="left"}
 

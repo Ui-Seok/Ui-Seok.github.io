@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Ui Seok">
+<meta name="dcterms.date" content="2024-09-08">
+<meta name="description" content="Week 01 &amp; Week 02">
 
-<title>Home - Coursera Lecture</title>
+<title>Home - Neural Networks and Deep Learning - 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +26,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-listing/list.min.js"></script>
-<script src="../../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<script src="../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,41 +62,12 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="../../styles.css">
-<link rel="alternate" type="application/rss+xml" title="Home" href="index.xml"></head>
+<link rel="stylesheet" href="../../../../styles.css">
+</head>
 
 <body class="nav-fixed">
 
@@ -104,7 +76,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Home</span>
     </a>
   </div>
@@ -115,15 +87,15 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html" rel="" target="">
+    <a class="nav-link" href="../../../../about.html" rel="" target="">
  <span class="menu-text">Contact Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../../docs/coursera/index.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../../../../docs/coursera/index.html" rel="" target="">
  <span class="menu-text">Coursera Lecture</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../docs/blog/index.html" rel="" target="">
+    <a class="nav-link" href="../../../../docs/blog/index.html" rel="" target="">
  <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -150,21 +122,65 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Coursera">Coursera <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Google MLB">Google MLB <span class="quarto-category-count">(1)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#week-01-introduction" id="toc-week-01-introduction" class="nav-link active" data-scroll-target="#week-01-introduction">Week 01: Introduction</a>
+  <ul class="collapse">
+  <li><a href="#what-is-a-neural-network" id="toc-what-is-a-neural-network" class="nav-link" data-scroll-target="#what-is-a-neural-network">1. What is a Neural Network?</a></li>
+  <li><a href="#supervised-learning-with-neural-networks" id="toc-supervised-learning-with-neural-networks" class="nav-link" data-scroll-target="#supervised-learning-with-neural-networks">2. Supervised Learning with Neural Networks</a></li>
+  <li><a href="#why-is-deep-learning-taking-off" id="toc-why-is-deep-learning-taking-off" class="nav-link" data-scroll-target="#why-is-deep-learning-taking-off">3. Why is Deep Learning taking off?</a></li>
+  </ul></li>
+  <li><a href="#week-02-basics-of-neural-network-programming" id="toc-week-02-basics-of-neural-network-programming" class="nav-link" data-scroll-target="#week-02-basics-of-neural-network-programming">Week 02: Basics of Neural Network programming</a>
+  <ul class="collapse">
+  <li><a href="#binary-classification" id="toc-binary-classification" class="nav-link" data-scroll-target="#binary-classification">1. Binary Classification</a></li>
+  <li><a href="#logistic-regression" id="toc-logistic-regression" class="nav-link" data-scroll-target="#logistic-regression">2. Logistic Regression</a></li>
+  <li><a href="#logistic-regression-cost-function" id="toc-logistic-regression-cost-function" class="nav-link" data-scroll-target="#logistic-regression-cost-function">3. Logistic Regression Cost Function</a></li>
+  <li><a href="#gradient-descent" id="toc-gradient-descent" class="nav-link" data-scroll-target="#gradient-descent">4. Gradient Descent</a></li>
+  <li><a href="#derivatives미분" id="toc-derivatives미분" class="nav-link" data-scroll-target="#derivatives미분">5. Derivatives(미분)</a></li>
+  <li><a href="#more-derivative-examples" id="toc-more-derivative-examples" class="nav-link" data-scroll-target="#more-derivative-examples">6. More Derivative Examples</a></li>
+  <li><a href="#computation-graph" id="toc-computation-graph" class="nav-link" data-scroll-target="#computation-graph">7. Computation Graph</a></li>
+  <li><a href="#derivatives-with-a-computation-graph" id="toc-derivatives-with-a-computation-graph" class="nav-link" data-scroll-target="#derivatives-with-a-computation-graph">8. Derivatives with a Computation Graph</a></li>
+  <li><a href="#logistic-regression-gradient-descent" id="toc-logistic-regression-gradient-descent" class="nav-link" data-scroll-target="#logistic-regression-gradient-descent">9. Logistic Regression Gradient descent</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/coursera/posts/2024-09-08-neural_network_and_deep_learning/inedx.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Coursera Lecture</h1>
-</div>
+<h1 class="title">Neural Networks and Deep Learning - 1</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Coursera</div>
+    <div class="quarto-category">Google MLB</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    Week 01 &amp; Week 02
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ui Seok </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 8, 2024</p>
+    </div>
+  </div>
   
     
   </div>
@@ -172,77 +188,140 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>Coursera 강의를 듣고 정리하는 페이지입니다.</p>
-<hr>
+<section id="week-01-introduction" class="level1">
+<h1>Week 01: Introduction</h1>
+<section id="what-is-a-neural-network" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-a-neural-network">1. What is a Neural Network?</h3>
+<ul>
+<li><p>Basic Neural Netwrok 가 무엇인지에 대한 간단한 설명</p></li>
+<li><p>Input feature of X -&gt; Output Y</p></li>
+</ul>
+</section>
+<section id="supervised-learning-with-neural-networks" class="level3">
+<h3 class="anchored" data-anchor-id="supervised-learning-with-neural-networks">2. Supervised Learning with Neural Networks</h3>
+<ul>
+<li><p>CNN, RNN 에 대한 간단한 설명</p>
+<ul>
+<li>RNN 은 1-demensional sequence data 에 적합</li>
+</ul></li>
+<li><p>Structured Data vs.&nbsp;Unstructured Data</p>
+<ul>
+<li><p>Structured Data: 표로 정리가 가능한 데이터</p></li>
+<li><p>Unstructured Data: Audio, Image, Text, …</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="why-is-deep-learning-taking-off" class="level3">
+<h3 class="anchored" data-anchor-id="why-is-deep-learning-taking-off">3. Why is Deep Learning taking off?</h3>
+<ul>
+<li><p>데이터 양에 따라 딥러닝의 성능이 점점 더 좋아짐</p></li>
+<li><p>그렇다면 반대로 데이터의 양이 작다면 엔지니어링에서 크게 성능이 바뀔 수 도 있음</p></li>
+</ul>
+</section>
+</section>
+<section id="week-02-basics-of-neural-network-programming" class="level1">
+<h1>Week 02: Basics of Neural Network programming</h1>
+<section id="binary-classification" class="level3">
+<h3 class="anchored" data-anchor-id="binary-classification">1. Binary Classification</h3>
+<ul>
+<li>Input X (ex. Image) 에 대해 output Y 가 0 혹은 1 로 나오는 것</li>
+</ul>
+</section>
+<section id="logistic-regression" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression">2. Logistic Regression</h3>
+<ul>
+<li><p>Sigmoid Function</p>
+<p><span class="math display">\[
+  \sigma(z) = \frac{1}{1+e^{-z}}
+  \]</span></p>
+<ul>
+<li><p>z → ∞ : sigma(z) = 1</p></li>
+<li><p>z → -∞ : sigma(z) = 0</p></li>
+<li><p>z → 0 : sigma(z) = 0.5</p></li>
+</ul></li>
+<li><p>Logistic Regression’s parameter</p>
+<ul>
+<li><p>W, nx -&gt; dimensional vector</p></li>
+<li><p>b, a -&gt; real number</p></li>
+</ul>
+<p><span class="math display">\[
+  \hat{y} = \sigma (w^T x + b)
+  \]</span></p></li>
+</ul>
+</section>
+<section id="logistic-regression-cost-function" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression-cost-function">3. Logistic Regression Cost Function</h3>
+<ul>
+<li><p>Loss function</p>
+<p><span class="math display">\[
+  \mathcal{L} (\hat{y}, y) = -(y log\hat{y} + (1-y)log(1-\hat{y}))
+  \]</span></p>
+<ul>
+<li><p>if y=1 → y hat is being large</p></li>
+<li><p>if y=0 → y hat is being small</p></li>
+</ul></li>
+<li><p>Cost function</p>
+<ul>
+<li>Average of loss function</li>
+</ul>
+<p><span class="math display">\[
+  J(w,b) = \frac{1}{m}\Sigma_{i=1}^{m} \mathcal{L}(\hat{y}^i, y^i)
+  \]</span></p></li>
+<li><p>Difference between the cost function and loss function for logistic regression</p>
+<ul>
+<li><p>The loss function computes the error for a single training example</p></li>
+<li><p>The cost function is the average of the loss function of the entire training set</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="gradient-descent" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-descent">4. Gradient Descent</h3>
+<ul>
+<li><p>W (weight) is updated by next function (Bias 는 일단 생각 안함)</p>
+<p><span class="math display">\[
+  w := w - \alpha \frac{dJ(w)}{dw}
+  \]</span></p></li>
+</ul>
+</section>
+<section id="derivatives미분" class="level3">
+<h3 class="anchored" data-anchor-id="derivatives미분">5. Derivatives(미분)</h3>
+<ul>
+<li>기울기가 일정한 1차 함수에 대한 미분</li>
+</ul>
+</section>
+<section id="more-derivative-examples" class="level3">
+<h3 class="anchored" data-anchor-id="more-derivative-examples">6. More Derivative Examples</h3>
+<ul>
+<li>기울기가 지점마다 변하는 2차 함수 이상에 대한 미분</li>
+</ul>
+</section>
+<section id="computation-graph" class="level3">
+<h3 class="anchored" data-anchor-id="computation-graph">7. Computation Graph</h3>
+<ul>
+<li>foward propagation and backward propagation 에 대한 간단한 설명</li>
+</ul>
+</section>
+<section id="derivatives-with-a-computation-graph" class="level3">
+<h3 class="anchored" data-anchor-id="derivatives-with-a-computation-graph">8. Derivatives with a Computation Graph</h3>
+<ul>
+<li><p>Chain Rule</p></li>
+<li><p>(이미지 추가 예정)</p></li>
+</ul>
+<p><span class="math display">\[
+\frac{dJ}{da} = \frac{dJ}{dv} \frac{dv}{da}
+\]</span></p>
+</section>
+<section id="logistic-regression-gradient-descent" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression-gradient-descent">9. Logistic Regression Gradient descent</h3>
+<ul>
+<li>(이미지 추가 예정)</li>
+</ul>
 
 
+</section>
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-title" data-direction="asc">
-          Title
-        </option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
-     </select>
-  </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
-    </div>
-</div>
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="Coursera,Google MLB" data-listing-date-sort="1725721200000" data-listing-file-modified-sort="1725807480943" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3">
-<a href="../../docs/coursera/posts/2024-09-08-neural_network_and_deep_learning/inedx.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img src="https://picsum.photos/id/201/200/001" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Neural Networks and Deep Learning - 1
-</h5>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Coursera'); return false;">
-Coursera
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Google MLB'); return false;">
-Google MLB
-</div>
-</div>
-<div class="card-text listing-description">
-Week 01 &amp; Week 02
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Ui Seok
-</div>
-<div class="listing-date">
-Sep 8, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -482,7 +561,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">us.lee1520@gmail.com<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/coursera/index.qmd" class="toc-action">Edit this page</a></p></div></div></div>
+    <div class="nav-footer-center">us.lee1520@gmail.com</div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

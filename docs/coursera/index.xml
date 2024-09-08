@@ -10,6 +10,142 @@
 <atom:link href="https://ui-seok.github.io/docs/coursera/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Sun, 25 Aug 2024 08:58:16 GMT</lastBuildDate>
+<lastBuildDate>Sat, 07 Sep 2024 15:00:00 GMT</lastBuildDate>
+<item>
+  <title>Neural Networks and Deep Learning - 1</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/coursera/posts/2024-09-08-neural_network_and_deep_learning/inedx.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="week-01-introduction" class="level1">
+<h1>Week 01: Introduction</h1>
+<section id="what-is-a-neural-network" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-a-neural-network">1. What is a Neural Network?</h3>
+<ul>
+<li><p>Basic Neural Netwrok 가 무엇인지에 대한 간단한 설명</p></li>
+<li><p>Input feature of X -&gt; Output Y</p></li>
+</ul>
+</section>
+<section id="supervised-learning-with-neural-networks" class="level3">
+<h3 class="anchored" data-anchor-id="supervised-learning-with-neural-networks">2. Supervised Learning with Neural Networks</h3>
+<ul>
+<li><p>CNN, RNN 에 대한 간단한 설명</p>
+<ul>
+<li>RNN 은 1-demensional sequence data 에 적합</li>
+</ul></li>
+<li><p>Structured Data vs.&nbsp;Unstructured Data</p>
+<ul>
+<li><p>Structured Data: 표로 정리가 가능한 데이터</p></li>
+<li><p>Unstructured Data: Audio, Image, Text, …</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="why-is-deep-learning-taking-off" class="level3">
+<h3 class="anchored" data-anchor-id="why-is-deep-learning-taking-off">3. Why is Deep Learning taking off?</h3>
+<ul>
+<li><p>데이터 양에 따라 딥러닝의 성능이 점점 더 좋아짐</p></li>
+<li><p>그렇다면 반대로 데이터의 양이 작다면 엔지니어링에서 크게 성능이 바뀔 수 도 있음</p></li>
+</ul>
+</section>
+</section>
+<section id="week-02-basics-of-neural-network-programming" class="level1">
+<h1>Week 02: Basics of Neural Network programming</h1>
+<section id="binary-classification" class="level3">
+<h3 class="anchored" data-anchor-id="binary-classification">1. Binary Classification</h3>
+<ul>
+<li>Input X (ex. Image) 에 대해 output Y 가 0 혹은 1 로 나오는 것</li>
+</ul>
+</section>
+<section id="logistic-regression" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression">2. Logistic Regression</h3>
+<ul>
+<li><p>Sigmoid Function</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%20%20%5Csigma(z)%20=%20%5Cfrac%7B1%7D%7B1+e%5E%7B-z%7D%7D%0A%20%20"></p>
+<ul>
+<li><p>z → ∞ : sigma(z) = 1</p></li>
+<li><p>z → -∞ : sigma(z) = 0</p></li>
+<li><p>z → 0 : sigma(z) = 0.5</p></li>
+</ul></li>
+<li><p>Logistic Regression’s parameter</p>
+<ul>
+<li><p>W, nx -&gt; dimensional vector</p></li>
+<li><p>b, a -&gt; real number</p></li>
+</ul>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%20%20%5Chat%7By%7D%20=%20%5Csigma%20(w%5ET%20x%20+%20b)%0A%20%20"></p></li>
+</ul>
+</section>
+<section id="logistic-regression-cost-function" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression-cost-function">3. Logistic Regression Cost Function</h3>
+<ul>
+<li><p>Loss function</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%20%20%5Cmathcal%7BL%7D%20(%5Chat%7By%7D,%20y)%20=%20-(y%20log%5Chat%7By%7D%20+%20(1-y)log(1-%5Chat%7By%7D))%0A%20%20"></p>
+<ul>
+<li><p>if y=1 → y hat is being large</p></li>
+<li><p>if y=0 → y hat is being small</p></li>
+</ul></li>
+<li><p>Cost function</p>
+<ul>
+<li>Average of loss function</li>
+</ul>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%20%20J(w,b)%20=%20%5Cfrac%7B1%7D%7Bm%7D%5CSigma_%7Bi=1%7D%5E%7Bm%7D%20%5Cmathcal%7BL%7D(%5Chat%7By%7D%5Ei,%20y%5Ei)%0A%20%20"></p></li>
+<li><p>Difference between the cost function and loss function for logistic regression</p>
+<ul>
+<li><p>The loss function computes the error for a single training example</p></li>
+<li><p>The cost function is the average of the loss function of the entire training set</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="gradient-descent" class="level3">
+<h3 class="anchored" data-anchor-id="gradient-descent">4. Gradient Descent</h3>
+<ul>
+<li><p>W (weight) is updated by next function (Bias 는 일단 생각 안함)</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%20%20w%20:=%20w%20-%20%5Calpha%20%5Cfrac%7BdJ(w)%7D%7Bdw%7D%0A%20%20"></p></li>
+</ul>
+</section>
+<section id="derivatives미분" class="level3">
+<h3 class="anchored" data-anchor-id="derivatives미분">5. Derivatives(미분)</h3>
+<ul>
+<li>기울기가 일정한 1차 함수에 대한 미분</li>
+</ul>
+</section>
+<section id="more-derivative-examples" class="level3">
+<h3 class="anchored" data-anchor-id="more-derivative-examples">6. More Derivative Examples</h3>
+<ul>
+<li>기울기가 지점마다 변하는 2차 함수 이상에 대한 미분</li>
+</ul>
+</section>
+<section id="computation-graph" class="level3">
+<h3 class="anchored" data-anchor-id="computation-graph">7. Computation Graph</h3>
+<ul>
+<li>foward propagation and backward propagation 에 대한 간단한 설명</li>
+</ul>
+</section>
+<section id="derivatives-with-a-computation-graph" class="level3">
+<h3 class="anchored" data-anchor-id="derivatives-with-a-computation-graph">8. Derivatives with a Computation Graph</h3>
+<ul>
+<li><p>Chain Rule</p></li>
+<li><p>(이미지 추가 예정)</p></li>
+</ul>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7BdJ%7D%7Bda%7D%20=%20%5Cfrac%7BdJ%7D%7Bdv%7D%20%5Cfrac%7Bdv%7D%7Bda%7D%0A"></p>
+</section>
+<section id="logistic-regression-gradient-descent" class="level3">
+<h3 class="anchored" data-anchor-id="logistic-regression-gradient-descent">9. Logistic Regression Gradient descent</h3>
+<ul>
+<li>(이미지 추가 예정)</li>
+</ul>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Coursera</category>
+  <category>Google MLB</category>
+  <guid>https://ui-seok.github.io/docs/coursera/posts/2024-09-08-neural_network_and_deep_learning/inedx.html</guid>
+  <pubDate>Sat, 07 Sep 2024 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/201/200/001" medium="image"/>
+</item>
 </channel>
 </rss>

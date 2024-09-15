@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Home</title>
+<link>https://ui-seok.github.io/docs/paper/index.html</link>
+<atom:link href="https://ui-seok.github.io/docs/paper/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.3.450</generator>
+<lastBuildDate>Sat, 14 Sep 2024 15:00:00 GMT</lastBuildDate>
+<item>
+  <title>BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/paper/posts/2024-09-15-BLIP/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="abstract" class="level1">
+<h1>Abstract</h1>
+<p>Vision-Language Pre-training (VLP) has advanced the performance for many vision-language tasks.</p>
+<p>However, most existing pre-trained models only excel in either <strong><code>understanding-based</code></strong> tasks or <strong><code>generation-based</code></strong> tasks.</p>
+<p>Furthermore, performace improvement has been largely achieved by scaling up the dataset with <strong><code>noisy image-text pairs collected from the web</code></strong>.</p>
+<p>BLIP effectively utilizes the noisy web data by bootstrapping the captions, where a captioner generates synthetic captions and a filter removes the noisy ones (called CapFilt).</p>
+<p>Also, denmonstrates strong generalization ability when directly transferred to video-language tasks in a zero-shot manner.</p>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>~~</p>
+</section>
+<section id="related-work" class="level1">
+<h1>Related Work</h1>
+<p>~~</p>
+</section>
+<section id="method" class="level1">
+<h1>Method</h1>
+<p>This section first introduces our new model architecture <strong><code>MED</code></strong> and its pre-training objectives, and then delineates <strong><code>CapFilt</code></strong> for dataset bootstrapping.</p>
+<section id="model-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="model-architecture">3.1 Model Architecture</h3>
+<p>We employ a visual transformer (ViT) as our image encoder, which devides an input image into patches and encodes them as a sequence of embeddings, with an additional [CLS] token to represent the global image feature.</p>
+<p>-&gt; [CLS] token is used as a token to indicate the start of a sentence.</p>
+<p>In order to pre-train a unified model with both understanding and generation capabilities, we propose <strong><code>multi-model mixture of encoder-decoder (MED)</code></strong>, a multi-task model which can operate in one of the three functionalities.</p>
+<ol type="1">
+<li><p>Unimodal encoder, which separately encodes image and text</p>
+<img src="https://ui-seok.github.io/docs/paper/posts/2024-09-15-BLIP/fig1.png" class="img-fluid" data-fig-align="left" alt="Unimodal Encoder">
+<p>The text encoder is the same as BERT, where a [CLS] token is appended to the beginning of the text input to summarize the sentence.</p></li>
+<li><p>Image-grounded text encoder</p>
+<img src="https://ui-seok.github.io/docs/paper/posts/2024-09-15-BLIP/fig2.png" class="img-fluid" data-fig-align="left" alt="Image-grounded Text Encoder">
+<p>This injects visual information by inserting one additional cross-attention (CA) layer between the self-attention (SA) layer and the feed forward network (FFN) for each transformer block of the text encoder.</p>
+<p>A task-specific [Encode] token is appended to the text, and the output embedding of [Encode] is used as the multimodal representation of the image-text pair.</p></li>
+<li><p>Image-grounded text decoder</p>
+<img src="https://ui-seok.github.io/docs/paper/posts/2024-09-15-BLIP/fig3.png" class="img-fluid" data-fig-align="left" alt="Image-gronded Text Decoder">
+<p>This replaces the bi-directional self-attention (Bi Self-Att block, in the image-grounded text encoder) with casual self-attention layers.</p>
+<p>A [Decode] token is used to signal the beginning of a sequence, and an end-of-sequence token is used to signal its end.</p></li>
+</ol>
+</section>
+<section id="pre-training-objectives" class="level3">
+<h3 class="anchored" data-anchor-id="pre-training-objectives">3.2 Pre-training Objectives</h3>
+<p>We jointly optimize three objectives during pre-training, with two understanding-based objectives and one generation-based objecttive.</p>
+<p>Each image-text pair only requires one forward pass through the computational-heavier visual transformer, and three forward passes through the text transformer, where different functionalities are activated to compute the three losses as delineated below.</p>
+<ol type="1">
+<li><p>Image-Text Contrastive Loss (ITC)</p>
+<p>This activates the unimodal encoder.</p>
+<p>It aims to align the feature space of the visual transformer and the text transformer by encouraging positive image-text pairs to have similar representations in contrast to the negative pairs.</p>
+<p>-&gt; Contrastive learning is a good way to think of it.</p>
+<img src="https://ui-seok.github.io/docs/paper/posts/2024-09-15-BLIP/fig4.png" class="img-fluid" data-fig-align="left" alt="Contrastive Leraning">
+<p>We follow the ITC loss by <em>Align before fuse: Vision and language representation learning with momentum distillation</em></p>
+<img src="https://ui-seok.github.io/docs/paper/posts/2024-09-15-BLIP/fig5.png" class="img-fluid" data-fig-align="left" alt="ITC Loss"></li>
+<li><p>Image-Text Matching Loss (ITM)</p>
+<p>This activates the image-grounded text encoder.</p>
+<p>It aims to learn image-text multimodal representation the captures the fine-grained alignment between vision and language.</p>
+<p>ITM is a bianry classification task, where the model uses an ITM head (a linear layer) to predict whether an image-text pair is positive (matched) or negative (unmatched) given their multimodal feature.</p>
+<p>-&gt; This is the loss of learning to predict whether the text and image are a good match after cross-attention with the text-embedding feauture and image embedding feature.</p></li>
+<li><p>Language Modeling Loss (LM)</p>
+<p>This is activates the image-grounded text decoder.</p>
+<p>It aims to generate textual descriptions given an image.</p>
+<p>It optimizes a cross entropy loss which trains the model to maximize the likelihood of the text in an autoregressive manner.</p>
+<p>-&gt; Similar to ITM, the features from the image encoder are received through cross attention, and Language Modeling Loss is used to train the decoder to generate captions for the image.</p></li>
+</ol>
+</section>
+<section id="capfilt" class="level3">
+<h3 class="anchored" data-anchor-id="capfilt">3.3 CapFilt</h3>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-09-15-BLIP/fig6.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Learning framework of BLIP</figcaption>
+</figure>
+</div>
+<p>Due to the prohibitive annotation cost, there exist a limited number of high-quality human-annotated image-text pairs <img src="https://latex.codecogs.com/png.latex?%7B(I_h,%20T_h)%7D">.</p>
+<p>Recent work utilizes a much larger number of image and alt-text pairs <img src="https://latex.codecogs.com/png.latex?%7B(I_w,%20T_w)%7D"> that are automatically collected from the web.</p>
+<p>However, the alt-texts often do not accurately describe the visual content of the images, making them a noisy signal that is suboptimal for learning vision-language alignment.</p>
+<p>We propose Captioning and Filtering (CapFilt), a new method to improve the quality of the text corpus.</p>
+<p>Both the captioner and the filter are initialized from the same pre-trained MED model, and finetuned individually on the COCO dataset.</p>
+<p>Specifically, the captioner is an <strong><code>image-grounded text decoder</code></strong>.</p>
+<p>It is finetuned with the <strong>LM</strong> objective to decode texts given images.</p>
+<p>Given the web images <img src="https://latex.codecogs.com/png.latex?%7BI_w%7D">, the captioner generates synthetic captions <img src="https://latex.codecogs.com/png.latex?%7BT_s%7D"> with one caption per image.</p>
+<p>The filter is an <strong><code>image-grounded text encoder</code></strong>.</p>
+<p>It is finetuned with the <strong>ITC</strong> and <strong>ITM</strong> objectives to learn whether a text matches an image.</p>
+<p>The filter removes noisy texts in both the original web texts <img src="https://latex.codecogs.com/png.latex?%7BT_w%7D"> and the synthetic texts <img src="https://latex.codecogs.com/png.latex?%7BT_s%7D">, where a text is considered to be noisy if the ITM head predicts it as unmatched to the image.</p>
+<p>Finally, we combine the filtered image-text pairs with the human-annotated pairs to form a new dataset, which we use to pre-train a new model.</p>
+<ul>
+<li><p>Captioner (Image-grounded Text Encoder)</p>
+<p>Given the human-labeled <img src="https://latex.codecogs.com/png.latex?%7B(I_h,%20T_h)%7D"> dataset and trained with LM loss, Captioner generates text for images collected from the web.</p></li>
+<li><p>Filter (Image-grounded Text Encoder)</p>
+<p>A dataset of <img src="https://latex.codecogs.com/png.latex?%7B(I_h,%20T_h)%7D"> pairs labeled by humans and a filter trained on ITC and ITM loss is used to filter the <em>{Image, Text}</em> pairs collected from the web <img src="https://latex.codecogs.com/png.latex?%7BT_w%7D"> and those generated <img src="https://latex.codecogs.com/png.latex?%7BT_s%7D"> by Captioner.</p>
+<p>In this case, it serves to refine data that may be noisy by removing cases where <em>{Image, Text}</em> pairs are incorrectly paired.</p></li>
+</ul>
+</section>
+</section>
+<section id="experiments-and-discussions" class="level1">
+<h1>Experiments and Discussions</h1>
+<p>~~</p>
+</section>
+<section id="reference" class="level1">
+<h1>Reference</h1>
+<p><a href="https://arxiv.org/abs/2107.07651">Align before fuse: Vision and language representation learning with momentum distillation</a></p>
+<p><a href="https://arxiv.org/abs/2002.05709">Contrastive Learning</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>VQA</category>
+  <guid>https://ui-seok.github.io/docs/paper/posts/2024-09-15-BLIP/index.html</guid>
+  <pubDate>Sat, 14 Sep 2024 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/201/200/101" medium="image"/>
+</item>
+</channel>
+</rss>

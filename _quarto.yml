@@ -18,6 +18,7 @@ website:
         text: Contact Me
       - docs/coursera/index.qmd
       - docs/blog/index.qmd
+      - docs/paper/index.qmd
 
     right:
       - icon: github

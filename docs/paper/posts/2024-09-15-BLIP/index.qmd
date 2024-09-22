@@ -9,6 +9,8 @@ image: "https://picsum.photos/id/201/200/101"
 page-layout: article
 ---
 
+Paper Link : [BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation](https://arxiv.org/abs/2201.12086)
+
 # Abstract
 
 Vision-Language Pre-training (VLP) has advanced the performance for many vision-language tasks.

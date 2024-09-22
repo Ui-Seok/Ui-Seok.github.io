@@ -10,7 +10,115 @@
 <atom:link href="https://ui-seok.github.io/docs/paper/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Sat, 14 Sep 2024 15:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 21 Sep 2024 15:00:00 GMT</lastBuildDate>
+<item>
+  <title>BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/paper/posts/2024-09-22-BLIP2/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<p>Paper Link : <a href="https://arxiv.org/abs/2301.12597">BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models</a></p>
+<section id="abstract" class="level1">
+<h1>Abstract</h1>
+<p>The cost of vision-and-language pre-training has become increasingly prohibitive due to end-to-end training of large-scale models.</p>
+<p>BLIP-2 bridges the modality gap with a lightweight Querying Transformer, which is pre-trained in two stages.</p>
+<p>The first stage bootstraps vision-language representation learning from a frozen image encoder.</p>
+<p>The second stage bootstraps vision-to-language generative learning from a frozen language model.</p>
+<p>BLIP-2 achieves state-of-the-art performance on various vision-language tasks, despite having significantly fewer trainable parameters than existing methods.</p>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>~~</p>
+</section>
+<section id="related-work" class="level1">
+<h1>Related Work</h1>
+<p>~~</p>
+</section>
+<section id="method" class="level1">
+<h1>Method</h1>
+<p>We propose BLIP-2, a new vision-language pre-training method that bootstraps from frozen pre-trained unimodal models.</p>
+<p>In order to bridge the modality gap, we propose a Querying Transformer (Q-Former) pre-trained in two stages: (1) vision-language representation learning stage with a frozen image encoder and (2) vision-to-language generative learning stage with a frozen LLM.</p>
+<section id="model-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="model-architecture">3.1 Model Architecture</h3>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-09-22-BLIP2/fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Model Architecture</figcaption>
+</figure>
+</div>
+<p>We propose Q-Former as the trainable module to bridge the gap between a frozen image encoder and a frozen LLM.</p>
+<p>It extracts a fixed number of output features from the image encoder, independent of input image resolution.</p>
+<p>As shown in upper Figure, Q-Former consists of two transformer submodules that share the same self-attention layers: (1) an image transformer that interacts with the frozen image encoder for visual feature extraction, (2) a text transformer that can function as both a text encoder and a text decoder.</p>
+<p>We create a set number of learnable query embeddings as input to the image transformer.</p>
+<p>-&gt; Left of Q-Former box</p>
+<p>The queries interact with each other through self-attention layers, and interact with frozen image features through cross-attention layers (inserted every other transformer block).</p>
+<p>The queries can additionally interact with the text through the same self-attention layers.</p>
+<p>Depending on the pre-training task, we apply different self-attention masks to control query-text interaction.</p>
+<hr>
+<ul>
+<li><p>Q-Former is a simple transformer structure that is utilized to extract information from a frozen image encoder.</p></li>
+<li><p>In the first step, it is trained to extract text-related information from the image, and in the second step, the extracted information is trained to be interpretable by the LLM. As a result, it is possible to leverage the zero-shot performance of the LLM for VL tasks while gaining the parameter efficiency of frozen large models.</p></li>
+</ul>
+<hr>
+</section>
+<section id="bootstrap-vision-language-representation-learning-from-a-frozen-image-encoder" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrap-vision-language-representation-learning-from-a-frozen-image-encoder">3.2 Bootstrap Vision-Language Representation Learning from a Frozen Image Encoder</h3>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-09-22-BLIP2/fig3.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Model Architecture</figcaption>
+</figure>
+</div>
+<p>In the representation learning stage, we connect Q-Former to a frozen image encoder and perform pre-training using image-text pairs.</p>
+<p>We aim to train the Q-Former such that the queries can learn to extract visual representation that is most informative of the text.</p>
+<p>Inspired by <strong>BLIP</strong>, we jointly optimize three pre-training objectives that share the same input format and model parameters.</p>
+<p><strong>Image-Text Contrastive Learning (ITC)</strong> learns to align image representation and text representation such that their mutual information is maximized.</p>
+<p>It achieves so by contrasting the image-text similarity of a positive pair against those of negative pairs.</p>
+<p>-&gt; To prevent this, we use the Uni-modal Self-Attention Mask because it would be cheating if images and text referenced each other’s information.</p>
+<p><strong>Image-grounded Text Generation (ITG)</strong> loss trains the Q-Former to generate texts, given input images as the condition.</p>
+<p>-&gt; Utilize a Multi-modal Causal Self-Attention Mask to prevent the query from referencing text information because it would be cheating for the query to preview text information. Also design the self-attention mask so that the text generation task can only reference text before the current point in time.</p>
+<p><strong>Image-Text Matching (ITM)</strong> aims to learn fine-grained alignment between image and text representation.</p>
+<p>It is a binary classification task where the model is asked to predict whether an image-text pair is positive (matched) or negative (unmatched).</p>
+<p>-&gt; Since it’s okay to look at all the information we have, we use a Bi-directional Self-Attention Mask.</p>
+</section>
+<section id="bootstrap-vision-to-language-generative-learning-from-a-frozen-llm" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrap-vision-to-language-generative-learning-from-a-frozen-llm">3.3 Bootstrap Vision-to-Language Generative Learning from a Frozen LLM</h3>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-09-22-BLIP2/fig4.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Second Architecture</figcaption>
+</figure>
+</div>
+<p>In the generative pre-training stage, we connect Q-Former (with the frozen image encoder attached) to a frozen LLM to harvest the LLM’s generative language capability.</p>
+<p>As shown in upper Figure, we use a fully-connected (FC) layer to linearly project the output query embeddings Z into the same dimension as the text embedding of the LLM.</p>
+<p>The projected query embeddings are then prepended to the input text embeddings.</p>
+<p>They function as soft visual prompts that condition the LLM on visual representation extracted by the Q-Former.</p>
+<p>Since the Q-Former has been pre-trained to extract language-informative visual representation, it effectively functions as an information bottleneck that feeds the most useful information to the LLM while removing irrelevant visual information.</p>
+</section>
+<section id="model-pre-training" class="level3">
+<h3 class="anchored" data-anchor-id="model-pre-training">3.4 Model Pre-training</h3>
+<p>We use the same pre-training dataset as BLIP</p>
+</section>
+</section>
+<section id="experiments-and-discussions" class="level1">
+<h1>Experiments and Discussions</h1>
+<p>~~</p>
+</section>
+<section id="reference" class="level1">
+<h1>Reference</h1>
+<p><a href="https://arxiv.org/abs/2201.12086">BLIP</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>VQA</category>
+  <guid>https://ui-seok.github.io/docs/paper/posts/2024-09-22-BLIP2/index.html</guid>
+  <pubDate>Sat, 21 Sep 2024 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/201/200/102" medium="image"/>
+</item>
 <item>
   <title>BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation</title>
   <dc:creator>Ui Seok</dc:creator>
@@ -19,6 +127,7 @@
 
 
 
+<p>Paper Link : <a href="https://arxiv.org/abs/2201.12086">BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation</a></p>
 <section id="abstract" class="level1">
 <h1>Abstract</h1>
 <p>Vision-Language Pre-training (VLP) has advanced the performance for many vision-language tasks.</p>

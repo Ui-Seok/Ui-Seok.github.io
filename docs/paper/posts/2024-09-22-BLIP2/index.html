@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Ui Seok">
+<meta name="dcterms.date" content="2024-09-22">
+<meta name="description" content="BLIPv2 Review (English)">
 
-<title>Home - Paper Review</title>
+<title>Home - BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +26,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-listing/list.min.js"></script>
-<script src="../../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<script src="../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,41 +62,10 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<link rel="stylesheet" href="../../styles.css">
-<link rel="alternate" type="application/rss+xml" title="Home" href="index.xml"></head>
+<link rel="stylesheet" href="../../../../styles.css">
+</head>
 
 <body class="nav-fixed">
 
@@ -104,7 +74,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Home</span>
     </a>
   </div>
@@ -115,19 +85,19 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html" rel="" target="">
+    <a class="nav-link" href="../../../../about.html" rel="" target="">
  <span class="menu-text">Contact Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../docs/coursera/index.html" rel="" target="">
+    <a class="nav-link" href="../../../../docs/coursera/index.html" rel="" target="">
  <span class="menu-text">Coursera Lecture</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../docs/blog/index.html" rel="" target="">
+    <a class="nav-link" href="../../../../docs/blog/index.html" rel="" target="">
  <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../../docs/paper/index.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../../../../docs/paper/index.html" rel="" target="">
  <span class="menu-text">Paper Review</span></a>
   </li>  
 </ul>
@@ -154,21 +124,58 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="VQA">VQA <span class="quarto-category-count">(2)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#related-work" id="toc-related-work" class="nav-link" data-scroll-target="#related-work">Related Work</a></li>
+  <li><a href="#method" id="toc-method" class="nav-link" data-scroll-target="#method">Method</a>
+  <ul class="collapse">
+  <li><a href="#model-architecture" id="toc-model-architecture" class="nav-link" data-scroll-target="#model-architecture">3.1 Model Architecture</a></li>
+  <li><a href="#bootstrap-vision-language-representation-learning-from-a-frozen-image-encoder" id="toc-bootstrap-vision-language-representation-learning-from-a-frozen-image-encoder" class="nav-link" data-scroll-target="#bootstrap-vision-language-representation-learning-from-a-frozen-image-encoder">3.2 Bootstrap Vision-Language Representation Learning from a Frozen Image Encoder</a></li>
+  <li><a href="#bootstrap-vision-to-language-generative-learning-from-a-frozen-llm" id="toc-bootstrap-vision-to-language-generative-learning-from-a-frozen-llm" class="nav-link" data-scroll-target="#bootstrap-vision-to-language-generative-learning-from-a-frozen-llm">3.3 Bootstrap Vision-to-Language Generative Learning from a Frozen LLM</a></li>
+  <li><a href="#model-pre-training" id="toc-model-pre-training" class="nav-link" data-scroll-target="#model-pre-training">3.4 Model Pre-training</a></li>
+  </ul></li>
+  <li><a href="#experiments-and-discussions" id="toc-experiments-and-discussions" class="nav-link" data-scroll-target="#experiments-and-discussions">Experiments and Discussions</a></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/paper/posts/2024-09-22-BLIP2/index.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Paper Review</h1>
-</div>
+<h1 class="title">BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">VQA</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    BLIPv2 Review (English)
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ui Seok </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 22, 2024</p>
+    </div>
+  </div>
   
     
   </div>
@@ -176,104 +183,101 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>Paper Review Page</p>
+<p>Paper Link : <a href="https://arxiv.org/abs/2301.12597">BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models</a></p>
+<section id="abstract" class="level1">
+<h1>Abstract</h1>
+<p>The cost of vision-and-language pre-training has become increasingly prohibitive due to end-to-end training of large-scale models.</p>
+<p>BLIP-2 bridges the modality gap with a lightweight Querying Transformer, which is pre-trained in two stages.</p>
+<p>The first stage bootstraps vision-language representation learning from a frozen image encoder.</p>
+<p>The second stage bootstraps vision-to-language generative learning from a frozen language model.</p>
+<p>BLIP-2 achieves state-of-the-art performance on various vision-language tasks, despite having significantly fewer trainable parameters than existing methods.</p>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>~~</p>
+</section>
+<section id="related-work" class="level1">
+<h1>Related Work</h1>
+<p>~~</p>
+</section>
+<section id="method" class="level1">
+<h1>Method</h1>
+<p>We propose BLIP-2, a new vision-language pre-training method that bootstraps from frozen pre-trained unimodal models.</p>
+<p>In order to bridge the modality gap, we propose a Querying Transformer (Q-Former) pre-trained in two stages: (1) vision-language representation learning stage with a frozen image encoder and (2) vision-to-language generative learning stage with a frozen LLM.</p>
+<section id="model-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="model-architecture">3.1 Model Architecture</h3>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Model Architecture</figcaption>
+</figure>
+</div>
+<p>We propose Q-Former as the trainable module to bridge the gap between a frozen image encoder and a frozen LLM.</p>
+<p>It extracts a fixed number of output features from the image encoder, independent of input image resolution.</p>
+<p>As shown in upper Figure, Q-Former consists of two transformer submodules that share the same self-attention layers: (1) an image transformer that interacts with the frozen image encoder for visual feature extraction, (2) a text transformer that can function as both a text encoder and a text decoder.</p>
+<p>We create a set number of learnable query embeddings as input to the image transformer.</p>
+<p>-&gt; Left of Q-Former box</p>
+<p>The queries interact with each other through self-attention layers, and interact with frozen image features through cross-attention layers (inserted every other transformer block).</p>
+<p>The queries can additionally interact with the text through the same self-attention layers.</p>
+<p>Depending on the pre-training task, we apply different self-attention masks to control query-text interaction.</p>
 <hr>
+<ul>
+<li><p>Q-Former is a simple transformer structure that is utilized to extract information from a frozen image encoder.</p></li>
+<li><p>In the first step, it is trained to extract text-related information from the image, and in the second step, the extracted information is trained to be interpretable by the LLM. As a result, it is possible to leverage the zero-shot performance of the LLM for VL tasks while gaining the parameter efficiency of frozen large models.</p></li>
+</ul>
+<hr>
+</section>
+<section id="bootstrap-vision-language-representation-learning-from-a-frozen-image-encoder" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrap-vision-language-representation-learning-from-a-frozen-image-encoder">3.2 Bootstrap Vision-Language Representation Learning from a Frozen Image Encoder</h3>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="fig3.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Model Architecture</figcaption>
+</figure>
+</div>
+<p>In the representation learning stage, we connect Q-Former to a frozen image encoder and perform pre-training using image-text pairs.</p>
+<p>We aim to train the Q-Former such that the queries can learn to extract visual representation that is most informative of the text.</p>
+<p>Inspired by <strong>BLIP</strong>, we jointly optimize three pre-training objectives that share the same input format and model parameters.</p>
+<p><strong>Image-Text Contrastive Learning (ITC)</strong> learns to align image representation and text representation such that their mutual information is maximized.</p>
+<p>It achieves so by contrasting the image-text similarity of a positive pair against those of negative pairs.</p>
+<p>-&gt; To prevent this, we use the Uni-modal Self-Attention Mask because it would be cheating if images and text referenced each other’s information.</p>
+<p><strong>Image-grounded Text Generation (ITG)</strong> loss trains the Q-Former to generate texts, given input images as the condition.</p>
+<p>-&gt; Utilize a Multi-modal Causal Self-Attention Mask to prevent the query from referencing text information because it would be cheating for the query to preview text information. Also design the self-attention mask so that the text generation task can only reference text before the current point in time.</p>
+<p><strong>Image-Text Matching (ITM)</strong> aims to learn fine-grained alignment between image and text representation.</p>
+<p>It is a binary classification task where the model is asked to predict whether an image-text pair is positive (matched) or negative (unmatched).</p>
+<p>-&gt; Since it’s okay to look at all the information we have, we use a Bi-directional Self-Attention Mask.</p>
+</section>
+<section id="bootstrap-vision-to-language-generative-learning-from-a-frozen-llm" class="level3">
+<h3 class="anchored" data-anchor-id="bootstrap-vision-to-language-generative-learning-from-a-frozen-llm">3.3 Bootstrap Vision-to-Language Generative Learning from a Frozen LLM</h3>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="fig4.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Second Architecture</figcaption>
+</figure>
+</div>
+<p>In the generative pre-training stage, we connect Q-Former (with the frozen image encoder attached) to a frozen LLM to harvest the LLM’s generative language capability.</p>
+<p>As shown in upper Figure, we use a fully-connected (FC) layer to linearly project the output query embeddings Z into the same dimension as the text embedding of the LLM.</p>
+<p>The projected query embeddings are then prepended to the input text embeddings.</p>
+<p>They function as soft visual prompts that condition the LLM on visual representation extracted by the Q-Former.</p>
+<p>Since the Q-Former has been pre-trained to extract language-informative visual representation, it effectively functions as an information bottleneck that feeds the most useful information to the LLM while removing irrelevant visual information.</p>
+</section>
+<section id="model-pre-training" class="level3">
+<h3 class="anchored" data-anchor-id="model-pre-training">3.4 Model Pre-training</h3>
+<p>We use the same pre-training dataset as BLIP</p>
+</section>
+</section>
+<section id="experiments-and-discussions" class="level1">
+<h1>Experiments and Discussions</h1>
+<p>~~</p>
+</section>
+<section id="reference" class="level1">
+<h1>Reference</h1>
+<p><a href="https://arxiv.org/abs/2201.12086">BLIP</a></p>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-title" data-direction="asc">
-          Title
-        </option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
-     </select>
-  </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
-    </div>
-</div>
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="VQA" data-listing-date-sort="1726930800000" data-listing-file-modified-sort="1727016219585" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
-<a href="../../docs/paper/posts/2024-09-22-BLIP2/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img src="https://picsum.photos/id/201/200/102" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models
-</h5>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('VQA'); return false;">
-VQA
-</div>
-</div>
-<div class="card-text listing-description">
-BLIPv2 Review (English)
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Ui Seok
-</div>
-<div class="listing-date">
-Sep 22, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="1" data-categories="VQA" data-listing-date-sort="1726326000000" data-listing-file-modified-sort="1727016220269" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
-<a href="../../docs/paper/posts/2024-09-15-BLIP/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img src="https://picsum.photos/id/201/200/101" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation
-</h5>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('VQA'); return false;">
-VQA
-</div>
-</div>
-<div class="card-text listing-description">
-BLIP Review (English)
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Ui Seok
-</div>
-<div class="listing-date">
-Sep 15, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -513,7 +517,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">us.lee1520@gmail.com<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/paper/index.qmd" class="toc-action">Edit this page</a></p></div></div></div>
+    <div class="nav-footer-center">us.lee1520@gmail.com</div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Ui Seok">
+<meta name="dcterms.date" content="2024-10-13">
+<meta name="description" content="MA-LMM Review (English)">
 
-<title>Home - Paper Review</title>
+<title>Home - MA-LMM: Memory-Augmented Large Multimodal Model for Long-Term Video Understanding</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +26,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-listing/list.min.js"></script>
-<script src="../../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<script src="../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,41 +62,10 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<link rel="stylesheet" href="../../styles.css">
-<link rel="alternate" type="application/rss+xml" title="Home" href="index.xml"></head>
+<link rel="stylesheet" href="../../../../styles.css">
+</head>
 
 <body class="nav-fixed">
 
@@ -104,7 +74,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Home</span>
     </a>
   </div>
@@ -115,19 +85,19 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html" rel="" target="">
+    <a class="nav-link" href="../../../../about.html" rel="" target="">
  <span class="menu-text">Contact Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../docs/coursera/index.html" rel="" target="">
+    <a class="nav-link" href="../../../../docs/coursera/index.html" rel="" target="">
  <span class="menu-text">Coursera Lecture</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../docs/blog/index.html" rel="" target="">
+    <a class="nav-link" href="../../../../docs/blog/index.html" rel="" target="">
  <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../../docs/paper/index.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../../../../docs/paper/index.html" rel="" target="">
  <span class="menu-text">Paper Review</span></a>
   </li>  
 </ul>
@@ -154,21 +124,53 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Multi-Modal">Multi-Modal <span class="quarto-category-count">(1)</span></div><div class="category" data-category="VQA">VQA <span class="quarto-category-count">(3)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#related-work" id="toc-related-work" class="nav-link" data-scroll-target="#related-work">Related Work</a></li>
+  <li><a href="#method" id="toc-method" class="nav-link" data-scroll-target="#method">Method</a></li>
+  <li><a href="#experiments-and-discussions" id="toc-experiments-and-discussions" class="nav-link" data-scroll-target="#experiments-and-discussions">Experiments and Discussions</a></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/paper/posts/2024-10-13-MALMM/index.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Paper Review</h1>
-</div>
+<h1 class="title">MA-LMM: Memory-Augmented Large Multimodal Model for Long-Term Video Understanding</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">VQA</div>
+    <div class="quarto-category">Multi-Modal</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    MA-LMM Review (English)
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ui Seok </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 13, 2024</p>
+    </div>
+  </div>
   
     
   </div>
@@ -176,137 +178,44 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>Paper Review Page</p>
-<hr>
+<p>Paper Link : <a href="https://arxiv.org/abs/2404.05726">MA-LMM: Memory-Augmented Large Multimodal Model for Long-Term Video Understanding</a></p>
+<section id="abstract" class="level1">
+<h1>Abstract</h1>
+<p>대규모 언어 모델(LLM)의 성공으로 비전 모델을 LLM에 통합하여 비전-언어 기반 모델을 구축하는 것이 최근 많은 관심을 받고 있습니다.</p>
+<p>하지만 기존의 LLM 기반 대형 멀티모달 모델(예: Video-LLaMA, VideoChat)은 짧은 영상 이해에 한정된 프레임 수만 처리할 수 있습니다.</p>
+<p>이 연구에서는 주로 장시간의 동영상 이해를 위한 효율적이고 효과적인 모델을 설계하는 데 중점을 둡니다.</p>
+<p>기존 연구들처럼 더 많은 프레임을 동시에 처리하는 대신 온라인 방식으로 동영상을 처리하고 과거 동영상 정보를 메모리 뱅크에 저장하는 방식을 제안합니다.</p>
+<p>이를 통해 우리 모델은 LLM의 컨텍스트 길이 제약이나 GPU 메모리 제한을 초과하지 않고도 장기 분석을 위해 과거 비디오 콘텐츠를 참조할 수 있습니다.</p>
+<p>메모리 뱅크는 기성품 방식으로 현재의 멀티모달 LLM에 원활하게 통합할 수 있습니다.</p>
+<p>긴 비디오 이해, 비디오 질문 답변, 비디오 캡션과 같은 다양한 비디오 이해 작업에 대한 광범위한 실험을 수행했으며, 우리 모델은 여러 데이터 세트에서 최첨단 성능을 달성할 수 있습니다.</p>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>~~</p>
+</section>
+<section id="related-work" class="level1">
+<h1>Related Work</h1>
+<p>~~</p>
+</section>
+<section id="method" class="level1">
+<h1>Method</h1>
+<p>본 논문에서는 장기 비디오 이해를 위한 메모리 증강 대규모 다중 모드 모델인 MA-LMM을 소개합니다.</p>
+<p>대부분의 동영상 이해 방법[42, 31, 43, 44, 45, 46, 47, 48, 49]에서처럼 더 많은 프레임을 동시에 처리하는 대신 온라인 방식으로 비디오 프레임을 자동 회귀적으로 처리하는 방식을 제안하며, 이는 MeMViT [41]에서 제시한 장기 기억 설계를 통한 온라인 처리 방식에서 영감을 얻었습니다.</p>
+<p>그림 2(a)는 MA-LMM 프레임워크의 개요를 보여줍니다.</p>
+<p>대규모 멀티모달 모델의 유사한 사례[7, 9, 8, 12]를 따라 전체 모델 아키텍처는 (1) 고정된 시각 인코더를 사용한 시각적 특징 추출(Sec. 3.1), (2) 시각 및 텍스트 임베딩 공간을 정렬하기 위해 훈련 가능한 쿼리 변환기(Q-Former)를 사용한 장기 시간 모델링(Sec. 3.2), (3) 고정된 대규모 언어 모델을 사용한 텍스트 디코딩(Sec. 3.3) 세 부분으로 구분할 수 있습니다.</p>
+</section>
+<section id="experiments-and-discussions" class="level1">
+<h1>Experiments and Discussions</h1>
+<p>~~</p>
+</section>
+<section id="reference" class="level1">
+<h1>Reference</h1>
+<p><a href="https://arxiv.org/abs/2301.12597">BLIPv2 (Q-Former)</a></p>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-title" data-direction="asc">
-          Title
-        </option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
-     </select>
-  </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
-    </div>
-</div>
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="VQA,Multi-Modal" data-listing-date-sort="1728745200000" data-listing-file-modified-sort="1728828006005" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
-<a href="../../docs/paper/posts/2024-10-13-MALMM/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img src="https://picsum.photos/id/201/200/110" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-MA-LMM: Memory-Augmented Large Multimodal Model for Long-Term Video Understanding
-</h5>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('VQA'); return false;">
-VQA
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Multi-Modal'); return false;">
-Multi-Modal
-</div>
-</div>
-<div class="card-text listing-description">
-MA-LMM Review (English)
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Ui Seok
-</div>
-<div class="listing-date">
-Oct 13, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="1" data-categories="VQA" data-listing-date-sort="1726930800000" data-listing-file-modified-sort="1727016219585" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4">
-<a href="../../docs/paper/posts/2024-09-22-BLIP2/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img src="https://picsum.photos/id/201/200/102" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models
-</h5>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('VQA'); return false;">
-VQA
-</div>
-</div>
-<div class="card-text listing-description">
-BLIPv2 Review (English)
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Ui Seok
-</div>
-<div class="listing-date">
-Sep 22, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="2" data-categories="VQA" data-listing-date-sort="1726326000000" data-listing-file-modified-sort="1727016220269" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
-<a href="../../docs/paper/posts/2024-09-15-BLIP/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img src="https://picsum.photos/id/201/200/101" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation
-</h5>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('VQA'); return false;">
-VQA
-</div>
-</div>
-<div class="card-text listing-description">
-BLIP Review (English)
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Ui Seok
-</div>
-<div class="listing-date">
-Sep 15, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -546,7 +455,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">us.lee1520@gmail.com<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/Ui-Seok/Ui-Seok.github.io/edit/main/docs/paper/index.qmd" class="toc-action">Edit this page</a></p></div></div></div>
+    <div class="nav-footer-center">us.lee1520@gmail.com</div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

@@ -10,7 +10,59 @@
 <atom:link href="https://ui-seok.github.io/docs/paper/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Sat, 21 Sep 2024 15:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 12 Oct 2024 15:00:00 GMT</lastBuildDate>
+<item>
+  <title>MA-LMM: Memory-Augmented Large Multimodal Model for Long-Term Video Understanding</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/paper/posts/2024-10-13-MALMM/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<p>Paper Link : <a href="https://arxiv.org/abs/2404.05726">MA-LMM: Memory-Augmented Large Multimodal Model for Long-Term Video Understanding</a></p>
+<section id="abstract" class="level1">
+<h1>Abstract</h1>
+<p>대규모 언어 모델(LLM)의 성공으로 비전 모델을 LLM에 통합하여 비전-언어 기반 모델을 구축하는 것이 최근 많은 관심을 받고 있습니다.</p>
+<p>하지만 기존의 LLM 기반 대형 멀티모달 모델(예: Video-LLaMA, VideoChat)은 짧은 영상 이해에 한정된 프레임 수만 처리할 수 있습니다.</p>
+<p>이 연구에서는 주로 장시간의 동영상 이해를 위한 효율적이고 효과적인 모델을 설계하는 데 중점을 둡니다.</p>
+<p>기존 연구들처럼 더 많은 프레임을 동시에 처리하는 대신 온라인 방식으로 동영상을 처리하고 과거 동영상 정보를 메모리 뱅크에 저장하는 방식을 제안합니다.</p>
+<p>이를 통해 우리 모델은 LLM의 컨텍스트 길이 제약이나 GPU 메모리 제한을 초과하지 않고도 장기 분석을 위해 과거 비디오 콘텐츠를 참조할 수 있습니다.</p>
+<p>메모리 뱅크는 기성품 방식으로 현재의 멀티모달 LLM에 원활하게 통합할 수 있습니다.</p>
+<p>긴 비디오 이해, 비디오 질문 답변, 비디오 캡션과 같은 다양한 비디오 이해 작업에 대한 광범위한 실험을 수행했으며, 우리 모델은 여러 데이터 세트에서 최첨단 성능을 달성할 수 있습니다.</p>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>~~</p>
+</section>
+<section id="related-work" class="level1">
+<h1>Related Work</h1>
+<p>~~</p>
+</section>
+<section id="method" class="level1">
+<h1>Method</h1>
+<p>본 논문에서는 장기 비디오 이해를 위한 메모리 증강 대규모 다중 모드 모델인 MA-LMM을 소개합니다.</p>
+<p>대부분의 동영상 이해 방법[42, 31, 43, 44, 45, 46, 47, 48, 49]에서처럼 더 많은 프레임을 동시에 처리하는 대신 온라인 방식으로 비디오 프레임을 자동 회귀적으로 처리하는 방식을 제안하며, 이는 MeMViT [41]에서 제시한 장기 기억 설계를 통한 온라인 처리 방식에서 영감을 얻었습니다.</p>
+<p>그림 2(a)는 MA-LMM 프레임워크의 개요를 보여줍니다.</p>
+<p>대규모 멀티모달 모델의 유사한 사례[7, 9, 8, 12]를 따라 전체 모델 아키텍처는 (1) 고정된 시각 인코더를 사용한 시각적 특징 추출(Sec. 3.1), (2) 시각 및 텍스트 임베딩 공간을 정렬하기 위해 훈련 가능한 쿼리 변환기(Q-Former)를 사용한 장기 시간 모델링(Sec. 3.2), (3) 고정된 대규모 언어 모델을 사용한 텍스트 디코딩(Sec. 3.3) 세 부분으로 구분할 수 있습니다.</p>
+</section>
+<section id="experiments-and-discussions" class="level1">
+<h1>Experiments and Discussions</h1>
+<p>~~</p>
+</section>
+<section id="reference" class="level1">
+<h1>Reference</h1>
+<p><a href="https://arxiv.org/abs/2301.12597">BLIPv2 (Q-Former)</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>VQA</category>
+  <category>Multi-Modal</category>
+  <guid>https://ui-seok.github.io/docs/paper/posts/2024-10-13-MALMM/index.html</guid>
+  <pubDate>Sat, 12 Oct 2024 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/201/200/110" medium="image"/>
+</item>
 <item>
   <title>BLIP-2: Bootstrapping Language-Image Pre-training with Frozen Image Encoders and Large Language Models</title>
   <dc:creator>Ui Seok</dc:creator>

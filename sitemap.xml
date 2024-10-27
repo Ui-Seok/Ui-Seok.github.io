@@ -2,126 +2,130 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ui-seok.github.io/about.html</loc>
-    <lastmod>2024-09-22T14:44:54.560Z</lastmod>
+    <lastmod>2024-10-27T14:16:32.876Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/coursera/index.html</loc>
-    <lastmod>2024-09-22T14:44:52.617Z</lastmod>
+    <lastmod>2024-10-27T14:16:30.930Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/index.html</loc>
-    <lastmod>2024-09-22T14:44:52.042Z</lastmod>
+    <lastmod>2024-10-27T14:16:30.169Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-20-MLOps-day15/index.html</loc>
-    <lastmod>2024-09-22T14:44:49.789Z</lastmod>
+    <lastmod>2024-10-27T14:16:28.482Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-01-MLOps-day7/index.html</loc>
-    <lastmod>2024-09-22T14:44:49.141Z</lastmod>
+    <lastmod>2024-10-27T14:16:27.780Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-24-MLOps-day2/index.html</loc>
-    <lastmod>2024-09-22T14:44:48.523Z</lastmod>
+    <lastmod>2024-10-27T14:16:27.167Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-29-MLOps-day17/index.html</loc>
-    <lastmod>2024-09-22T14:44:48.018Z</lastmod>
+    <lastmod>2024-10-27T14:16:26.531Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-06-book-review-1/index.html</loc>
-    <lastmod>2024-09-22T14:44:47.277Z</lastmod>
+    <lastmod>2024-10-27T14:16:25.864Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-02-MLOps-day8/index.html</loc>
-    <lastmod>2024-09-22T14:44:46.761Z</lastmod>
+    <lastmod>2024-10-27T14:16:25.333Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-28-MLOps-day5/index.html</loc>
-    <lastmod>2024-09-22T14:44:45.922Z</lastmod>
+    <lastmod>2024-10-27T14:16:24.495Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-15-MLOps-day13/index.html</loc>
-    <lastmod>2024-09-22T14:44:45.243Z</lastmod>
+    <lastmod>2024-10-27T14:16:23.544Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-11-MLOps-day11/index.html</loc>
-    <lastmod>2024-09-22T14:44:44.570Z</lastmod>
+    <lastmod>2024-10-27T14:16:22.803Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2024-7-1-MongDB-1/index.html</loc>
-    <lastmod>2024-09-22T14:44:43.965Z</lastmod>
+    <lastmod>2024-10-27T14:16:22.154Z</lastmod>
   </url>
   <url>
-    <loc>https://ui-seok.github.io/docs/paper/posts/2024-09-22-BLIP2/index.html</loc>
-    <lastmod>2024-09-22T14:44:43.031Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ui-seok.github.io/posts/test-page/index.html</loc>
-    <lastmod>2024-09-22T14:44:42.133Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ui-seok.github.io/posts/post-with-code/index.html</loc>
-    <lastmod>2024-09-22T14:44:41.519Z</lastmod>
-  </url>
-  <url>
-    <loc>https://ui-seok.github.io/posts/welcome/index.html</loc>
-    <lastmod>2024-09-22T14:44:41.839Z</lastmod>
+    <loc>https://ui-seok.github.io/docs/paper/posts/2024-10-13-MALMM/index.html</loc>
+    <lastmod>2024-10-27T14:16:21.294Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/paper/posts/2024-09-15-BLIP/index.html</loc>
-    <lastmod>2024-09-22T14:44:42.680Z</lastmod>
+    <lastmod>2024-10-27T14:16:20.708Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ui-seok.github.io/posts/welcome/index.html</loc>
+    <lastmod>2024-10-27T14:16:20.083Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ui-seok.github.io/posts/post-with-code/index.html</loc>
+    <lastmod>2024-10-27T14:16:19.803Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ui-seok.github.io/posts/test-page/index.html</loc>
+    <lastmod>2024-10-27T14:16:20.338Z</lastmod>
+  </url>
+  <url>
+    <loc>https://ui-seok.github.io/docs/paper/posts/2024-09-22-BLIP2/index.html</loc>
+    <lastmod>2024-10-27T14:16:21.036Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/paper/index.html</loc>
-    <lastmod>2024-09-22T14:44:43.449Z</lastmod>
+    <lastmod>2024-10-27T14:16:21.685Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-29-MLOps-day6/index.html</loc>
-    <lastmod>2024-09-22T14:44:44.285Z</lastmod>
+    <lastmod>2024-10-27T14:16:22.487Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-07-MLOps-day9/index.html</loc>
-    <lastmod>2024-09-22T14:44:44.911Z</lastmod>
+    <lastmod>2024-10-27T14:16:23.157Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-25-MLOps-day3/index.html</loc>
-    <lastmod>2024-09-22T14:44:45.643Z</lastmod>
+    <lastmod>2024-10-27T14:16:24.204Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-26-MLOps-day16/index.html</loc>
-    <lastmod>2024-09-22T14:44:46.471Z</lastmod>
+    <lastmod>2024-10-27T14:16:25.045Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-16-MLOps-day14/index.html</loc>
-    <lastmod>2024-09-22T14:44:47.030Z</lastmod>
+    <lastmod>2024-10-27T14:16:25.606Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-23-MLOps-day1/index.html</loc>
-    <lastmod>2024-09-22T14:44:47.698Z</lastmod>
+    <lastmod>2024-10-27T14:16:26.184Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2024-1-3-MLOps-day18/index.html</loc>
-    <lastmod>2024-09-22T14:44:48.262Z</lastmod>
+    <lastmod>2024-10-27T14:16:26.889Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-09-MLOps-day10/index.html</loc>
-    <lastmod>2024-09-22T14:44:48.828Z</lastmod>
+    <lastmod>2024-10-27T14:16:27.472Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-11-26-MLOps-day4/index.html</loc>
-    <lastmod>2024-09-22T14:44:49.401Z</lastmod>
+    <lastmod>2024-10-27T14:16:28.042Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/blog/posts/2023-12-12-MLOps-day12/index.html</loc>
-    <lastmod>2024-09-22T14:44:50.060Z</lastmod>
+    <lastmod>2024-10-27T14:16:28.746Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/docs/coursera/posts/2024-09-08-neural_network_and_deep_learning/inedx.html</loc>
-    <lastmod>2024-09-22T14:44:52.344Z</lastmod>
+    <lastmod>2024-10-27T14:16:30.520Z</lastmod>
   </url>
   <url>
     <loc>https://ui-seok.github.io/index.html</loc>
-    <lastmod>2024-09-22T14:44:54.285Z</lastmod>
+    <lastmod>2024-10-27T14:16:32.644Z</lastmod>
   </url>
 </urlset>

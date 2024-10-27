@@ -23,6 +23,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -133,6 +167,7 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#review" id="toc-review" class="nav-link" data-scroll-target="#review">1. Review</a></li>
   <li><a href="#kafka-system" id="toc-kafka-system" class="nav-link" data-scroll-target="#kafka-system">2. Kafka System</a></li>
+  <li><a href="#전체적인-docker-compose-yaml-코드" id="toc-전체적인-docker-compose-yaml-코드" class="nav-link" data-scroll-target="#전체적인-docker-compose-yaml-코드">3. 전체적인 docker compose yaml 코드</a></li>
   </ul></li>
   <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
   </ul>
@@ -207,12 +242,177 @@ Note
 <li>Schema Registry : 메시지의 schema 를 저장하기 위한 Schema Registry 서버</li>
 <li>Connect : Connector 를 띄우기 위한 Connect 서버</li>
 </ul>
+<p>이번 실습에서 진행될 전체적인 요약도</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Architecture</figcaption>
+</figure>
+</div>
 </section>
 <section id="kafka-system" class="level3">
 <h3 class="anchored" data-anchor-id="kafka-system">2. Kafka System</h3>
 <section id="zookeeper-broker" class="level4">
 <h4 class="anchored" data-anchor-id="zookeeper-broker">2.1 Zookeeper &amp; Broker</h4>
+<ul>
+<li><code>MLOps-day16</code> 에 작성했던 docker.yaml 파일을 사용</li>
+</ul>
 </section>
+<section id="schema-registry" class="level4">
+<h4 class="anchored" data-anchor-id="schema-registry">2.2 Schema Registry</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">"3"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">schema-registry</span><span class="kw">:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> confluentinc/cp-schema-registry:7.3.0</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> schema-registry</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> broker</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 8081:8081</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">SCHEMA_REGISTRY_HOST_NAME</span><span class="kw">:</span><span class="at"> schema-registry</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS</span><span class="kw">:</span><span class="at"> broker:29092</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">SCHEMA_REGISTRY_LISTENERS</span><span class="kw">:</span><span class="at"> http://schema-registry:8081</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><em>image</em> : Schema Registry 의 이미지로 해당 기입된 이미지 사용</li>
+<li><em>depends_on</em> : <code>broker</code> 가 먼저 실행된 후 Schema Registry 가 실행되어야 함</li>
+<li><em>ports</em> : Schema Registry 의 포트인 <code>8081:8081</code> 을 사용</li>
+<li><em>SCHEMA_REGISTRY_HOST_NAME</em> : Schema Registry 의 호스트 이름</li>
+<li><em>SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS</em> : Bootstrap 으로 띄워진 브로커 서버 지정 / 일반적으로 <code>브로커 서비스 이름 : 브로커 서비스 내부 포트</code> 로 사용</li>
+<li><em>SCHEMA_REGISTRY_LISTENERS</em> : 외부에서 접속할 리스너를 설정</li>
+</ul>
+</section>
+<section id="connect" class="level4">
+<h4 class="anchored" data-anchor-id="connect">2.3 Connect</h4>
+<p>Connect 의 경우 이미지를 build 하기 위한 Dockerfile 이 필요</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode dockerfile code-with-copy"><code class="sourceCode dockerfile"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> confluentinc/cp-kafka-connect:7.3.0</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> CONNECT_PLUGIN_PATH=<span class="st">"/usr/share/java,/usr/share/confluent-hub-components"</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">confluent-hub</span> install <span class="at">--no-prompt</span> snowflakeinc/snowflake-kafka-connector:1.5.5 <span class="kw">&amp;&amp;</span><span class="dt">\</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="ex">confluent-hub</span> install <span class="at">--no-prompt</span> confluentinc/kafka-connect-jdbc:10.2.2 <span class="kw">&amp;&amp;</span><span class="dt">\</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="ex">confluent-hub</span> install <span class="at">--no-prompt</span> confluentinc/kafka-connect-json-schema-converter:7.3.0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><em>ENV</em> : Connect 에서는 플러그인의 path 를 설정</li>
+<li><em>RUN</em> : JDBC Connect 를 사용하고, PostgreSQL DB 에 접근이 가능한 Connector 를 설치해야 함 / value schema 의 Converter 는 Json Schema Converter 를 사용</li>
+</ul>
+<p>위에서 작성한 Dockerfile 을 이용해서 docker compose 파일은 아래와 같음</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">"3"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span><span class="at">  </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">connect</span><span class="kw">:</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">build</span><span class="kw">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">context</span><span class="kw">:</span><span class="at"> .</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">dockerfile</span><span class="kw">:</span><span class="at"> connect.Dockerfile</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> connect</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> broker</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> schema-registry</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 8083:8083</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_BOOTSTRAP_SERVERS</span><span class="kw">:</span><span class="at"> broker:29092</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_REST_ADVERTISED_HOST_NAME</span><span class="kw">:</span><span class="at"> connect</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_GROUP_ID</span><span class="kw">:</span><span class="at"> docker-connect-group</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_CONFIG_STORAGE_TOPIC</span><span class="kw">:</span><span class="at"> docker-connect-configs</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_OFFSET_STORAGE_TOPIC</span><span class="kw">:</span><span class="at"> docker-connect-offsets</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_STATUS_STORAGE_TOPIC</span><span class="kw">:</span><span class="at"> docker-connect-status</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_STATUS_STORAGE_REPLICATION_FACTOR</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_KEY_CONVERTER</span><span class="kw">:</span><span class="at"> org.apache.kafka.connect.storage.StringConverter</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_VALUE_CONVERTER</span><span class="kw">:</span><span class="at"> org.apache.kafka.connect.json.JsonConverter</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL</span><span class="kw">:</span><span class="at"> http://schema-registry:8081</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><em>ports</em> : Connect 의 포트인 <code>8083:8083</code> 을 포트 포워딩</li>
+<li><em>CONNECT_BOOTSTRAP_SERVERS</em> : Bootstrap 으로 띄워진 브로커 서버 지정 / 일반적으로 <code>브로커 서비스 이름 : 브로커 서비스 내부 포트</code> 사용</li>
+<li><em>CONNECT_REST_ADVERTISED_HOST_NAME</em> : Connect 에서는 REST API 요청에 대한 처리와 Connector 의 등록, 설정, 시작, 종료 등의 처리를 담당하는 Worker 가 존재하고 Worker 간의 연결이 가능하도록 이름을 지정</li>
+<li><em>CONNECT_GROUP_ID</em> : Connect 의 Worker 프로세스 그룹을 구성하는데 사용하는 고유한 ID 지정 (Consumer 그룹 ID 와 출동하면 안됨)</li>
+<li><em>CONNECT_CONFIG_STORAGE_TOPIC</em> : Connector 의 환경 설정을 저장할 브로커의 토픽 이름 설정</li>
+<li><em>CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR</em> : 환경 설정을 저장하는 토픽을 생성할 때 사용할 Replication Factor 의 수를 설정</li>
+<li><em>CONNECT_OFFSET_STORAGE_TOPIC</em> : Connector 의 offset 을 저장할 브로커의 토픽 이름을 설정</li>
+<li><em>CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR</em> : offset 을 저장하는 토픽을 생성할 때 사용할 Replication Factor 의 수를 설정</li>
+<li><em>CONNECT_STATUS_STORAGE_TOPIC</em> : Connector 와 task 의 상태를 저장할 브로커의 토픽 이름을 설정</li>
+<li><em>CONNECT_STATUS_STORAGE_REPLICATION_FACTOR</em> : 상태를 저장하는 토픽을 생성할 때 사용할 Replication Factor 의 수를 설정</li>
+<li><em>CONNECT_KEY_CONVERTER</em> : Key 에 대한 Converter 를 설정</li>
+<li><em>CONNECT_VALUE_CONVERTER</em> : Value 에 대한 Converter 를 설정</li>
+<li><em>CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL</em> : Value Converter 에 대한 Schema Registry URL 설정</li>
+</ul>
+</section>
+</section>
+<section id="전체적인-docker-compose-yaml-코드" class="level3">
+<h3 class="anchored" data-anchor-id="전체적인-docker-compose-yaml-코드">3. 전체적인 docker compose yaml 코드</h3>
+<p>zookeeper, schema registry, connector 를 합친 파일은 아래와 같음</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># kafka-docker-compose.yaml</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">version</span><span class="kw">:</span><span class="at"> </span><span class="st">"3"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">zookeeper</span><span class="kw">:</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> confluentinc/cp-zookeeper:7.3.0</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> zookeeper</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 2181:2181</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ZOOKEEPER_SERVER_ID</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">ZOOKEEPER_CLIENT_PORT</span><span class="kw">:</span><span class="at"> </span><span class="dv">2181</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">broker</span><span class="kw">:</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> confluentinc/cp-kafka:7.3.0</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> broker</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> zookeeper</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 9092:9092</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_BROKER_ID</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_ZOOKEEPER_CONNECT</span><span class="kw">:</span><span class="at"> zookeeper:2181</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_ADVERTISED_LISTENERS</span><span class="kw">:</span><span class="at"> PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="kw">:</span><span class="at"> PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="kw">:</span><span class="at"> PLAINTEXT</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</span><span class="kw">:</span><span class="at"> </span><span class="dv">0</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">schema-registry</span><span class="kw">:</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> confluentinc/cp-schema-registry:7.3.0</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> schema-registry</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> broker</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 8081:8081</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">SCHEMA_REGISTRY_HOST_NAME</span><span class="kw">:</span><span class="at"> schema-registry</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS</span><span class="kw">:</span><span class="at"> broker:29092</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">SCHEMA_REGISTRY_LISTENERS</span><span class="kw">:</span><span class="at"> http://schema-registry:8081</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">connect</span><span class="kw">:</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">build</span><span class="kw">:</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">context</span><span class="kw">:</span><span class="at"> .</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">dockerfile</span><span class="kw">:</span><span class="at"> connect.Dockerfile</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">container_name</span><span class="kw">:</span><span class="at"> connect</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">depends_on</span><span class="kw">:</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> broker</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> schema-registry</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> 8083:8083</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_BOOTSTRAP_SERVERS</span><span class="kw">:</span><span class="at"> broker:29092</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_REST_ADVERTISED_HOST_NAME</span><span class="kw">:</span><span class="at"> connect</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_GROUP_ID</span><span class="kw">:</span><span class="at"> docker-connect-group</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_CONFIG_STORAGE_TOPIC</span><span class="kw">:</span><span class="at"> docker-connect-configs</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_OFFSET_STORAGE_TOPIC</span><span class="kw">:</span><span class="at"> docker-connect-offsets</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_STATUS_STORAGE_TOPIC</span><span class="kw">:</span><span class="at"> docker-connect-status</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_STATUS_STORAGE_REPLICATION_FACTOR</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_KEY_CONVERTER</span><span class="kw">:</span><span class="at"> org.apache.kafka.connect.storage.StringConverter</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_VALUE_CONVERTER</span><span class="kw">:</span><span class="at"> org.apache.kafka.connect.json.JsonConverter</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL</span><span class="kw">:</span><span class="at"> http://schema-registry:8081</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a><span class="fu">networks</span><span class="kw">:</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">default</span><span class="kw">:</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> mlops-network</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">external</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="reference" class="level2">

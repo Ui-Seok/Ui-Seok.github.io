@@ -10,7 +10,126 @@
 <atom:link href="https://ui-seok.github.io/docs/paper/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Sat, 12 Oct 2024 15:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 09 Nov 2024 15:00:00 GMT</lastBuildDate>
+<item>
+  <title>Learning to Prompt for Vision-Language Models</title>
+  <dc:creator>Ui Seok</dc:creator>
+  <link>https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<p>Paper Link : <a href="https://arxiv.org/abs/2109.01134">Learning to Prompt for Vision-Language Models</a></p>
+<section id="abstract" class="level1">
+<h1>Abstract</h1>
+<p>Large pre-trained vision-language models like CLIP have shown great potential in learning representations that are transferable across a wide range of downstream tasks.</p>
+<p>And usually these models will perform downstream tasks via prompt.</p>
+<p>However, since prompt engineering requires a lot of prior knowledge of the new domain to do well, and since small changes in wording can have a big impact on performance, a significant amount of time is spent tweaking the wording.</p>
+<p>This paper proposes Context Optimization (CoOp), a simple approach specifically for adapting CLIP-like vision-language models for downstream image recognition.</p>
+<p>Concretely, CoOp models a prompt’s context words with learnable vectors while the entire pre-trained parameters are kept fixed.</p>
+<p>CoOp achieves superb domain generalization performance compared with the zero-shot model using hand-crafted prompts.</p>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/fig1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Co-Op</figcaption>
+</figure>
+</div>
+<p>Traditional SOTA models in computer vision use discrete labels to perform supervised learning.</p>
+<p>However, this learning paradigm has the limitation of not being able to make zero-shot predictions because it limits the performance of the model.</p>
+<p>The vision-language model, represented by CLIP, is a promising alternative to the existing learning paradigm, but it suffers from the problem that the performance of the model changes significantly due to prompt engineering.</p>
+<p>CoOp is a research project that aims to make prompt engineering, a non-trivial task, automatic and learning-based.</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/fig2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Model Architecture</figcaption>
+</figure>
+</div>
+<p>A simple way to describe the CoOp is that it’s about fine-tuning the prompt part of CLIP.</p>
+<p>The overall CoOp learning process is well represented in the figure above.</p>
+<p>We use CLIP as it is, but freeze all parameters, leave only the context of the prompt part as the learnable vector, and run GT and cross-entropy loss to learn.</p>
+<p>The context is the most important part to note here, and CoOp has implemented two different contexts to cover different recognition tasks: one is unified context, where all classes have the same context, and the other is class-specific context, where each class has a different context.</p>
+<p>The contributions in the paper are as follows:</p>
+<ol type="1">
+<li><p>We present a timely study on the adaptation of recently proposed vision-language models in downstream applications and identify a critical problem associated with the deployment efficiency, i.e., prompt engineering.</p></li>
+<li><p>To automate prompt engineering specifically for pre-trained vision-language models, we propose a simple approach based on continuous prompt learning and provide two implementations that can handle different recognition tasks.</p></li>
+<li><p>We for the first time show that the proposed prompt learning-based approach outperforms both handcrafted prompts and the linear probe model in terms of downstream transfer learning performance and robustness under domain shifts for large visionlanguage models.</p></li>
+</ol>
+</section>
+<section id="related-work" class="level1">
+<h1>Related Work</h1>
+<p>~~</p>
+</section>
+<section id="method" class="level1">
+<h1>Method</h1>
+<p>As mentioned earlier, CoOp has organized two contexts. Before we introduce the unified context, we will show the prediction probability used by CLIP.</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/fig3.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Prediction Probability of CLIP</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/fig8.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>It’s organized like the formula shown above</p>
+<section id="unified-context" class="level3">
+<h3 class="anchored" data-anchor-id="unified-context">Unified Context</h3>
+<p>A unified context means that all classes have the same context.</p>
+<p>In this case, prompt t could be expressed as follows</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/fig4.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>where each <img src="https://latex.codecogs.com/png.latex?%7B%5BV%5D_m%20(m%20%5Cin%7B%20(1,%20...,%20M)%20%7D)%7D"> is a vector with the same dimension as word embeddings (i.e., 512 for CLIP), and is a hyperparameter specifying the number of context tokens.</p>
+<p>By forwarding a prompt 𝒕 to the text encoder g(⋅), we can obtain a classification weight vector representing a visual concept (still from the [EOS] token position).</p>
+<p>The prediction probability is computed as</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/fig5.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>Other than placing the class token at the end of a sequence as in Equation (2), we can also put it in the middle like</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/fig6.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>which increases flexibility for learning—the prompt is allowed to either fill the latter cells with supplementary descriptions or cut off the sentence earlier by using a termination signal such as full stop.</p>
+</section>
+<section id="class-specific-context" class="level3">
+<h3 class="anchored" data-anchor-id="class-specific-context">Class-Specific Context</h3>
+<p>Another option for CoOp is Class-Specific Context (CSC).</p>
+<p>CSC uses an independent context for each class, as opposed to a unified context, which can be represented by the formula</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/fig7.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="experiments-and-discussions" class="level1">
+<h1>Experiments and Discussions</h1>
+<p>~~</p>
+</section>
+<section id="reference" class="level1">
+<h1>Reference</h1>
+
+
+</section>
+
+ ]]></description>
+  <category>VQA</category>
+  <category>Multi-Modal</category>
+  <guid>https://ui-seok.github.io/docs/paper/posts/2024-11-10-CoOp/index.html</guid>
+  <pubDate>Sat, 09 Nov 2024 15:00:00 GMT</pubDate>
+  <media:content url="https://picsum.photos/id/201/200/115" medium="image"/>
+</item>
 <item>
   <title>MA-LMM: Memory-Augmented Large Multimodal Model for Long-Term Video Understanding</title>
   <dc:creator>Ui Seok</dc:creator>

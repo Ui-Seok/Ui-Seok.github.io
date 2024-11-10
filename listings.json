@@ -33,6 +33,7 @@
   {
     "listing": "/docs/paper/index.html",
     "items": [
+      "/docs/paper/posts/2024-11-10-CoOp/index.html",
       "/docs/paper/posts/2024-10-13-MALMM/index.html",
       "/docs/paper/posts/2024-09-22-BLIP2/index.html",
       "/docs/paper/posts/2024-09-15-BLIP/index.html"
@@ -41,6 +42,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/docs/paper/posts/2024-11-10-CoOp/index.html",
       "/docs/paper/posts/2024-10-13-MALMM/index.html",
       "/docs/paper/posts/2024-09-22-BLIP2/index.html",
       "/docs/paper/posts/2024-09-15-BLIP/index.html",

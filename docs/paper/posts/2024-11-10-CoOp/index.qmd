@@ -1,0 +1,110 @@
+---
+title: "Learning to Prompt for Vision-Language Models"
+description: CoOp Review (English)
+author: "Ui Seok"
+date: "2024-11-10"
+categories: [VQA, Multi-Modal]
+image: "https://picsum.photos/id/201/200/115"
+
+page-layout: article
+---
+
+Paper Link : [Learning to Prompt for Vision-Language Models](https://arxiv.org/abs/2109.01134)
+
+# Abstract
+
+Large pre-trained vision-language models like CLIP have shown great potential in learning representations that are transferable across a wide range of downstream tasks.
+
+And usually these models will perform downstream tasks via prompt.
+
+However, since prompt engineering requires a lot of prior knowledge of the new domain to do well, and since small changes in wording can have a big impact on performance, a significant amount of time is spent tweaking the wording.
+
+This paper proposes Context Optimization (CoOp), a simple approach specifically for adapting CLIP-like vision-language models for downstream image recognition.
+
+Concretely, CoOp models a prompt’s context words with learnable vectors while the entire pre-trained parameters are kept fixed.
+
+CoOp achieves superb domain generalization performance compared with the zero-shot model using hand-crafted prompts.
+
+
+# Introduction
+
+![Co-Op](fig1.png){fig-align="left"}
+
+Traditional SOTA models in computer vision use discrete labels to perform supervised learning. 
+
+However, this learning paradigm has the limitation of not being able to make zero-shot predictions because it limits the performance of the model. 
+
+The vision-language model, represented by CLIP, is a promising alternative to the existing learning paradigm, but it suffers from the problem that the performance of the model changes significantly due to prompt engineering. 
+
+CoOp is a research project that aims to make prompt engineering, a non-trivial task, automatic and learning-based.
+
+![Model Architecture](fig2.png){fig-align="left"}
+
+A simple way to describe the CoOp is that it's about fine-tuning the prompt part of CLIP. 
+
+The overall CoOp learning process is well represented in the figure above. 
+
+We use CLIP as it is, but freeze all parameters, leave only the context of the prompt part as the learnable vector, and run GT and cross-entropy loss to learn. 
+
+The context is the most important part to note here, and CoOp has implemented two different contexts to cover different recognition tasks: one is unified context, where all classes have the same context, and the other is class-specific context, where each class has a different context.
+
+The contributions in the paper are as follows:
+
+1. We present a timely study on the adaptation of recently proposed vision-language models in downstream applications and identify a critical problem associated with the deployment efficiency, i.e., prompt engineering.
+
+2. To automate prompt engineering specifically for pre-trained vision-language models, we propose a simple approach based on continuous prompt learning and provide two implementations that can handle different recognition tasks.
+
+3. We for the first time show that the proposed prompt learning-based approach outperforms both handcrafted prompts and the linear probe model in terms of downstream transfer learning performance and robustness under domain shifts for large visionlanguage models.
+
+
+# Related Work
+~~
+
+
+# Method
+
+As mentioned earlier, CoOp has organized two contexts. Before we introduce the unified context, we will show the prediction probability used by CLIP.
+
+![Prediction Probability of CLIP](fig3.png){fig-align="left"}
+
+![](fig8.png){fig-align="left"}
+
+It's organized like the formula shown above
+
+### Unified Context
+
+A unified context means that all classes have the same context. 
+
+In this case, prompt t could be expressed as follows
+
+![](fig4.png){fig-align="left"}
+
+where each ${[V]_m (m \in{ (1, ..., M) })}$ is a vector with the same dimension as word embeddings (i.e., 512 for CLIP), and is a hyperparameter specifying the number of context tokens.
+
+By forwarding a prompt 𝒕 to the text encoder g(⋅), we can obtain a classification weight vector representing a visual concept (still from the [EOS] token position). 
+
+The prediction probability is computed as
+
+![](fig5.png){fig-align="left"}
+
+Other than placing the class token at the end of a sequence as in Equation (2), we can also put it in the middle like
+
+![](fig6.png){fig-align="left"}
+
+which increases flexibility for learning—the prompt is allowed to either fill the latter cells with supplementary descriptions or cut off the sentence earlier by using a termination signal such as full stop.
+
+### Class-Specific Context
+
+Another option for CoOp is Class-Specific Context (CSC). 
+
+CSC uses an independent context for each class, as opposed to a unified context, which can be represented by the formula
+
+![](fig7.png){fig-align="left"}
+
+# Experiments and Discussions
+
+~~
+
+
+# Reference
+
